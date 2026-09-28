@@ -30,13 +30,25 @@ A production-ready, mobile-first dental clinic web application engineered for **
 - **Live Slot Availability Check:** Integrates with clinic database and Google Calendar FreeBusy API to avoid double-booking.
 - **Instant WhatsApp & Email Confirmations:** Generates instant WhatsApp notification links and email confirmation triggers via Resend.
 
-### 3. 🤖 Intelligent Bilingual AI Dental Assistant
-- **Vercel AI SDK & OpenAI GPT-4o-mini:** Real-time streaming conversational assistant embedded directly in the web app.
-- **Bilingual & Urdu RTL Native:** Automatically detects language and replies fluently in English, Urdu (اردو), or Roman Urdu.
+### 3. 🤖 Intelligent Bilingual AI Dental Assistant & Knowledge Retrieval
+- **Production-Ready AI Architecture:** Connected via secure backend route (`/api/chat`) with strict server-side API key protection (keys are never leaked to client).
+- **Knowledge Retrieval Pipeline ([`ai-retriever.ts`](file:///C:/Users/MUHAMMAD%20UMAIR/.gemini/scratch/lahore-dental/src/lib/ai-retriever.ts)):** Before generating a response, the backend extracts the user's intent and dynamically retrieves relevant company facts (services, pricing, refund timelines, FAQs, working hours, and policies).
+- **Strict Language Behavior & Roman Urdu Native:**
+  - **Roman Urdu:** User writes in Roman Urdu $\rightarrow$ AI replies in natural, fluent Roman Urdu.
+  - **English:** User writes in English $\rightarrow$ AI replies in English.
+  - **Mixed:** User mixes Roman Urdu and English $\rightarrow$ AI replies in the same mixed natural style.
+  - **Script Preservation:** Roman Urdu is never converted to Arabic script unless requested.
+- **Zero Hallucination Guardrails:** The AI is strictly barred from inventing prices, services, discounts, or policies. When required facts are missing, it politely informs the user and provides clinic human support (`+92 300 1234567`).
 - **Automated Tool Calling:**
-  - `checkAvailability(date)`: Checks database and calendar for open consultation slots.
-  - `bookAppointment(name, phone, date, time, reason)`: Directly books appointments into the database during chat.
-- **Medical Emergency Triage:** Detects acute symptoms (severe bleeding, acute trauma, tooth knocked out) and immediately surfaces the 24/7 clinic emergency hotline (`+92 300 1234567`).
+  - `checkAvailability(date)`: Verifies real-time calendar and database slots.
+  - `bookAppointment(name, phone, date, time, reason)`: Confirms booking, syncs with Google Calendar, and sends WhatsApp confirmation.
+- **Medical Emergency Triage:** Detects acute trauma or severe pain and immediately displays emergency contacts.
+
+### 4. ⚙️ Admin "AI Assistant & Knowledge" Manager ([`AIAssistantManager.tsx`](file:///C:/Users/MUHAMMAD%20UMAIR/.gemini/scratch/lahore-dental/src/components/admin/AIAssistantManager.tsx))
+- **Company Knowledge Management:** Full admin controls to update clinic description, contact details, working hours, 8+ dental services & exact pricing, refund/cancellation policies (e.g. 3–5 business days timeline), and FAQs.
+- **AI Behavior Instructions:** Admin can configure AI role, target audience, tone, response length, business goals, Dos and Don'ts, unavailable information policies, and human support handover triggers.
+- **Provider & Model Settings:** Support for OpenAI (`gpt-4o-mini`, `gpt-4o`), Groq, OpenRouter, and custom endpoints, with server-side encrypted key storage.
+- **Live Simulator:** In-panel test console allowing admins to test queries in Roman Urdu and English and preview real-time AI responses.
 
 ### 4. 📊 Portals & Dashboards
 - **Patient Dashboard (`/[locale]/user-dashboard`):**

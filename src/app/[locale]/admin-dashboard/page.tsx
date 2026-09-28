@@ -28,7 +28,9 @@ import {
   FileText,
   Shield,
   ShieldAlert,
+  Bot,
 } from "lucide-react";
+import { AIAssistantManager } from "@/components/admin/AIAssistantManager";
 
 interface Appointment {
   id: string;
@@ -60,7 +62,7 @@ export default function AdminDashboardPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loadingData, setLoadingData] = useState(false);
-  const [activeTab, setActiveTab] = useState<"appointments" | "inquiries" | "new">("appointments");
+  const [activeTab, setActiveTab] = useState<"appointments" | "inquiries" | "new" | "ai-knowledge">("appointments");
 
   // Filter State
   const [searchQuery, setSearchQuery] = useState("");
@@ -399,6 +401,18 @@ export default function AdminDashboardPage() {
           >
             <PlusCircle className="w-4 h-4" />
             <span>Add Walk-In / Phone Booking</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("ai-knowledge")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === "ai-knowledge"
+                ? "bg-[#04326d] text-white shadow-soft"
+                : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
+            }`}
+          >
+            <Bot className="w-4 h-4" />
+            <span>AI Assistant & Knowledge</span>
           </button>
         </div>
 
@@ -842,6 +856,9 @@ export default function AdminDashboardPage() {
             </form>
           </div>
         )}
+
+        {/* TAB 4: AI Assistant & Knowledge Base Manager */}
+        {activeTab === "ai-knowledge" && <AIAssistantManager />}
       </main>
     </div>
   );
