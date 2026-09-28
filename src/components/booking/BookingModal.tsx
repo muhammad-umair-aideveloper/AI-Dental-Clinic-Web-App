@@ -212,21 +212,21 @@ export function BookingModal({
         {/* Modal Header */}
         <div className="px-6 py-4 bg-gradient-to-r from-[#001a4b] via-[#04326d] to-[#001a4b] text-white flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-lg">
+            <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-lg text-white">
               🦷
             </div>
             <div>
-              <h3 className="font-heading font-bold text-lg tracking-tight">
+              <h3 className="font-heading font-bold text-lg tracking-tight text-white !text-white">
                 {isUrdu ? "وقت بک کریں — لاہور ڈینٹل" : "Book Your Appointment — Lahore Dental"}
               </h3>
-              <p className="text-xs text-[#b2bed6]">
+              <p className="text-xs text-sky-100">
                 {isUrdu ? "تاریخ اور وقت منتخب کریں" : "Select your preferred date & time slot"}
               </p>
             </div>
           </div>
           <button
             onClick={handleReset}
-            className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-1.5 rounded-lg text-white/90 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
             aria-label="Close"
           >
             <X className="w-5 h-5" />

@@ -95,8 +95,8 @@ export function HeroSection({ onOpenChat }: { onOpenChat?: () => void }) {
                   {/* Float badge inside image */}
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white p-2">
                     <div>
-                      <p className="text-xs uppercase font-bold text-[#b2bed6] tracking-wider">Gulberg III, Lahore</p>
-                      <p className="text-sm font-semibold">State-of-the-Art Digital Dental Suite</p>
+                      <p className="text-xs uppercase font-bold text-sky-200 tracking-wider">Gulberg III, Lahore</p>
+                      <p className="text-sm font-semibold text-white">State-of-the-Art Digital Dental Suite</p>
                     </div>
                     <span className="w-8 h-8 rounded-full bg-[#04326d]/90 backdrop-blur-sm flex items-center justify-center text-sm">
                       ✨

@@ -18,7 +18,7 @@ export function Footer() {
                 {t("common.clinicName")}
               </span>
             </div>
-            <p className="text-sm text-[#b2bed6]/90 leading-relaxed">
+            <p className="text-sm text-slate-200 leading-relaxed">
               {t("footer.description")}
             </p>
             <div className="flex items-center gap-3 pt-2">
@@ -50,10 +50,10 @@ export function Footer() {
 
           {/* Treatments Col */}
           <div>
-            <h3 className="text-white font-semibold text-base mb-4 tracking-wide">
+            <h3 className="text-white !text-white font-semibold text-base mb-4 tracking-wide">
               {t("footer.servicesTitle")}
             </h3>
-            <ul className="space-y-2.5 text-sm text-[#b2bed6]/80">
+            <ul className="space-y-2.5 text-sm text-slate-200">
               <li>
                 <a href="#services" className="hover:text-white transition-colors">
                   {t("services.items.checkup.title")}
@@ -89,10 +89,10 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold text-base mb-4 tracking-wide">
+            <h3 className="text-white !text-white font-semibold text-base mb-4 tracking-wide">
               {t("footer.quickLinks")}
             </h3>
-            <ul className="space-y-2.5 text-sm text-[#b2bed6]/80">
+            <ul className="space-y-2.5 text-sm text-slate-200">
               <li>
                 <a href="#why-us" className="hover:text-white transition-colors">
                   {t("nav.whyUs")}
@@ -123,25 +123,25 @@ export function Footer() {
 
           {/* Working Hours & Emergency */}
           <div>
-            <h3 className="text-white font-semibold text-base mb-4 tracking-wide">
+            <h3 className="text-white !text-white font-semibold text-base mb-4 tracking-wide">
               {t("footer.hoursTitle")}
             </h3>
-            <div className="space-y-3 text-sm text-[#b2bed6]/90">
+            <div className="space-y-3 text-sm text-slate-200">
               <div className="flex items-start gap-2.5">
-                <Clock className="w-4 h-4 text-[#b2bed6] shrink-0 mt-0.5" />
+                <Clock className="w-4 h-4 text-sky-200 shrink-0 mt-0.5" />
                 <span>{t("common.timings")}</span>
               </div>
               <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-[#b2bed6] shrink-0 mt-0.5" />
+                <MapPin className="w-4 h-4 text-sky-200 shrink-0 mt-0.5" />
                 <span>{t("common.address")}</span>
               </div>
-              <div className="p-3 rounded-xl bg-[#04326d]/60 border border-[#b2bed6]/30 mt-3">
-                <span className="text-xs uppercase font-bold text-[#b2bed6] block mb-1">
+              <div className="p-3 rounded-xl bg-[#04326d]/80 border border-[#b2bed6]/40 mt-3">
+                <span className="text-xs uppercase font-bold text-sky-200 block mb-1">
                   24/7 Dental Emergency
                 </span>
                 <a
                   href={`tel:${t("common.emergencyPhone")}`}
-                  className="text-white font-semibold text-sm hover:text-[#b2bed6] flex items-center gap-1.5"
+                  className="text-white font-semibold text-sm hover:text-sky-200 flex items-center gap-1.5"
                 >
                   <Phone className="w-3.5 h-3.5 text-rose-300" />
                   {t("common.emergencyPhone")}
@@ -153,17 +153,17 @@ export function Footer() {
 
         {/* Disclaimer & Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-[#04326d] space-y-4">
-          <p className="text-xs text-[#b2bed6]/70 text-center leading-relaxed max-w-4xl mx-auto">
+          <p className="text-xs text-slate-300 text-center leading-relaxed max-w-4xl mx-auto">
             {t("footer.disclaimer")}
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-[#b2bed6]/80 pt-2 gap-2">
+          <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-200 pt-2 gap-2">
             <p>
               © {new Date().getFullYear()} {t("common.clinicName")}. {t("footer.rights")}
             </p>
             <div className="flex items-center gap-4">
               <a
                 href="/en/admin-dashboard"
-                className="text-[#b2bed6] hover:text-white font-medium inline-flex items-center gap-1"
+                className="text-slate-200 hover:text-white font-medium inline-flex items-center gap-1"
               >
                 <span>🔐 Clinic Staff & Owner Portal</span>
               </a>

@@ -206,31 +206,31 @@ function UserDashboardContent() {
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-xs font-bold uppercase tracking-wider text-[#b2bed6]">
+                <span className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-xs font-bold uppercase tracking-wider text-sky-100">
                   {isUrdu ? "مریض کا پورٹل" : "Patient Portal"}
                 </span>
-                <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200 text-xs font-semibold border border-emerald-400/30">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500/25 text-emerald-200 text-xs font-semibold border border-emerald-400/40">
                   Active User Account
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight text-white !text-white">
                 {isUrdu ? `خوش آمدید، ${user?.name || "محترم مریض"}` : `Welcome back, ${user?.name || "Patient"}`}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-4 text-xs text-[#b2bed6] pt-1">
+              <div className="flex flex-wrap items-center gap-4 text-xs text-sky-100 pt-1">
                 <div className="flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-[#b2bed6]" />
-                  <span>{user?.email}</span>
+                  <Mail className="w-3.5 h-3.5 text-sky-200" />
+                  <span className="text-white/95">{user?.email}</span>
                 </div>
                 {user?.phone && (
                   <div className="flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-[#b2bed6]" />
-                    <span>{user.phone}</span>
+                    <Phone className="w-3.5 h-3.5 text-sky-200" />
+                    <span className="text-white/95">{user.phone}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-1.5">
-                  <span className="font-bold uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded text-[11px]">
+                  <span className="font-bold uppercase tracking-wider bg-white/20 text-white px-2 py-0.5 rounded text-[11px]">
                     Role: {role || "user"}
                   </span>
                 </div>
@@ -240,7 +240,7 @@ function UserDashboardContent() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsBookingOpen(true)}
-                className="px-5 py-3 rounded-full bg-white text-[#001a4b] hover:bg-[#b2bed6]/20 hover:text-white font-semibold text-sm transition-all shadow-soft cursor-pointer"
+                className="px-5 py-3 rounded-full bg-white text-[#001a4b] hover:bg-sky-50 font-bold text-sm transition-all shadow-soft cursor-pointer"
               >
                 + New Appointment
               </button>

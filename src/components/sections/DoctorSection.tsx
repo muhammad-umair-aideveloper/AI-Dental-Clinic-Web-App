@@ -271,11 +271,11 @@ export function DoctorSection({ onOpenChat, onBookAppointment }: DoctorSectionPr
                   {/* Doctor Info & 3 Action Circles (Exactly like screenshot) */}
                   <div className="relative z-10 p-4 pt-1 flex items-end justify-between gap-2">
                     <div className="space-y-1">
-                      <h4 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">
+                      <h4 className="text-lg sm:text-xl font-bold tracking-tight text-white !text-white leading-tight">
                         Dr. Sarah Tariq
                       </h4>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-[#b2bed6] font-medium">
+                        <span className="text-xs text-sky-100 font-medium">
                           {isUrdu ? "چیف ڈینٹسٹ" : "Chief Dentist"}
                         </span>
                         <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-[11px] font-bold text-amber-300 border border-white/20">

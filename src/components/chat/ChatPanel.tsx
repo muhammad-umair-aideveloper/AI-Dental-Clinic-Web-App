@@ -113,15 +113,15 @@ export function ChatPanel({
         {/* Header */}
         <div className="px-5 py-4 bg-gradient-to-r from-[#001a4b] via-[#04326d] to-[#001a4b] text-white flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-lg">
+            <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-lg text-white">
               🦷
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h3 className="font-bold text-sm tracking-wide">{t("title")}</h3>
-                <span className="inline-block w-2 h-2 rounded-full bg-[#b2bed6] animate-pulse" />
+                <h3 className="font-heading font-bold text-sm tracking-wide text-white !text-white">{t("title")}</h3>
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
               </div>
-              <p className="text-[11px] text-[#b2bed6] font-medium">
+              <p className="text-[11px] text-sky-100 font-medium">
                 {t("subtitle")}
               </p>
             </div>
@@ -131,14 +131,14 @@ export function ChatPanel({
             <button
               onClick={clearChat}
               title="Reset Chat"
-              className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+              className="p-2 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
               title="Close"
-              className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+              className="p-2 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -197,7 +197,7 @@ export function ChatPanel({
                       : "bg-white text-[#001a4b] border border-[#b2bed6] rounded-bl-xs shadow-xs"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">{m.content}</p>
+                  <p className={`whitespace-pre-wrap ${isUser ? "text-white font-medium" : "text-[#001a4b]"}`}>{m.content}</p>
 
                   {/* Render Tool Invocations */}
                   {m.toolInvocations?.map((toolInvocation) => {

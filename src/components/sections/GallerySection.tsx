@@ -122,7 +122,7 @@ export function GallerySection() {
                   <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] uppercase font-bold tracking-wider bg-[#04326d]/90 text-white mb-1.5">
                     {item.beforeAfter}
                   </span>
-                  <h3 className="text-sm sm:text-base font-bold text-white line-clamp-1">
+                  <h3 className="text-sm sm:text-base font-bold text-white !text-white line-clamp-1">
                     {item.title}
                   </h3>
                 </div>
