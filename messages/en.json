@@ -1,0 +1,218 @@
+{
+  "common": {
+    "clinicName": "Lahore Dental",
+    "clinicTagline": "Advanced Dental Care & AI Consultations",
+    "phone": "+92 300 1234567",
+    "displayPhone": "+92 300 1234567",
+    "emergencyPhone": "+92 300 1234567",
+    "whatsappNumber": "923001234567",
+    "whatsappText": "Hello Lahore Dental! I would like to book an appointment.",
+    "address": "Plaza 42-B, Main Boulevard, Gulberg III, Lahore, Pakistan",
+    "timings": "Mon - Sat: 11:00 AM - 09:00 PM | Sun: Emergency Only",
+    "bookAppointment": "Book Appointment",
+    "whatsappUs": "WhatsApp Us",
+    "emergencyCall": "Emergency Call",
+    "callNow": "Call Now",
+    "language": "Language",
+    "selectLanguage": "Select Language",
+    "english": "English",
+    "urdu": "اردو"
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "whyUs": "Why Choose Us",
+    "doctor": "Our Doctor",
+    "gallery": "Gallery",
+    "testimonials": "Reviews",
+    "contact": "Contact"
+  },
+  "hero": {
+    "badge": "✨ Best Rated Dental Clinic in Lahore",
+    "headline": "Your Smile, Our Priority",
+    "subheadline": "Experience gentle, pain-free dental care backed by cutting-edge technology and Pakistan's first AI dental assistant. From routine checkups to complete smile transformations.",
+    "ctaBook": "Book Appointment via AI",
+    "ctaWhatsApp": "WhatsApp Us",
+    "satisfaction": "99.4% Patient Satisfaction",
+    "reviewsCount": "1,500+ Happy Smiles",
+    "trustPoints": {
+      "painless": "Pain-free Dentistry",
+      "sterilized": "100% Hospital-Grade Sterilization",
+      "verified": "PMDC Certified Specialists"
+    }
+  },
+  "services": {
+    "badge": "Comprehensive Dental Treatments",
+    "title": "World-Class Dental Services",
+    "subtitle": "Combining gentle patient care with state-of-the-art German and Japanese clinical technology.",
+    "bookService": "Book This Service",
+    "items": {
+      "checkup": {
+        "title": "General Checkup & Consultation",
+        "description": "Digital HD X-rays, comprehensive oral cancer screening, and detailed personalized treatment planning.",
+        "price": "From Rs. 1,500"
+      },
+      "scaling": {
+        "title": "Scaling & Ultrasonic Polishing",
+        "description": "Deep ultrasonic plaque and tartar removal with stain polishing for healthier gums and fresher breath.",
+        "price": "From Rs. 3,500"
+      },
+      "rootCanal": {
+        "title": "Single-Visit Root Canal (RCT)",
+        "description": "Painless rotary endodontic therapy with digital apex locator to save your natural tooth in one comfortable session.",
+        "price": "From Rs. 12,000"
+      },
+      "braces": {
+        "title": "Braces & Invisible Aligners",
+        "description": "Custom clear aligners and ceramic/metal braces to straighten crooked teeth discreetly for teens and adults.",
+        "price": "From Rs. 75,000"
+      },
+      "implants": {
+        "title": "Permanent Dental Implants",
+        "description": "Titanium bio-compatible root replacements providing permanent, natural-looking teeth with lifetime durability.",
+        "price": "From Rs. 55,000"
+      },
+      "whitening": {
+        "title": "Laser Teeth Whitening",
+        "description": "Instant 6 to 8 shades brighter smile in a single 45-minute clinic session with zero enamel damage.",
+        "price": "From Rs. 15,000"
+      },
+      "kids": {
+        "title": "Pediatric & Kids Dentistry",
+        "description": "Friendly, fun, and fear-free dental visits for children. Cavity fluoride varnishes, fillings, and gentle habits coaching.",
+        "price": "From Rs. 2,000"
+      },
+      "emergency": {
+        "title": "24/7 Dental Emergency Care",
+        "description": "Immediate relief for severe toothaches, chipped/broken teeth, lost fillings, bleeding gums, and facial trauma.",
+        "price": "Immediate Relief"
+      }
+    }
+  },
+  "whyUs": {
+    "badge": "The Lahore Dental Difference",
+    "title": "Why Lahore Trusts Us With Their Smiles",
+    "subtitle": "We believe visiting the dentist should be stress-free, transparent, and pain-free.",
+    "badges": {
+      "experienced": {
+        "title": "Experienced Dentists",
+        "description": "Over 14+ years of clinical excellence led by PMDC certified specialists with UK & European training."
+      },
+      "modern": {
+        "title": "Modern Digital Equipment",
+        "description": "Equipped with low-radiation digital sensors, rotary endodontics, intraoral 4K cameras, and Class-B autoclaves."
+      },
+      "painless": {
+        "title": "Painless Treatment",
+        "description": "Computerized local anesthesia and gentle techniques designed especially for anxious and sensitive patients."
+      },
+      "affordable": {
+        "title": "Affordable & Transparent",
+        "description": "Clear pricing with no hidden charges. Flexible payment plans available for aligners and implant treatments."
+      }
+    }
+  },
+  "doctor": {
+    "badge": "Principal Dental Surgeon",
+    "name": "Dr. Sarah Tariq Khan",
+    "qualifications": "BDS, RDS, C-Implants (UK), M.Sc Oral Surgery (Cert.)",
+    "experience": "14+ Years Clinical Experience",
+    "bio": "Dr. Sarah Tariq is one of Lahore's most respected restorative and aesthetic dentists. With extensive training in minimally invasive dentistry, she has restored over 8,000 happy smiles with a warm, empathetic touch.",
+    "stats": {
+      "surgeries": "8,000+ Smiles Restored",
+      "rating": "4.9 / 5.0 Rating",
+      "painlessRatio": "98% Pain-Free Procedures"
+    }
+  },
+  "gallery": {
+    "badge": "Visual Transformations",
+    "title": "Real Patient Results & Modern Clinic",
+    "subtitle": "Take a look at our clinical environment, high sterilization protocols, and before/after smile transformations.",
+    "tabs": {
+      "all": "All",
+      "transformations": "Transformations",
+      "clinic": "Clinic Interior"
+    }
+  },
+  "testimonials": {
+    "badge": "Verified Patient Reviews",
+    "title": "What Our Patients Say",
+    "subtitle": "Real experiences from families and professionals across Lahore.",
+    "items": [
+      {
+        "name": "Hamza Rafiq",
+        "area": "DHA Phase 5, Lahore",
+        "treatment": "Dental Implants",
+        "rating": 5,
+        "text": "I was terrified of getting an implant, but Dr. Sarah and her team made it completely painless. From the AI booking to the final crown, everything was seamless!"
+      },
+      {
+        "name": "Ayesha Bilal",
+        "area": "Gulberg III, Lahore",
+        "treatment": "Laser Teeth Whitening",
+        "rating": 5,
+        "text": "Got my teeth whitened for my brother's wedding. Results were instantaneous and my teeth didn't hurt at all. Best dental clinic in Gulberg by far."
+      },
+      {
+        "name": "Omer Cheema",
+        "area": "Model Town, Lahore",
+        "treatment": "Single-Sitting RCT",
+        "rating": 5,
+        "text": "Had severe throbbing pain on a Friday evening. Used their website AI chat, got booked immediately, and the root canal was completed painlessly in one sitting."
+      },
+      {
+        "name": "Zainab Malik",
+        "area": "Johar Town, Lahore",
+        "treatment": "Clear Aligners",
+        "rating": 5,
+        "text": "Halfway through my aligner treatment and my smile is already transformed. Very transparent pricing with monthly installments. Highly recommended!"
+      }
+    ]
+  },
+  "contact": {
+    "badge": "Get In Touch",
+    "title": "Visit Our Clinic in Gulberg, Lahore",
+    "subtitle": "Conveniently located in the heart of Lahore with dedicated valet parking and wheelchair access.",
+    "formTitle": "Send Us an Inquiry",
+    "nameLabel": "Your Full Name",
+    "namePlaceholder": "e.g. Ali Ahmed",
+    "phoneLabel": "Phone / WhatsApp Number",
+    "phonePlaceholder": "0300 1234567",
+    "messageLabel": "Your Message or Dental Concern",
+    "messagePlaceholder": "Tell us about your dental issue, preferred time, or questions...",
+    "submitBtn": "Send Inquiry",
+    "sending": "Sending...",
+    "successMsg": "Thank you! We received your message and our team will contact you within 30 minutes.",
+    "errorMsg": "Failed to send message. Please reach us directly on WhatsApp or call.",
+    "info": {
+      "addressTitle": "Clinic Location",
+      "timingsTitle": "Working Hours",
+      "phoneTitle": "Call & Emergency",
+      "whatsappTitle": "Instant WhatsApp"
+    }
+  },
+  "chat": {
+    "title": "Lahore Dental AI",
+    "subtitle": "Friendly Assistant • Online",
+    "welcome": "Hello! I am your AI assistant at Lahore Dental. How can I help you today? You can ask about treatments, check prices, or book an appointment directly here.",
+    "placeholder": "Type your message in English or اردو...",
+    "send": "Send",
+    "suggestedTitle": "Quick Questions:",
+    "quick1": "Book an appointment",
+    "quick2": "What are scaling & polishing charges?",
+    "quick3": "Do you offer painless root canals?",
+    "quick4": "I have an emergency toothache",
+    "emergencyBanner": "🚨 Severe Dental Emergency? Call our urgent hotline immediately at +92 300 1234567 for instant guidance.",
+    "rateLimitWarning": "You have reached the maximum allowed messages for this session. Please call or WhatsApp us for further questions.",
+    "appointmentConfirmed": "✅ Appointment Booked Successfully!",
+    "bookingDetails": "We have sent your confirmation via WhatsApp & Email."
+  },
+  "footer": {
+    "description": "Lahore Dental is a premier healthcare clinic delivering world-class, pain-free dental treatments with compassion, hygiene, and modern digital dentistry in Lahore, Pakistan.",
+    "quickLinks": "Quick Links",
+    "servicesTitle": "Treatments",
+    "hoursTitle": "Clinic Hours",
+    "rights": "All rights reserved. Powered by Lahore Dental Healthcare.",
+    "disclaimer": "Medical Disclaimer: The AI assistant provides general information only and does not substitute professional medical diagnosis. Please visit our certified dental specialists for a clinical evaluation."
+  }
+}

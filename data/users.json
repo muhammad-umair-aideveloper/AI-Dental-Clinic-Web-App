@@ -1,0 +1,29 @@
+[
+  {
+    "id": "usr-admin-001",
+    "name": "Dr. Admin (Owner)",
+    "email": "admin@lahoredental.pk",
+    "phone": "03001234567",
+    "passwordHash": "12d073e78033f03d7fad7eee0f83a8c0:e9de3622ef0322bdd2a52e2e700996e1f93c126883389b84eb3791a6c0e64d7c9e9bf5f0210643bb67b388d4e7817f699702363ed4ad49b9c39cee3d62add906",
+    "role": "admin",
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "usr-patient-001",
+    "name": "Ali Ahmed",
+    "email": "patient@lahoredental.pk",
+    "phone": "03009876543",
+    "passwordHash": "e96eaa3cb08b2f0e3524823e36d6f997:affe17c5848c3066552373b9cb3aab8607f8c9163dfef42b4269128cae4daaca674ccec3762657b1982963a1b932b83de435f100d8bbc665ed44c6bd7bcf596b",
+    "role": "user",
+    "created_at": "2026-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "usr-029pvqfb",
+    "name": "Usman Ghani",
+    "email": "patient_1790588468545@lahoredental.pk",
+    "phone": "03007654321",
+    "passwordHash": "b2f91d7bf860104e1f4f37acbe20b243:e750b7113d8f3527ba402feed0c9d9415fedc43094fffe0b0c0c4169eca6dbe75981e13d1e18c85a341cf474dc4e2888acb74ced58de8e25a8451479dd917371",
+    "role": "user",
+    "created_at": "2026-09-28T09:41:08.876Z"
+  }
+]
