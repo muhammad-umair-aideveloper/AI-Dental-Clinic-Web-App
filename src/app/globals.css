@@ -21,48 +21,30 @@ html {
 }
 
 body {
-  color: #001a4b; /* Color 1: Deep Navy Blue */
-  background: #ffffff;
+  color: #001a4b;
+  background: #fafafa;
   font-family: var(--font-sans);
   font-weight: 400;
   line-height: 1.5;
   overflow-x: hidden;
 }
 
-/* Headings (H1, H2, H3, H4, H5, H6): Plus Jakarta Sans, Semi-Bold / Bold, tight line-height, crisp letter spacing */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   color: inherit;
 }
 
-h1 {
-  font-weight: 700;
-  line-height: 1.15;
-}
+h1 { font-weight: 700; line-height: 1.15; }
+h2 { font-weight: 700; line-height: 1.2; }
+h3 { font-weight: 600; line-height: 1.25; }
+h4, h5, h6 { font-weight: 600; line-height: 1.3; }
 
-h2 {
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-h3 {
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-h4, h5, h6 {
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-/* Body Text, Navigation, Cards, & Forms: Inter with 1.5 line-height */
 p, li, nav, footer, label, span:not(.font-heading) {
   font-family: var(--font-sans);
-  line-height: 1.5;
+  line-height: 1.6; /* generous line-height on body */
 }
 
-/* Appointment Form Inputs & CTA Buttons: Inter at minimum 16px font-size with semi-bold weight */
 input, select, textarea {
   font-family: var(--font-sans) !important;
   font-size: 16px !important;
@@ -75,74 +57,33 @@ button, [type="button"], [type="submit"], a.btn-cta, button.btn-cta {
   font-weight: 600;
 }
 
-/* RTL-specific styles for Urdu */
 [dir="rtl"] {
   font-family: var(--font-urdu);
   letter-spacing: 0;
 }
-
-[dir="rtl"] h1,
-[dir="rtl"] h2,
-[dir="rtl"] h3,
-[dir="rtl"] h4,
-[dir="rtl"] h5,
-[dir="rtl"] h6 {
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
   font-family: var(--font-urdu);
   line-height: 1.6;
   letter-spacing: 0;
 }
-
-[dir="rtl"] body,
-[dir="rtl"] p,
-[dir="rtl"] input,
-[dir="rtl"] select,
-[dir="rtl"] button {
+[dir="rtl"] body, [dir="rtl"] p, [dir="rtl"] input, [dir="rtl"] select, [dir="rtl"] button {
   font-family: var(--font-urdu) !important;
 }
 
-/* 3-Color Glow animations */
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(4, 50, 109, 0.7);
-  }
-  50% {
-    box-shadow: 0 0 0 16px rgba(178, 190, 214, 0);
-  }
+/* MedTech precision micro-animations */
+@keyframes slideUpFade { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.animate-slideUpFade { animation: slideUpFade 0.5s ease forwards; }
+
+/* Subtle grid pattern for sections */
+.bg-grid-pattern {
+  background-image: linear-gradient(rgba(178,190,214,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(178,190,214,0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-.animate-pulseGlow {
-  animation: pulseGlow 2.5s infinite;
-}
-
-/* Mobile-first touch scroll smoothness */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #b2bed6 transparent;
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #b2bed6;
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #8ca2c4;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+* { scrollbar-width: thin; scrollbar-color: #b2bed6 transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #b2bed6; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #8ca2c4; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

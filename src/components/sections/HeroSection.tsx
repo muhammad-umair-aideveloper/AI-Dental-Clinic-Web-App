@@ -7,44 +7,29 @@ export function HeroSection({ onOpenChat }: { onOpenChat?: () => void }) {
   const t = useTranslations();
 
   return (
-    <section className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24 bg-gradient-to-b from-[#b2bed6]/25 via-white to-[#b2bed6]/10">
-      {/* Background ambient lighting */}
-      <div className="absolute top-0 right-1/4 -z-10 w-96 h-96 bg-[#b2bed6]/40 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -top-12 left-10 -z-10 w-80 h-80 bg-[#04326d]/10 rounded-full blur-3xl pointer-events-none" />
+    <section className="bg-zinc-50 bg-grid-pattern min-h-[90vh] flex items-center py-20 relative overflow-hidden">
+      {/* Very subtle radial gradient background, no blobs */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(178,190,214,0.1)_0%,transparent_70%)] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Content Column */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-start">
-            {/* Trust Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#b2bed6]/30 border border-[#b2bed6] text-[#001a4b] text-xs sm:text-sm font-bold shadow-xs">
-              <Sparkles className="w-4 h-4 text-[#04326d]" />
-              <span>{t("hero.badge")}</span>
-            </div>
-
-            {/* Headline */}
-            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#001a4b] tracking-tight leading-[1.15]">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#001a4b] via-[#04326d] to-[#04326d]">
-                {t("hero.headline")}
-              </span>
+          <div className="lg:col-span-7 space-y-8 text-center lg:text-start">
+            <h1 className="font-heading text-5xl md:text-6xl font-bold text-[#001a4b] tracking-tight leading-[1.1]">
+              {t("hero.headline")}
             </h1>
-
-            {/* Subheadline */}
-            <p className="text-base sm:text-lg text-[#001a4b]/80 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-sans">
+            <p className="text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-sans">
               {t("hero.subheadline")}
             </p>
 
             {/* Dual CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <button
                 onClick={onOpenChat}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-[#001a4b] to-[#04326d] hover:from-[#04326d] hover:to-[#001a4b] text-white font-semibold text-base font-sans shadow-soft hover:shadow-glow transition-all duration-200 active:scale-98 group cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3 rounded-full bg-[#001a4b] hover:bg-[#04326d] text-white font-semibold text-base shadow-sm transition-colors cursor-pointer"
               >
-                <Calendar className="w-5 h-5 text-[#b2bed6] group-hover:scale-110 transition-transform" />
+                <Calendar className="w-5 h-5 text-[#b2bed6]" />
                 <span>{t("hero.ctaBook")}</span>
-                <span className="inline-block px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider bg-white/20 rounded-md">
-                  AI
-                </span>
               </button>
 
               <a
@@ -53,7 +38,7 @@ export function HeroSection({ onOpenChat }: { onOpenChat?: () => void }) {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-white hover:bg-[#b2bed6]/20 text-[#001a4b] font-semibold text-base font-sans border border-[#b2bed6] shadow-xs transition-all duration-200 active:scale-98"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3 rounded-full bg-white hover:bg-zinc-50 text-[#001a4b] font-semibold text-base border border-[#b2bed6] transition-colors"
               >
                 <MessageCircle className="w-5 h-5 text-[#04326d]" />
                 <span>{t("hero.ctaWhatsApp")}</span>
@@ -61,61 +46,43 @@ export function HeroSection({ onOpenChat }: { onOpenChat?: () => void }) {
             </div>
 
             {/* 3 Trust points */}
-            <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-[#b2bed6]/40">
-              <div className="flex items-center justify-center lg:justify-start gap-2 text-xs sm:text-sm text-[#001a4b] font-semibold">
+            <div className="pt-6 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-6">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-[#001a4b] font-semibold px-4 py-2 rounded-full border border-slate-200/60 bg-white">
                 <CheckCircle2 className="w-4 h-4 text-[#04326d] shrink-0" />
                 <span>{t("hero.trustPoints.painless")}</span>
               </div>
-              <div className="flex items-center justify-center lg:justify-start gap-2 text-xs sm:text-sm text-[#001a4b] font-semibold">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-[#001a4b] font-semibold px-4 py-2 rounded-full border border-slate-200/60 bg-white">
                 <ShieldCheck className="w-4 h-4 text-[#04326d] shrink-0" />
                 <span>{t("hero.trustPoints.sterilized")}</span>
               </div>
-              <div className="flex items-center justify-center lg:justify-start gap-2 text-xs sm:text-sm text-[#001a4b] font-semibold">
-                <Star className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0" />
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-[#001a4b] font-semibold px-4 py-2 rounded-full border border-slate-200/60 bg-white">
+                <Star className="w-4 h-4 text-[#04326d] shrink-0" />
                 <span>{t("hero.trustPoints.verified")}</span>
               </div>
             </div>
           </div>
 
-          {/* Right Visual Card Column */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-md lg:max-w-none">
-              {/* Doctor / Clinic Hero Card */}
-              <div className="relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#b2bed6]/30 to-white border border-[#b2bed6] p-3 shadow-card">
-                <div className="relative aspect-[4/3] sm:aspect-[4/3] rounded-2xl overflow-hidden bg-[#b2bed6]/40">
-                  <img
-                    src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=900&q=80"
-                    alt="Lahore Dental Clinic"
-                    className="w-full h-full object-cover object-center"
-                    loading="eager"
-                  />
-                  {/* Subtle gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#001a4b]/80 via-transparent to-transparent" />
-                  
-                  {/* Float badge inside image */}
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white p-2">
-                    <div>
-                      <p className="text-xs uppercase font-bold text-sky-200 tracking-wider">Gulberg III, Lahore</p>
-                      <p className="text-sm font-semibold text-white">State-of-the-Art Digital Dental Suite</p>
-                    </div>
-                    <span className="w-8 h-8 rounded-full bg-[#04326d]/90 backdrop-blur-sm flex items-center justify-center text-sm">
-                      ✨
-                    </span>
-                  </div>
-                </div>
-
-                {/* Floating Metrics */}
-                <div className="mt-3 grid grid-cols-2 gap-2 text-center">
-                  <div className="p-2.5 rounded-xl bg-[#b2bed6]/20 border border-[#b2bed6]/60">
-                    <p className="text-lg font-bold text-[#001a4b]">{t("hero.reviewsCount")}</p>
-                    <p className="text-xs text-[#04326d] font-medium">{t("hero.satisfaction")}</p>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-[#04326d]/10 border border-[#04326d]/20">
-                    <p className="text-lg font-bold text-[#001a4b]">14+ Years</p>
-                    <p className="text-xs text-[#04326d] font-medium">Clinical Mastery</p>
-                  </div>
-                </div>
+          {/* Right Visual Card Column - Asymmetric Bento Grid */}
+          <div className="lg:col-span-5 grid grid-cols-2 gap-4">
+            <div className="col-span-2 rounded-2xl border border-slate-200/60 bg-white p-2 shadow-sm overflow-hidden relative">
+              <img
+                src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=900&q=80"
+                alt="Lahore Dental Clinic"
+                className="w-full h-48 sm:h-64 object-cover rounded-xl"
+                loading="eager"
+              />
+              <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#b2bed6] bg-white text-[#04326d] uppercase text-[10px] font-bold tracking-[0.15em]">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Gulberg III, Lahore
               </div>
+            </div>
+            <div className="col-span-1 rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm flex flex-col justify-center text-center">
+              <div className="text-3xl font-bold text-[#001a4b] mb-1">4.9<Star className="w-5 h-5 inline-block text-amber-400 fill-amber-400 ml-1" /></div>
+              <div className="text-xs text-slate-500 uppercase tracking-widest">{t("hero.satisfaction")}</div>
+            </div>
+            <div className="col-span-1 rounded-2xl border border-slate-200/60 bg-zinc-50 p-6 shadow-sm flex flex-col justify-center text-center">
+              <div className="text-3xl font-bold text-[#001a4b] mb-1">14+</div>
+              <div className="text-xs text-slate-500 uppercase tracking-widest">Years Exp</div>
             </div>
           </div>
         </div>

@@ -7,40 +7,28 @@ export function WhyChooseUsSection() {
   const t = useTranslations();
 
   const trustBadges = [
-    {
-      key: "experienced",
-      icon: Award,
-    },
-    {
-      key: "modern",
-      icon: Cpu,
-    },
-    {
-      key: "painless",
-      icon: HeartHandshake,
-    },
-    {
-      key: "affordable",
-      icon: Banknote,
-    },
+    { key: "experienced", icon: Award, num: "01" },
+    { key: "modern", icon: Cpu, num: "02" },
+    { key: "painless", icon: HeartHandshake, num: "03" },
+    { key: "affordable", icon: Banknote, num: "04" },
   ];
 
   return (
-    <section id="why-us" className="py-16 md:py-24 bg-[#b2bed6]/15 relative">
+    <section id="why-us" className="bg-zinc-50 py-20 md:py-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-14">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#b2bed6]/30 border border-[#b2bed6] text-[#001a4b] text-xs font-bold">
-            <span>{t("whyUs.badge")}</span>
+        <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
+          <div className="inline-flex items-center px-3 py-1 rounded-full border border-[#b2bed6] bg-white text-[#04326d] uppercase text-[10px] font-bold tracking-[0.15em]">
+            {t("whyUs.badge")}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#001a4b] tracking-tight">
+          <h2 className="text-4xl font-extrabold text-[#001a4b] tracking-tight">
             {t("whyUs.title")}
           </h2>
-          <p className="text-[#001a4b]/80 text-base sm:text-lg">
+          <p className="text-slate-500 text-lg">
             {t("whyUs.subtitle")}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {trustBadges.map((badge) => {
             const Icon = badge.icon;
             const title = t(`whyUs.badges.${badge.key}.title`);
@@ -49,19 +37,22 @@ export function WhyChooseUsSection() {
             return (
               <div
                 key={badge.key}
-                className="bg-white rounded-2xl p-7 border border-[#b2bed6]/60 shadow-soft hover:shadow-card hover:border-[#04326d] transition-all duration-300 flex flex-col items-center text-center group hover:-translate-y-1"
+                className="bg-white border border-slate-200/60 rounded-2xl p-8 flex flex-col items-start gap-4 relative overflow-hidden group hover:border-[#04326d]/40 transition-colors"
               >
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center border border-[#b2bed6] bg-[#b2bed6]/25 text-[#04326d] mb-5 shadow-xs group-hover:scale-110 group-hover:bg-[#04326d] group-hover:text-white transition-all"
-                >
-                  <Icon className="w-7 h-7" />
+                <div className="text-4xl font-black text-[#001a4b]/10 absolute top-4 right-4 pointer-events-none select-none">
+                  {badge.num}
                 </div>
-                <h3 className="text-lg font-bold text-[#001a4b] mb-2.5">
-                  {title}
-                </h3>
-                <p className="text-sm text-[#001a4b]/75 leading-relaxed">
-                  {desc}
-                </p>
+                <div className="w-10 h-10 rounded-xl bg-[#b2bed6]/20 border border-[#b2bed6]/40 flex items-center justify-center text-[#04326d]">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#001a4b] tracking-tight mb-2">
+                    {title}
+                  </h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    {desc}
+                  </p>
+                </div>
               </div>
             );
           })}
