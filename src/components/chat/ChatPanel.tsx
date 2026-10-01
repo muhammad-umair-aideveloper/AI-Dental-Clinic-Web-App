@@ -113,8 +113,8 @@ export function ChatPanel({
         {/* Header */}
         <div className="px-5 py-4 bg-gradient-to-r from-[#001a4b] via-[#04326d] to-[#001a4b] text-white flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-lg text-white">
-              🦷
+            <div className="w-9 h-9 rounded-full bg-white overflow-hidden p-0.5 shrink-0 flex items-center justify-center shadow-xs">
+              <img src="/images/logo.png" alt="Lahore Dental Logo" className="w-full h-full object-contain rounded-full" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">

@@ -129,8 +129,8 @@ function UserDashboardContent() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href={`/${locale}`} className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#04326d] text-white flex items-center justify-center text-base shadow-soft">
-                🦷
+              <div className="w-9 h-9 rounded-full bg-white border border-[#b2bed6] overflow-hidden p-0.5 shrink-0 flex items-center justify-center shadow-xs">
+                <img src="/images/logo.png" alt="Lahore Dental Logo" className="w-full h-full object-contain rounded-full" />
               </div>
               <div>
                 <span className="font-heading font-bold text-[#001a4b] text-base block tracking-tight">

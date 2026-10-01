@@ -10,7 +10,10 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           <div className="space-y-4">
             <div className="flex items-center gap-2.5 text-white font-bold text-xl tracking-tight">
-              <span className="text-xl">🦷</span> {t("common.clinicName")}
+              <div className="w-8 h-8 rounded-full bg-white overflow-hidden p-0.5 shrink-0 flex items-center justify-center">
+                <img src="/images/logo.png" alt="Lahore Dental Logo" className="w-full h-full object-contain rounded-full" />
+              </div>
+              <span>{t("common.clinicName")}</span>
             </div>
             <p className="text-[#b2bed6]/90 text-sm leading-relaxed">
               {t("footer.description")}

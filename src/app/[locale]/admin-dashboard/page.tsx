@@ -254,8 +254,8 @@ export default function AdminDashboardPage() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#04326d] text-white flex items-center justify-center text-lg shadow-soft">
-                🦷
+              <div className="w-9 h-9 rounded-full bg-white border border-[#b2bed6] overflow-hidden p-0.5 shrink-0 flex items-center justify-center shadow-xs">
+                <img src="/images/logo.png" alt="Lahore Dental Logo" className="w-full h-full object-contain rounded-full" />
               </div>
               <div>
                 <span className="font-heading font-bold text-[#001a4b] text-base tracking-tight block">

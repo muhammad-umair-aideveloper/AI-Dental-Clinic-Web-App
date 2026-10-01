@@ -212,8 +212,8 @@ export function BookingModal({
         {/* Modal Header */}
         <div className="px-6 py-4 bg-gradient-to-r from-[#001a4b] via-[#04326d] to-[#001a4b] text-white flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-lg text-white">
-              🦷
+            <div className="w-9 h-9 rounded-full bg-white overflow-hidden p-0.5 shrink-0 flex items-center justify-center shadow-xs">
+              <img src="/images/logo.png" alt="Lahore Dental Logo" className="w-full h-full object-contain rounded-full" />
             </div>
             <div>
               <h3 className="font-heading font-bold text-lg tracking-tight text-white !text-white">

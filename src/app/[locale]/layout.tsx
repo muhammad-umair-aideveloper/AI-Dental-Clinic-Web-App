@@ -40,7 +40,9 @@ export async function generateMetadata({
     ],
     authors: [{ name: "Lahore Dental Care" }],
     icons: {
-      icon: "/favicon.ico",
+      icon: "/images/logo.png",
+      shortcut: "/images/logo.png",
+      apple: "/images/logo.png",
     },
     openGraph: {
       title: "Lahore Dental — AI-Powered Dental Clinic",

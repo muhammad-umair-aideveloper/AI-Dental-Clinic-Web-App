@@ -36,8 +36,8 @@ export function Navbar({ onOpenChat }: { onOpenChat?: () => void }) {
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
           <a href="#" className="flex items-center gap-2.5 group focus:outline-none rounded-lg p-1">
-            <div className="w-10 h-10 rounded-full bg-white border border-[#b2bed6] flex items-center justify-center text-[#04326d] transition-transform duration-200 shadow-none">
-              <span className="text-xl">🦷</span>
+            <div className="w-10 h-10 rounded-full bg-white border border-[#b2bed6] overflow-hidden p-0.5 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200">
+              <img src="/images/logo.png" alt="Lahore Dental Logo" className="w-full h-full object-contain rounded-full" />
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-lg sm:text-xl tracking-tight text-[#001a4b] group-hover:text-[#04326d] transition-colors">

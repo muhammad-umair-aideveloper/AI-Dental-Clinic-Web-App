@@ -180,8 +180,8 @@ export function AuthButton() {
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#001a4b] to-[#04326d] text-white flex items-center justify-center text-xl shadow-soft">
-              🦷
+            <div className="w-10 h-10 rounded-full bg-white border border-[#b2bed6] overflow-hidden p-0.5 flex items-center justify-center shrink-0 shadow-xs">
+              <img src="/images/logo.png" alt="Lahore Dental Logo" className="w-full h-full object-contain rounded-full" />
             </div>
             <div>
               <h3 className="font-heading font-extrabold text-[#001a4b] text-lg tracking-tight">
