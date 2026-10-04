@@ -4,21 +4,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import { LanguageToggle } from "./LanguageToggle";
-import { AuthButton } from "../auth/AuthButton";
-import { Menu, X, Phone, Sparkles } from "lucide-react";
+import { Menu, X, MessageCircle, Calendar, Lock } from "lucide-react";
+import { CLINIC_CONFIG } from "@/config/clinic";
 
-export function Navbar({ onOpenChat }: { onOpenChat?: () => void }) {
+export function Navbar({ onOpenBooking }: { onOpenBooking?: () => void }) {
   const t = useTranslations();
   const locale = useLocale();
+  const isUrdu = locale === "ur";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: "#services", label: t("nav.services") },
-    { href: "#why-us", label: t("nav.whyUs") },
-    { href: "#doctor", label: t("nav.doctor") },
-    { href: "#gallery", label: t("nav.gallery") },
-    { href: "#testimonials", label: t("nav.testimonials") },
-    { href: "#contact", label: t("nav.contact") },
+    { href: "#treatments", label: isUrdu ? "علاجات و فیس" : "Treatments" },
+    { href: "#before-after", label: isUrdu ? "نتائج" : "Results" },
+    { href: "#doctor", label: isUrdu ? "ڈاکٹر و پروٹوکول" : "Doctor & Safety" },
+    { href: "#location", label: isUrdu ? "کلینک و اوقات" : "Location" },
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -31,46 +30,66 @@ export function Navbar({ onOpenChat }: { onOpenChat?: () => void }) {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-lg border-b border-slate-200/60 transition-all">
+    <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-[#E5EAF0] transition-clinical">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2.5 group focus:outline-none rounded-lg p-1">
-            <div className="w-10 h-10 rounded-full bg-white border border-[#b2bed6] overflow-hidden p-0.5 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200">
-              <img src="/images/logo.png" alt="Lahore Dental Logo" className="w-full h-full object-contain rounded-full" />
+          {/* Logo & Clinical Brand */}
+          <a href="#" className="flex items-center gap-3 group focus:outline-none rounded-lg p-1">
+            <div className="w-10 h-10 rounded-full bg-white border border-[#E5EAF0] overflow-hidden p-0.5 flex items-center justify-center shrink-0 group-hover:border-[#4FB8A6] transition-clinical">
+              <img
+                src="/images/logo.png"
+                alt="Lahore Dental Clinic"
+                className="w-full h-full object-contain rounded-full"
+              />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-lg sm:text-xl tracking-tight text-[#001a4b] group-hover:text-[#04326d] transition-colors">
-                {t("common.clinicName")}
+              <span className="font-sans font-bold text-lg sm:text-xl tracking-tight text-[#0F172A]">
+                {isUrdu ? CLINIC_CONFIG.nameUr : CLINIC_CONFIG.name}
+              </span>
+              <span className="text-[11px] text-[#5B6B7F] font-medium leading-none">
+                {isUrdu ? "گلبرگ III، لاہور" : "Gulberg III, Lahore"}
               </span>
             </div>
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-7">
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm font-medium text-slate-600 hover:text-[#001a4b] hover:underline transition-colors py-1"
+                className="text-sm font-medium text-[#5B6B7F] hover:text-[#0F172A] transition-colors py-1"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          {/* Action CTAs */}
-          <div className="hidden sm:flex items-center gap-2.5">
+          {/* Action CTAs: WhatsApp + Book Consultation + Language */}
+          <div className="hidden sm:flex items-center gap-3">
             <LanguageToggle />
-            <AuthButton />
 
-            <button
-              onClick={onOpenChat}
-              className="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-bold text-white bg-[#001a4b] hover:bg-[#04326d] rounded-full transition-all duration-200 active:scale-95 cursor-pointer"
+            {/* WhatsApp Doctor Quick CTA */}
+            <a
+              href={`https://wa.me/${CLINIC_CONFIG.whatsappNumber}?text=${encodeURIComponent(
+                isUrdu ? CLINIC_CONFIG.whatsappPrefillUr : CLINIC_CONFIG.whatsappPrefill
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#0F172A] bg-[#F6F8FA] hover:bg-[#E5EAF0] border border-[#E5EAF0] rounded-full transition-clinical active:scale-95"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#b2bed6]" />
-              <span>{t("common.bookAppointment")}</span>
+              <MessageCircle className="w-3.5 h-3.5 text-[#2E9C89]" />
+              <span>{isUrdu ? "واٹس ایپ" : "WhatsApp"}</span>
+            </a>
+
+            {/* Book Consultation Trigger */}
+            <button
+              onClick={onOpenBooking}
+              className="inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold text-white bg-[#0F172A] hover:bg-[#2E9C89] rounded-full transition-clinical active:scale-95 shadow-sm cursor-pointer"
+            >
+              <Calendar className="w-3.5 h-3.5 text-[#4FB8A6]" />
+              <span>{isUrdu ? "وقت بک کریں" : "Book Consultation"}</span>
             </button>
           </div>
 
@@ -79,10 +98,10 @@ export function Navbar({ onOpenChat }: { onOpenChat?: () => void }) {
             <LanguageToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-[#001a4b] hover:bg-slate-100 focus:outline-none cursor-pointer"
+              className="p-2 rounded-xl text-[#0F172A] hover:bg-[#F6F8FA] border border-[#E5EAF0] focus:outline-none cursor-pointer"
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -90,47 +109,53 @@ export function Navbar({ onOpenChat }: { onOpenChat?: () => void }) {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-t border-slate-200/60 bg-white/98 backdrop-blur-md px-5 py-4 space-y-3 animate-in slide-in-from-top duration-200">
-          <nav className="flex flex-col space-y-2">
+        <div className="sm:hidden border-t border-[#E5EAF0] bg-white px-5 py-4 space-y-3 animate-clinical-in">
+          <nav className="flex flex-col space-y-1.5">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="px-3 py-2 rounded-lg text-base font-medium text-slate-600 hover:bg-slate-50 hover:text-[#001a4b] transition-colors"
+                className="px-3 py-2.5 rounded-xl text-sm font-medium text-[#0F172A] hover:bg-[#F6F8FA] transition-colors"
               >
                 {link.label}
               </a>
             ))}
           </nav>
-          <div className="pt-3 border-t border-slate-200/60 flex flex-col gap-2.5">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
-              <span className="text-xs font-bold text-[#001a4b]">Patient Portal:</span>
-              <AuthButton />
-            </div>
+
+          <div className="pt-3 border-t border-[#E5EAF0] flex flex-col gap-2.5">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                onOpenChat?.();
+                onOpenBooking?.();
               }}
-              className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#001a4b] hover:bg-[#04326d] text-white font-bold text-sm cursor-pointer transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#0F172A] text-white font-semibold text-sm cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-[#b2bed6]" />
-              <span>{t("common.bookAppointment")}</span>
+              <Calendar className="w-4 h-4 text-[#4FB8A6]" />
+              <span>{isUrdu ? "وقت بک کریں" : "Book Consultation"}</span>
             </button>
+
             <a
-              href={`tel:${t("common.phone")}`}
-              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-[#b2bed6] bg-white text-[#001a4b] font-semibold text-sm hover:bg-slate-50 transition-colors"
+              href={`https://wa.me/${CLINIC_CONFIG.whatsappNumber}?text=${encodeURIComponent(
+                isUrdu ? CLINIC_CONFIG.whatsappPrefillUr : CLINIC_CONFIG.whatsappPrefill
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-[#E5EAF0] bg-[#F6F8FA] text-[#0F172A] font-semibold text-sm hover:bg-[#E5EAF0] transition-colors"
             >
-              <Phone className="w-4 h-4 text-[#04326d]" />
-              <span>{t("common.callNow")}: {t("common.phone")}</span>
+              <MessageCircle className="w-4 h-4 text-[#2E9C89]" />
+              <span>{isUrdu ? "واٹس ایپ ڈاکٹر" : "WhatsApp Doctor"}</span>
             </a>
-            <Link
-              href={`/${locale}/admin-dashboard`}
-              className="text-center text-xs font-medium text-slate-500 hover:text-[#001a4b] py-1 transition-colors"
-            >
-              Clinic Staff / Admin Login
-            </Link>
+
+            <div className="pt-2 flex justify-center">
+              <Link
+                href={`/${locale}/admin-dashboard`}
+                className="inline-flex items-center gap-1.5 text-xs text-[#5B6B7F] hover:text-[#0F172A] py-1"
+              >
+                <Lock className="w-3 h-3" />
+                <span>{isUrdu ? "سٹاف لاگ ان" : "Clinic Staff Portal"}</span>
+              </Link>
+            </div>
           </div>
         </div>
       )}

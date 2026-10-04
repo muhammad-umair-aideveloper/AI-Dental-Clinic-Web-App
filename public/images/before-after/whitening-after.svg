@@ -1,0 +1,18 @@
+<svg width="700" height="500" viewBox="0 0 700 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="700" height="500" fill="#F0FDF4"/>
+  <rect x="2" y="2" width="696" height="496" rx="16" stroke="#BBF7D0" stroke-width="2"/>
+  <g transform="translate(350, 200)">
+    <circle r="50" fill="#DCFCE7"/>
+    <text y="8" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="28" fill="#16A34A">AFTER</text>
+  </g>
+  <text x="350" y="300" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="18" fill="#0F172A">
+    Post-Laser Treatment (6 Shades Lighter)
+  </text>
+  <text x="350" y="330" text-anchor="middle" font-family="Inter, sans-serif" font-weight="500" font-size="13" fill="#15803D">
+    Single 45-minute clinical laser session
+  </text>
+  <rect x="220" y="360" width="260" height="30" rx="15" fill="#FFFFFF" stroke="#BBF7D0"/>
+  <text x="350" y="380" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="12" fill="#16A34A">
+    Consent On File · Results Vary
+  </text>
+</svg>

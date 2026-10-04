@@ -1,0 +1,19 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#F6F8FA"/>
+  <rect x="2" y="2" width="796" height="596" rx="16" stroke="#E5EAF0" stroke-width="4" stroke-dasharray="12 12"/>
+  <g transform="translate(400, 240)">
+    <circle r="60" fill="#FFFFFF" stroke="#E5EAF0" stroke-width="2"/>
+    <path d="M-24 -8 C-24 -24 24 -24 24 -8 C24 16 -24 16 -24 -8 Z" fill="#4FB8A6" opacity="0.2"/>
+    <path d="M0 -30 L0 30 M-30 0 L30 0" stroke="#4FB8A6" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="400" y="360" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#0F172A">
+    CLINIC OPERATORY FOOTAGE
+  </text>
+  <text x="400" y="390" text-anchor="middle" font-family="Inter, sans-serif" font-weight="500" font-size="14" fill="#5B6B7F">
+    [CLIENT_ASSET_REQUIRED] Genuine photo/video of Gulberg III suite required
+  </text>
+  <rect x="290" y="420" width="220" height="32" rx="16" fill="#FFFFFF" stroke="#E5EAF0"/>
+  <text x="400" y="441" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="12" fill="#2E9C89">
+    Zero Stock Photography Rule
+  </text>
+</svg>

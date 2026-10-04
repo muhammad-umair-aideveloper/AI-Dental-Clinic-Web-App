@@ -1,0 +1,18 @@
+<svg width="700" height="500" viewBox="0 0 700 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="700" height="500" fill="#F8FAFC"/>
+  <rect x="2" y="2" width="696" height="496" rx="16" stroke="#E2E8F0" stroke-width="2"/>
+  <g transform="translate(350, 200)">
+    <circle r="50" fill="#F1F5F9"/>
+    <text y="8" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="28" fill="#64748B">BEFORE</text>
+  </g>
+  <text x="350" y="300" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="18" fill="#0F172A">
+    Anterior Crowding & Irregular Alignment
+  </text>
+  <text x="350" y="330" text-anchor="middle" font-family="Inter, sans-serif" font-weight="500" font-size="13" fill="#64748B">
+    [CLIENT_ASSET_REQUIRED] Pre-treatment 3D scan & clinical photos
+  </text>
+  <rect x="230" y="360" width="240" height="30" rx="15" fill="#FFFFFF" stroke="#E2E8F0"/>
+  <text x="350" y="380" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="12" fill="#4FB8A6">
+    Case #03 · Clear Aligners
+  </text>
+</svg>

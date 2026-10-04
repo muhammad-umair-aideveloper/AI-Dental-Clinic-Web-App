@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
+import { CLINIC_CONFIG } from "@/config/clinic";
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -9,11 +10,11 @@ import {
   Phone,
   CheckCircle2,
   X,
-  Sparkles,
   AlertCircle,
   Loader2,
-  ChevronRight,
-  ChevronLeft,
+  Download,
+  MessageCircle,
+  ShieldCheck,
 } from "lucide-react";
 
 interface BookingModalProps {
@@ -22,7 +23,6 @@ interface BookingModalProps {
   preselectedService?: string | null;
   initialDate?: string;
   initialTime?: string;
-  onSwitchToAiChat?: () => void;
 }
 
 const DEFAULT_SLOTS = [
@@ -38,15 +38,12 @@ const DEFAULT_SLOTS = [
   "20:00",
 ];
 
-const SERVICES_LIST = [
-  "General Checkup & Consultation",
-  "Scaling & Ultrasonic Polishing",
-  "Single-Visit Root Canal (RCT)",
-  "Braces & Invisible Aligners",
-  "Permanent Dental Implants",
-  "Laser Teeth Whitening",
-  "Pediatric & Kids Dentistry",
-  "24/7 Dental Emergency Care",
+const TREATMENTS_OPTIONS = [
+  { id: "consultation", name: "General Checkup & Consultation", nameUr: "عمومی معائنہ و مشاورت" },
+  { id: "scaling", name: "Scaling & Ultrasonic Polishing", nameUr: "دانتوں کی صفائی اور پالش (Scaling)" },
+  { id: "root-canal", name: "Single-Visit Root Canal (RCT)", nameUr: "ایک نشست میں روٹ کینال (RCT)" },
+  { id: "aligners", name: "Invisible Clear Aligners", nameUr: "پوشیدہ شفاف الائنرز (Clear Aligners)" },
+  { id: "implants", name: "Permanent Dental Implants", nameUr: "مستقل ڈینٹل امپلانٹس (Implants)" },
 ];
 
 export function BookingModal({
@@ -55,32 +52,29 @@ export function BookingModal({
   preselectedService,
   initialDate,
   initialTime,
-  onSwitchToAiChat,
 }: BookingModalProps) {
   const locale = useLocale();
   const isUrdu = locale === "ur";
 
   // Form State
   const [selectedService, setSelectedService] = useState<string>(
-    preselectedService || SERVICES_LIST[0]
+    preselectedService || TREATMENTS_OPTIONS[0].name
   );
 
-  // Today formatted as YYYY-MM-DD
   const today = new Date().toISOString().split("T")[0];
   const [selectedDate, setSelectedDate] = useState<string>(initialDate || today);
   const [selectedTime, setSelectedTime] = useState<string>(initialTime || "11:00");
   const [patientName, setPatientName] = useState("");
   const [patientPhone, setPatientPhone] = useState("");
-  const [reason, setReason] = useState("");
+  const [whatsappConsent, setWhatsappConsent] = useState(true);
 
-  // Availability State
+  // Status & Slots
   const [availableSlots, setAvailableSlots] = useState<string[]>(DEFAULT_SLOTS);
   const [checkingSlots, setCheckingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [confirmedBooking, setConfirmedBooking] = useState<any>(null);
 
-  // Update selected service if prop changes
   useEffect(() => {
     if (preselectedService) {
       setSelectedService(preselectedService);
@@ -88,20 +82,16 @@ export function BookingModal({
   }, [preselectedService]);
 
   useEffect(() => {
-    if (initialDate) {
-      setSelectedDate(initialDate);
-    }
+    if (initialDate) setSelectedDate(initialDate);
   }, [initialDate]);
 
   useEffect(() => {
-    if (initialTime) {
-      setSelectedTime(initialTime);
-    }
+    if (initialTime) setSelectedTime(initialTime);
   }, [initialTime]);
 
-  // Fetch real-time available slots whenever selectedDate changes
+  // Fetch real-time available slots for selected date
   useEffect(() => {
-    if (!selectedDate) return;
+    if (!selectedDate || !isOpen) return;
 
     let isMounted = true;
     setCheckingSlots(true);
@@ -112,13 +102,12 @@ export function BookingModal({
         if (!isMounted) return;
         if (data.availableSlots && Array.isArray(data.availableSlots)) {
           setAvailableSlots(data.availableSlots);
-          // If current selected time is not available, default to first available
           if (!data.availableSlots.includes(selectedTime) && data.availableSlots.length > 0) {
             setSelectedTime(data.availableSlots[0]);
           }
         }
       })
-      .catch((err) => console.error("Error fetching slots:", err))
+      .catch((err) => console.error("Error checking slots:", err))
       .finally(() => {
         if (isMounted) setCheckingSlots(false);
       });
@@ -126,23 +115,48 @@ export function BookingModal({
     return () => {
       isMounted = false;
     };
-  }, [selectedDate]);
+  }, [selectedDate, isOpen]);
 
   if (!isOpen) return null;
+
+  // Pakistani phone number normalization: validate 03XX-XXXXXXX or +92 3XX XXXXXXX -> +923XXXXXXXXX
+  const normalizePakistaniPhone = (input: string): string | null => {
+    const cleaned = input.replace(/[\s\-\(\)]/g, "");
+    if (/^(\+92|92)?3[0-9]{9}$/.test(cleaned)) {
+      if (cleaned.startsWith("+92")) return cleaned;
+      if (cleaned.startsWith("92")) return `+${cleaned}`;
+      return `+92${cleaned}`;
+    }
+    if (/^03[0-9]{9}$/.test(cleaned)) {
+      return `+92${cleaned.substring(1)}`;
+    }
+    return null;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
     if (!patientName.trim()) {
-      setErrorMessage(isUrdu ? "برائے مہربانی اپنا نام درج کریں۔" : "Please enter your full name.");
+      setErrorMessage(isUrdu ? "برائے مہربانی اپنا مکمل نام درج کریں۔" : "Please enter your full name.");
       return;
     }
-    if (!patientPhone.trim() || patientPhone.trim().length < 8) {
+
+    const normalizedPhone = normalizePakistaniPhone(patientPhone);
+    if (!normalizedPhone) {
       setErrorMessage(
         isUrdu
-          ? "برائے مہربانی درست فون یا واٹس ایپ نمبر درج کریں۔"
-          : "Please enter a valid phone or WhatsApp number."
+          ? "برائے مہربانی درست پاکستانی فون یا واٹس ایپ نمبر درج کریں (مثال: 03001234567)"
+          : "Please enter a valid Pakistani phone number (e.g., 0300 1234567 or +92 300 1234567)."
+      );
+      return;
+    }
+
+    if (!whatsappConsent) {
+      setErrorMessage(
+        isUrdu
+          ? "اپوائنٹمنٹ کی تصدیق کے لیے واٹس ایپ رضامندی لازمی ہے۔"
+          : "WhatsApp/SMS consent is required to send your appointment confirmation."
       );
       return;
     }
@@ -155,364 +169,325 @@ export function BookingModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: patientName.trim(),
-          phone: patientPhone.trim(),
+          phone: normalizedPhone,
           date: selectedDate,
           time: selectedTime,
-          reason: reason.trim() || selectedService,
+          reason: selectedService,
           language: locale,
+          whatsappConsent: true,
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setErrorMessage(data.error || "Failed to book appointment. Please try another slot.");
+        setErrorMessage(data.error || "That slot was just booked. Please pick another available time.");
       } else {
         setConfirmedBooking(data.appointment);
       }
-    } catch (err: any) {
-      console.error("Booking submission error:", err);
-      setErrorMessage("Network error occurred. Please check connection.");
+    } catch (err) {
+      setErrorMessage("Network error occurred. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleReset = () => {
+  const handleClose = () => {
     setConfirmedBooking(null);
     setPatientName("");
     setPatientPhone("");
-    setReason("");
+    setErrorMessage("");
     onClose();
   };
 
-  const formatSlotLabel = (slot: string) => {
-    const [h, m] = slot.split(":");
-    const hour = parseInt(h, 10);
-    const ampm = hour >= 12 ? "PM" : "AM";
-    const displayHour = hour % 12 || 12;
-    return `${displayHour}:${m} ${ampm}`;
+  // Generate .ics file for confirmation
+  const downloadIcsFile = () => {
+    if (!confirmedBooking) return;
+    const startIso = `${confirmedBooking.date.replace(/-/g, "")}T${confirmedBooking.time.replace(":", "")}00`;
+    const endHour = parseInt(confirmedBooking.time.split(":")[0], 10) + 1;
+    const endIso = `${confirmedBooking.date.replace(/-/g, "")}T${String(endHour).padStart(2, "0")}0000`;
+
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Lahore Dental Clinic//Appointment Booking//EN",
+      "BEGIN:VEVENT",
+      `SUMMARY:Dental Appointment: ${confirmedBooking.reason}`,
+      `DESCRIPTION:Appointment with Lahore Dental Clinic. Address: ${CLINIC_CONFIG.address}. Contact: ${CLINIC_CONFIG.phone}`,
+      `LOCATION:${CLINIC_CONFIG.address}`,
+      `DTSTART:${startIso}`,
+      `DTEND:${endIso}`,
+      "STATUS:CONFIRMED",
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `lahore-dental-appointment-${confirmedBooking.date}.ics`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  // Generate the next 7 days for quick day pills
+  // Generate 7 days quick picker
   const nextDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() + i);
     const dateStr = d.toISOString().split("T")[0];
-    const dayName = d.toLocaleDateString(locale === "ur" ? "ur-PK" : "en-US", {
-      weekday: "short",
-    });
-    const dayNumber = d.getDate();
-    return { dateStr, dayName, dayNumber };
+    const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
+    const dayNum = d.getDate();
+    return { dateStr, dayName, dayNum };
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-xl max-h-[92vh] flex flex-col rounded-3xl bg-white shadow-2xl overflow-hidden border border-[#b2bed6]/40">
-        {/* Modal Header */}
-        <div className="px-6 py-4 bg-gradient-to-r from-[#001a4b] via-[#04326d] to-[#001a4b] text-white flex items-center justify-between shadow-xs">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-white overflow-hidden p-0.5 shrink-0 flex items-center justify-center shadow-xs">
-              <img src="/images/logo.png" alt="Lahore Dental Logo" className="w-full h-full object-contain rounded-full" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg max-h-[92vh] flex flex-col rounded-2xl bg-white shadow-2xl overflow-hidden border border-[#E5EAF0]">
+        {/* Header */}
+        <div className="px-6 py-4 bg-white border-b border-[#E5EAF0] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-[#F6F8FA] border border-[#E5EAF0] flex items-center justify-center">
+              <CalendarIcon className="w-4 h-4 text-[#2E9C89]" />
             </div>
             <div>
-              <h3 className="font-heading font-bold text-lg tracking-tight text-white !text-white">
-                {isUrdu ? "وقت بک کریں — لاہور ڈینٹل" : "Book Your Appointment — Lahore Dental"}
+              <h3 className="font-sans font-bold text-base text-[#0F172A]">
+                {isUrdu ? "وقت بک کریں — لاہور ڈینٹل" : "Book Consultation — Lahore Dental"}
               </h3>
-              <p className="text-xs text-sky-100">
-                {isUrdu ? "تاریخ اور وقت منتخب کریں" : "Select your preferred date & time slot"}
+              <p className="text-xs text-[#5B6B7F]">
+                {isUrdu ? "بغیر اکاؤنٹ، فوری تصدیق" : "No account required · Instant confirmation"}
               </p>
             </div>
           </div>
+
           <button
-            onClick={handleReset}
-            className="p-1.5 rounded-lg text-white/90 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-            aria-label="Close"
+            onClick={handleClose}
+            className="p-1.5 rounded-lg text-[#5B6B7F] hover:text-[#0F172A] hover:bg-[#F6F8FA] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
+        <div className="overflow-y-auto p-6 space-y-5">
           {confirmedBooking ? (
-            /* Confirmation Success Screen */
-            <div className="text-center py-6 space-y-5 animate-in zoom-in-95 duration-200">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-soft">
-                <CheckCircle2 className="w-10 h-10" />
+            /* Success View */
+            <div className="text-center py-4 space-y-4 animate-clinical-in">
+              <div className="w-14 h-14 rounded-full bg-[#E8F7F4] text-[#2E9C89] mx-auto flex items-center justify-center">
+                <CheckCircle2 className="w-8 h-8" />
               </div>
 
               <div>
-                <h3 className="font-heading text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                  {isUrdu ? "آپ کا وقت بک ہو گیا ہے!" : "Appointment Confirmed!"}
-                </h3>
-                <p className="text-sm text-slate-600 mt-1">
+                <h4 className="text-xl font-bold text-[#0F172A]">
+                  {isUrdu ? "وقت کامیابی سے بک ہو گیا ہے!" : "Appointment Confirmed!"}
+                </h4>
+                <p className="text-xs text-[#5B6B7F] mt-1">
                   {isUrdu
-                    ? "ہم نے تصدیقی میسج واٹس ایپ اور ایس ایم ایس پر بھیج دیا ہے۔"
-                    : "We have dispatched your confirmation via WhatsApp & Email."}
+                    ? `تصدیقی تفصیلات واٹس ایپ پر ${confirmedBooking.phone} کو بھیج دی گئی ہیں۔`
+                    : `Confirmation sent via WhatsApp to ${confirmedBooking.phone}`}
                 </p>
               </div>
 
-              {/* Confirmation Details Card */}
-              <div className="rounded-2xl bg-[#b2bed6]/15 border border-[#b2bed6]/40 p-5 text-start space-y-3 text-sm">
-                <div className="flex justify-between items-center pb-2 border-b border-[#b2bed6]/30">
-                  <span className="text-xs font-semibold text-slate-500">Booking ID:</span>
-                  <span className="font-mono font-bold text-[#04326d] uppercase">
-                    {confirmedBooking.id}
+              {/* Appointment Card */}
+              <div className="p-4 rounded-xl bg-[#F6F8FA] border border-[#E5EAF0] text-start text-xs space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-[#5B6B7F]">{isUrdu ? "مریض" : "Patient"}:</span>
+                  <span className="font-semibold text-[#0F172A]">{confirmedBooking.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#5B6B7F]">{isUrdu ? "علاج" : "Treatment"}:</span>
+                  <span className="font-semibold text-[#0F172A]">{confirmedBooking.reason}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#5B6B7F]">{isUrdu ? "تاریخ و وقت" : "Date & Time"}:</span>
+                  <span className="font-semibold text-[#2E9C89]">
+                    {confirmedBooking.date} · {confirmedBooking.time}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-600">Patient:</span>
-                  <span className="font-bold text-slate-900">{confirmedBooking.name}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-600">Date & Time:</span>
-                  <span className="font-bold text-[#04326d]">
-                    {confirmedBooking.date} at {formatSlotLabel(confirmedBooking.time)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-600">Service:</span>
-                  <span className="font-bold text-slate-800">{confirmedBooking.reason}</span>
-                </div>
-                <div className="flex justify-between items-center pt-2 border-t border-[#b2bed6]/30">
-                  <span className="text-slate-600">Surgeon:</span>
-                  <span className="font-semibold text-slate-900">Dr. Sarah Tariq Khan</span>
-                </div>
-                <div className="pt-2 text-xs text-slate-500">
-                  📍 <strong>Clinic Address:</strong> Plaza 42-B, Main Boulevard, Gulberg III, Lahore
+                <div className="flex justify-between">
+                  <span className="text-[#5B6B7F]">{isUrdu ? "مقام" : "Location"}:</span>
+                  <span className="font-semibold text-[#0F172A]">Gulberg III, Lahore</span>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              {/* Action Buttons: Add to Calendar & WhatsApp */}
+              <div className="space-y-2 pt-2">
                 <button
-                  onClick={handleReset}
-                  className="flex-1 py-3 px-4 rounded-xl bg-[#04326d] hover:bg-[#001a4b] text-white font-semibold text-sm shadow-soft transition-all cursor-pointer"
+                  onClick={downloadIcsFile}
+                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#0F172A] hover:bg-[#2E9C89] text-white font-semibold text-xs transition-clinical cursor-pointer"
+                >
+                  <Download className="w-4 h-4 text-[#4FB8A6]" />
+                  <span>{isUrdu ? "کیلنڈر میں شامل کریں (.ics)" : "Add to Calendar (.ics)"}</span>
+                </button>
+
+                <button
+                  onClick={handleClose}
+                  className="w-full py-2.5 rounded-xl border border-[#E5EAF0] text-xs font-semibold text-[#5B6B7F] hover:bg-[#F6F8FA]"
                 >
                   {isUrdu ? "مکمل" : "Done"}
                 </button>
-                <a
-                  href={`https://wa.me/923001234567?text=${encodeURIComponent(
-                    `Hello Lahore Dental! I just booked an appointment with ID: ${confirmedBooking.id}`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-3 px-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 font-semibold text-sm hover:bg-emerald-100 transition-all"
-                >
-                  <span>WhatsApp Clinic</span>
-                </a>
               </div>
             </div>
           ) : (
             /* Booking Form */
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Optional AI Switch Banner */}
-              {onSwitchToAiChat && (
-                <div className="flex items-center justify-between p-3 rounded-2xl bg-[#b2bed6]/20 border border-[#b2bed6]/50 text-xs">
-                  <div className="flex items-center gap-2 text-[#001a4b] font-medium">
-                    <Sparkles className="w-4 h-4 text-[#04326d] shrink-0" />
-                    <span>
-                      {isUrdu
-                        ? "کیا آپ اے آئی اسسٹنٹ سے بات کرنا چاہتے ہیں؟"
-                        : "Prefer talking to our AI Dental Assistant?"}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onClose();
-                      onSwitchToAiChat();
-                    }}
-                    className="font-bold text-[#04326d] hover:text-[#001a4b] underline whitespace-nowrap cursor-pointer"
-                  >
-                    {isUrdu ? "اے آئی چیٹ کھولیں" : "Chat with AI"}
-                  </button>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {errorMessage && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-center gap-2 text-xs text-rose-700 animate-in fade-in">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{errorMessage}</span>
                 </div>
               )}
 
-              {/* Step 1: Dental Service Selection */}
+              {/* Step 1: Treatment Dropdown */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#001a4b] mb-1.5 font-sans">
-                  1. {isUrdu ? "علاج کی قسم منتخب کریں" : "Select Treatment / Service"}
+                <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-1.5">
+                  1. {isUrdu ? "مطلوبہ علاج" : "Select Treatment"}
                 </label>
                 <select
                   value={selectedService}
                   onChange={(e) => setSelectedService(e.target.value)}
-                  className="w-full px-4 py-3 text-base rounded-xl border border-[#b2bed6]/60 bg-white focus:border-[#04326d] focus:ring-2 focus:ring-[#b2bed6]/30 outline-none transition-all font-medium font-sans text-slate-800 leading-normal"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAF0] bg-white text-xs text-[#0F172A] focus:outline-none focus:border-[#4FB8A6]"
                 >
-                  {SERVICES_LIST.map((srv) => (
-                    <option key={srv} value={srv}>
-                      {srv}
+                  {TREATMENTS_OPTIONS.map((t) => (
+                    <option key={t.id} value={t.name}>
+                      {isUrdu ? t.nameUr : t.name}
                     </option>
                   ))}
                 </select>
               </div>
 
-              {/* Step 2: Date Selection */}
+              {/* Step 2: Date Selector (7 Days) */}
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#001a4b] font-sans">
-                    2. {isUrdu ? "تاریخ منتخب کریں" : "Select Date"}
-                  </label>
-                  <input
-                    type="date"
-                    min={today}
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="text-base px-3 py-1.5 rounded-lg border border-[#b2bed6]/60 text-slate-700 focus:border-[#04326d] outline-none font-sans font-medium"
-                  />
-                </div>
-
-                {/* Next 7 Days Quick Picker Pills */}
-                <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+                <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-1.5">
+                  2. {isUrdu ? "تاریخ منتخب کریں" : "Select Date"}
+                </label>
+                <div className="grid grid-cols-7 gap-1.5">
                   {nextDays.map((d) => {
                     const isSelected = selectedDate === d.dateStr;
                     return (
                       <button
-                        key={d.dateStr}
                         type="button"
+                        key={d.dateStr}
                         onClick={() => setSelectedDate(d.dateStr)}
-                        className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all cursor-pointer font-sans ${
+                        className={`p-2 rounded-xl text-center border transition-clinical cursor-pointer ${
                           isSelected
-                            ? "bg-[#04326d] text-white border-[#04326d] shadow-soft scale-102"
-                            : "bg-slate-50 text-slate-700 border-slate-200 hover:border-[#04326d] hover:bg-[#b2bed6]/20"
+                            ? "bg-[#0F172A] text-white border-[#0F172A]"
+                            : "bg-[#F6F8FA] text-[#0F172A] border-[#E5EAF0] hover:bg-slate-100"
                         }`}
                       >
-                        <span className="text-[11px] font-medium">{d.dayName}</span>
-                        <span className="text-base font-bold">{d.dayNumber}</span>
+                        <span className="text-[10px] block opacity-80">{d.dayName}</span>
+                        <span className="text-xs font-bold block">{d.dayNum}</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Step 3: Available Time Slot Selection */}
+              {/* Step 3: Time Slot Grid */}
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#001a4b] font-sans">
-                    3. {isUrdu ? "وقت (ٹائم سلاٹ) منتخب کریں" : "Select Time Slot"}
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">
+                    3. {isUrdu ? "دستیاب وقت" : "Available Time Slot"}
                   </label>
-                  {checkingSlots ? (
-                    <span className="text-xs text-[#04326d] flex items-center gap-1 font-medium font-sans">
-                      <Loader2 className="w-3 h-3 animate-spin" /> Checking slots...
-                    </span>
-                  ) : (
-                    <span className="text-xs text-slate-500 font-medium font-sans">
-                      {availableSlots.length} {isUrdu ? "سلاٹس دستیاب" : "slots available"}
+                  {checkingSlots && (
+                    <span className="text-[10px] text-[#2E9C89] flex items-center gap-1">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      Checking...
                     </span>
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                  {DEFAULT_SLOTS.map((slot) => {
-                    const isAvailable = availableSlots.includes(slot);
-                    const isSelected = selectedTime === slot;
-
-                    return (
-                      <button
-                        key={slot}
-                        type="button"
-                        disabled={!isAvailable}
-                        onClick={() => setSelectedTime(slot)}
-                        className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-semibold font-sans transition-all border cursor-pointer ${
-                          isSelected
-                            ? "bg-[#04326d] text-white border-[#04326d] shadow-soft"
-                            : isAvailable
-                            ? "bg-white text-slate-800 border-[#b2bed6]/60 hover:border-[#04326d] hover:bg-[#b2bed6]/20"
-                            : "bg-slate-100 text-slate-400 border-slate-200/60 line-through cursor-not-allowed opacity-60"
-                        }`}
-                      >
-                        <Clock className="w-3.5 h-3.5 shrink-0" />
-                        <span>{formatSlotLabel(slot)}</span>
-                      </button>
-                    );
-                  })}
+                <div className="grid grid-cols-5 gap-1.5">
+                  {availableSlots.length > 0 ? (
+                    availableSlots.map((slot) => {
+                      const isSelected = selectedTime === slot;
+                      return (
+                        <button
+                          type="button"
+                          key={slot}
+                          onClick={() => setSelectedTime(slot)}
+                          className={`py-2 rounded-lg text-xs font-semibold border transition-clinical cursor-pointer ${
+                            isSelected
+                              ? "bg-[#2E9C89] text-white border-[#2E9C89]"
+                              : "bg-white text-[#0F172A] border-[#E5EAF0] hover:bg-[#F6F8FA]"
+                          }`}
+                        >
+                          {slot}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <p className="col-span-5 text-center text-xs text-[#5B6B7F] py-2">
+                      No slots available for this date.
+                    </p>
+                  )}
                 </div>
               </div>
 
-              {/* Step 4: Patient Info */}
-              <div className="space-y-3 pt-1 border-t border-slate-100">
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#001a4b] font-sans">
-                  4. {isUrdu ? "مریض کی معلومات" : "Patient Details"}
+              {/* Step 4: Name & Pakistani WhatsApp Phone */}
+              <div className="space-y-3 pt-1">
+                <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider">
+                  4. {isUrdu ? "مریض کی تفصیلات" : "Patient Details"}
                 </label>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1 font-sans">
-                      {isUrdu ? "مکمل نام *" : "Full Name *"}
-                    </label>
-                    <div className="relative">
-                      <User className="w-4 h-4 text-slate-400 absolute left-3 top-3.5 rtl:right-3 rtl:left-auto" />
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g. Ali Ahmed"
-                        value={patientName}
-                        onChange={(e) => setPatientName(e.target.value)}
-                        className="w-full pl-9 pr-3 rtl:pr-9 rtl:pl-3 py-2.5 text-base rounded-xl border border-slate-200 focus:border-[#04326d] focus:ring-2 focus:ring-[#b2bed6]/30 outline-none transition-all font-sans font-medium text-slate-800"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1 font-sans">
-                      {isUrdu ? "فون یا واٹس ایپ نمبر *" : "Phone / WhatsApp *"}
-                    </label>
-                    <div className="relative">
-                      <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3.5 rtl:right-3 rtl:left-auto" />
-                      <input
-                        type="tel"
-                        required
-                        placeholder="0300 1234567"
-                        value={patientPhone}
-                        onChange={(e) => setPatientPhone(e.target.value)}
-                        className="w-full pl-9 pr-3 rtl:pr-9 rtl:pl-3 py-2.5 text-base rounded-xl border border-slate-200 focus:border-[#04326d] focus:ring-2 focus:ring-[#b2bed6]/30 outline-none transition-all font-sans font-medium text-slate-800"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1 font-sans">
-                    {isUrdu ? "اضافی تفصیل یا دانتوں کی کیفیت (اختیاری)" : "Special notes or symptoms (optional)"}
-                  </label>
+                <div className="relative">
+                  <User className="w-4 h-4 text-[#5B6B7F] absolute left-3 top-3 rtl:right-3 rtl:left-auto" />
                   <input
                     type="text"
-                    placeholder="e.g. Lower molar pain since 2 days"
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                    className="w-full px-4 py-2.5 text-base rounded-xl border border-slate-200 focus:border-[#04326d] focus:ring-2 focus:ring-[#b2bed6]/30 outline-none transition-all font-sans font-medium text-slate-800"
+                    required
+                    value={patientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                    placeholder={isUrdu ? "مریض کا مکمل نام" : "Full Name"}
+                    className="w-full pl-9 pr-3 py-2.5 rtl:pr-9 rtl:pl-3 rounded-xl border border-[#E5EAF0] text-xs text-[#0F172A] focus:outline-none focus:border-[#4FB8A6]"
+                  />
+                </div>
+
+                <div className="relative">
+                  <Phone className="w-4 h-4 text-[#5B6B7F] absolute left-3 top-3 rtl:right-3 rtl:left-auto" />
+                  <input
+                    type="tel"
+                    required
+                    value={patientPhone}
+                    onChange={(e) => setPatientPhone(e.target.value)}
+                    placeholder={isUrdu ? "واٹس ایپ نمبر (0300 1234567)" : "WhatsApp Phone (0300 1234567)"}
+                    className="w-full pl-9 pr-3 py-2.5 rtl:pr-9 rtl:pl-3 rounded-xl border border-[#E5EAF0] text-xs text-[#0F172A] focus:outline-none focus:border-[#4FB8A6]"
                   />
                 </div>
               </div>
 
-              {errorMessage && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2 font-sans font-medium">
-                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span>{errorMessage}</span>
-                </div>
-              )}
+              {/* Mandatory Consent Checkbox */}
+              <div className="pt-1">
+                <label className="flex items-start gap-2.5 cursor-pointer text-xs text-[#5B6B7F]">
+                  <input
+                    type="checkbox"
+                    checked={whatsappConsent}
+                    onChange={(e) => setWhatsappConsent(e.target.checked)}
+                    className="mt-0.5 rounded border-slate-300 text-[#2E9C89] focus:ring-[#4FB8A6]"
+                  />
+                  <span>
+                    {isUrdu
+                      ? "میں اس اپوائنٹمنٹ کے بارے میں واٹس ایپ/ایس ایم ایس پر رابطہ کرنے پر رضامند ہوں۔"
+                      : "I agree to receive appointment confirmations and reminders on WhatsApp/SMS."}
+                  </span>
+                </label>
+              </div>
 
               {/* Submit CTA */}
               <div className="pt-2">
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#001a4b] to-[#04326d] hover:from-[#04326d] hover:to-[#001a4b] text-white font-semibold text-base font-sans shadow-soft transition-all active:scale-98 disabled:opacity-70 cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full bg-[#0F172A] hover:bg-[#2E9C89] text-white font-semibold text-xs transition-clinical disabled:opacity-50 cursor-pointer shadow-sm"
                 >
                   {submitting ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>{isUrdu ? "وقت بک کیا جا رہا ہے..." : "Confirming Appointment..."}</span>
+                      <Loader2 className="w-4 h-4 animate-spin text-[#4FB8A6]" />
+                      <span>{isUrdu ? "بکنگ ہو رہی ہے..." : "Securing Your Slot..."}</span>
                     </>
                   ) : (
                     <>
-                      <CheckCircle2 className="w-5 h-5" />
-                      <span>
-                        {isUrdu
-                          ? `وقت بک کریں برائے ${selectedDate} (${formatSlotLabel(selectedTime)})`
-                          : `Confirm Appointment for ${selectedDate} at ${formatSlotLabel(selectedTime)}`}
-                      </span>
+                      <CheckCircle2 className="w-4 h-4 text-[#4FB8A6]" />
+                      <span>{isUrdu ? "وقت کی تصدیق کریں" : "Confirm Appointment"}</span>
                     </>
                   )}
                 </button>

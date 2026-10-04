@@ -192,20 +192,20 @@
     }
   },
   "chat": {
-    "title": "Lahore Dental AI",
-    "subtitle": "Friendly Assistant • Online",
-    "welcome": "Hello! I am your AI assistant at Lahore Dental. How can I help you today? You can ask about treatments, check prices, or book an appointment directly here.",
-    "placeholder": "Type your message in English or اردو...",
+    "title": "Lahore Dental Clinic AI",
+    "subtitle": "Clinical Operational Assistant",
+    "welcome": "Hello! I am the AI assistant for Lahore Dental Clinic in Gulberg III. Are you currently experiencing dental pain or discomfort, or would you like to explore cosmetic treatments (such as teeth whitening, invisible aligners, or dental implants)?",
+    "placeholder": "Type in English, Roman Urdu, or اردو...",
     "send": "Send",
-    "suggestedTitle": "Quick Questions:",
-    "quick1": "Book an appointment",
-    "quick2": "What are scaling & polishing charges?",
-    "quick3": "Do you offer painless root canals?",
-    "quick4": "I have an emergency toothache",
-    "emergencyBanner": "🚨 Severe Dental Emergency? Call our urgent hotline immediately at +92 300 1234567 for instant guidance.",
-    "rateLimitWarning": "You have reached the maximum allowed messages for this session. Please call or WhatsApp us for further questions.",
+    "suggestedTitle": "Quick Triage:",
+    "quick1": "I am having severe tooth pain",
+    "quick2": "What are starting fees for aligners?",
+    "quick3": "Book consultation for implants",
+    "quick4": "What are your clinic hours?",
+    "emergencyBanner": "🚨 Severe Dental Emergency? Call our urgent hotline immediately at +92 300 1234567.",
+    "rateLimitWarning": "You have reached the maximum allowed messages for this session. Please WhatsApp us directly.",
     "appointmentConfirmed": "✅ Appointment Booked Successfully!",
-    "bookingDetails": "We have sent your confirmation via WhatsApp & Email."
+    "bookingDetails": "Confirmation sent via WhatsApp."
   },
   "footer": {
     "description": "Lahore Dental is a premier healthcare clinic delivering world-class, pain-free dental treatments with compassion, hygiene, and modern digital dentistry in Lahore, Pakistan.",

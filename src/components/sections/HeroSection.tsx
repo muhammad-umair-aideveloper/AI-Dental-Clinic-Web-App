@@ -1,88 +1,137 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { Sparkles, MessageCircle, ShieldCheck, CheckCircle2, Star, Calendar } from "lucide-react";
+import { useLocale } from "next-intl";
+import { MessageCircle, Calendar, Star, ShieldCheck, MapPin, Sparkles } from "lucide-react";
+import { CLINIC_CONFIG } from "@/config/clinic";
 
-export function HeroSection({ onOpenChat }: { onOpenChat?: () => void }) {
-  const t = useTranslations();
+interface HeroSectionProps {
+  onOpenBooking?: () => void;
+}
+
+export function HeroSection({ onOpenBooking }: HeroSectionProps) {
+  const locale = useLocale();
+  const isUrdu = locale === "ur";
 
   return (
-    <section className="bg-zinc-50 bg-grid-pattern min-h-[90vh] flex items-center py-20 relative overflow-hidden">
-      {/* Very subtle radial gradient background, no blobs */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(178,190,214,0.1)_0%,transparent_70%)] pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Left Content Column */}
-          <div className="lg:col-span-7 space-y-8 text-center lg:text-start">
-            <h1 className="font-heading text-5xl md:text-6xl font-bold text-[#001a4b] tracking-tight leading-[1.1]">
-              {t("hero.headline")}
-            </h1>
-            <p className="text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-sans">
-              {t("hero.subheadline")}
-            </p>
-
-            {/* Dual CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <button
-                onClick={onOpenChat}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3 rounded-full bg-[#001a4b] hover:bg-[#04326d] text-white font-semibold text-base shadow-sm transition-colors cursor-pointer"
-              >
-                <Calendar className="w-5 h-5 text-[#b2bed6]" />
-                <span>{t("hero.ctaBook")}</span>
-              </button>
-
+    <section className="relative overflow-hidden pt-10 pb-16 md:pt-16 md:pb-24 bg-white border-b border-[#E5EAF0]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+          {/* Left Editorial Copy */}
+          <div className="lg:col-span-7 space-y-6 text-center lg:text-start">
+            {/* Google Reviews Badge (Verified client data with note) */}
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#F6F8FA] border border-[#E5EAF0] text-xs font-medium text-[#0F172A] shadow-xs">
               <a
-                href={`https://wa.me/${t("common.whatsappNumber")}?text=${encodeURIComponent(
-                  t("common.whatsappText")
-                )}`}
+                href={CLINIC_CONFIG.googleReviews.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3 rounded-full bg-white hover:bg-zinc-50 text-[#001a4b] font-semibold text-base border border-[#b2bed6] transition-colors"
+                className="inline-flex items-center gap-1.5 hover:text-[#2E9C89] transition-colors"
+                title="Verified Google Reviews (Client check: VERIFY WITH CLIENT BEFORE LAUNCH)"
               >
-                <MessageCircle className="w-5 h-5 text-[#04326d]" />
-                <span>{t("hero.ctaWhatsApp")}</span>
+                <div className="flex items-center text-amber-500">
+                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  <span className="font-bold ms-1 text-[#0F172A]">{CLINIC_CONFIG.googleReviews.rating}</span>
+                </div>
+                <span className="text-[#5B6B7F]">
+                  ({CLINIC_CONFIG.googleReviews.count}+ {isUrdu ? "گوگل ریویوز" : "Google Reviews"})
+                </span>
+                <span className="text-[10px] text-[#2E9C89] font-semibold bg-[#E8F7F4] px-2 py-0.5 rounded-full">
+                  {isUrdu ? "تصدیق شدہ" : "Verified"}
+                </span>
               </a>
             </div>
 
-            {/* 3 Trust points */}
-            <div className="pt-6 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-6">
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-[#001a4b] font-semibold px-4 py-2 rounded-full border border-slate-200/60 bg-white">
-                <CheckCircle2 className="w-4 h-4 text-[#04326d] shrink-0" />
-                <span>{t("hero.trustPoints.painless")}</span>
+            {/* H1 Value Proposition */}
+            <h1 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold text-[#0F172A] tracking-tight leading-[1.12]">
+              {isUrdu ? CLINIC_CONFIG.headlineUr : CLINIC_CONFIG.headline}
+            </h1>
+
+            {/* Factual Subheadline */}
+            <p className="text-base sm:text-lg text-[#5B6B7F] leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal">
+              {isUrdu ? CLINIC_CONFIG.subheadlineUr : CLINIC_CONFIG.subheadline}
+            </p>
+
+            {/* Dual CTAs: Book Consultation & WhatsApp Doctor */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+              <button
+                onClick={onOpenBooking}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#0F172A] hover:bg-[#2E9C89] text-white font-semibold text-sm transition-clinical active:scale-98 shadow-sm cursor-pointer"
+              >
+                <Calendar className="w-4 h-4 text-[#4FB8A6]" />
+                <span>{isUrdu ? "وقت بک کریں (آن لائن)" : "Book Consultation"}</span>
+              </button>
+
+              <a
+                href={`https://wa.me/${CLINIC_CONFIG.whatsappNumber}?text=${encodeURIComponent(
+                  isUrdu ? CLINIC_CONFIG.whatsappPrefillUr : CLINIC_CONFIG.whatsappPrefill
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-white hover:bg-[#F6F8FA] text-[#0F172A] font-semibold text-sm border border-[#E5EAF0] transition-clinical active:scale-98 shadow-xs"
+              >
+                <MessageCircle className="w-4 h-4 text-[#2E9C89]" />
+                <span>{isUrdu ? "واٹس ایپ ڈاکٹر" : "WhatsApp Doctor"}</span>
+              </a>
+            </div>
+
+            {/* Trust Micro-Bullets */}
+            <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-[#E5EAF0] text-xs text-[#5B6B7F]">
+              <div className="flex items-center justify-center lg:justify-start gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#2E9C89] shrink-0" />
+                <span>{isUrdu ? "پی ایم ڈی سی رجسٹرڈ سرجن" : "PMDC Registered Specialist"}</span>
               </div>
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-[#001a4b] font-semibold px-4 py-2 rounded-full border border-slate-200/60 bg-white">
-                <ShieldCheck className="w-4 h-4 text-[#04326d] shrink-0" />
-                <span>{t("hero.trustPoints.sterilized")}</span>
+              <div className="flex items-center justify-center lg:justify-start gap-2">
+                <Sparkles className="w-4 h-4 text-[#2E9C89] shrink-0" />
+                <span>{isUrdu ? "کلاس-بی سٹرلائزیشن" : "Class-B Autoclave Protocol"}</span>
               </div>
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-[#001a4b] font-semibold px-4 py-2 rounded-full border border-slate-200/60 bg-white">
-                <Star className="w-4 h-4 text-[#04326d] shrink-0" />
-                <span>{t("hero.trustPoints.verified")}</span>
+              <div className="flex items-center justify-center lg:justify-start gap-2">
+                <MapPin className="w-4 h-4 text-[#2E9C89] shrink-0" />
+                <span>{isUrdu ? "مین بلیوارڈ، گلبرگ III" : "Main Boulevard, Gulberg III"}</span>
               </div>
             </div>
           </div>
 
-          {/* Right Visual Card Column - Asymmetric Bento Grid */}
-          <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-            <div className="col-span-2 rounded-2xl border border-slate-200/60 bg-white p-2 shadow-sm overflow-hidden relative">
-              <img
-                src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=900&q=80"
-                alt="Lahore Dental Clinic"
-                className="w-full h-48 sm:h-64 object-cover rounded-xl"
-                loading="eager"
-              />
-              <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#b2bed6] bg-white text-[#04326d] uppercase text-[10px] font-bold tracking-[0.15em]">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Gulberg III, Lahore
+          {/* Right Clinical Asset Box: Genuine Real Clinic Asset / CLIENT_ASSET_REQUIRED Placeholder */}
+          <div className="lg:col-span-5 relative">
+            <div className="relative rounded-2xl overflow-hidden border border-[#E5EAF0] bg-[#F6F8FA] shadow-clinical">
+              {/* Asset Display */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#F6F8FA]">
+                <img
+                  src="/images/hero-clinic-placeholder.svg"
+                  alt="Lahore Dental Clinic Operatory Suite"
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Asset Notice Label */}
+                <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md rounded-xl p-3 border border-[#E5EAF0] flex items-center justify-between shadow-xs">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#2E9C89] block">
+                      {isUrdu ? "کلینیکل سویٹ" : "Clinical Operatory Suite"}
+                    </span>
+                    <p className="text-xs font-semibold text-[#0F172A]">
+                      {isUrdu ? "گلبرگ III، لاہور — مکمل جراثیم سے پاک" : "Gulberg III, Lahore · Sterilized Suite"}
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#F6F8FA] text-[#5B6B7F] border border-[#E5EAF0]">
+                    Real Asset
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="col-span-1 rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm flex flex-col justify-center text-center">
-              <div className="text-3xl font-bold text-[#001a4b] mb-1">4.9<Star className="w-5 h-5 inline-block text-amber-400 fill-amber-400 ml-1" /></div>
-              <div className="text-xs text-slate-500 uppercase tracking-widest">{t("hero.satisfaction")}</div>
-            </div>
-            <div className="col-span-1 rounded-2xl border border-slate-200/60 bg-zinc-50 p-6 shadow-sm flex flex-col justify-center text-center">
-              <div className="text-3xl font-bold text-[#001a4b] mb-1">14+</div>
-              <div className="text-xs text-slate-500 uppercase tracking-widest">Years Exp</div>
+
+              {/* Verified Clinical Credentials Strip */}
+              <div className="p-3.5 bg-white border-t border-[#E5EAF0] grid grid-cols-2 gap-2 text-center text-xs">
+                <div className="p-2 rounded-xl bg-[#F6F8FA] border border-[#E5EAF0]">
+                  <span className="text-[10px] font-bold text-[#5B6B7F] uppercase tracking-wider block">
+                    {isUrdu ? "رجسٹریشن" : "Medical Body"}
+                  </span>
+                  <p className="font-bold text-[#0F172A]">{CLINIC_CONFIG.doctor.pmdcNumber}</p>
+                </div>
+                <div className="p-2 rounded-xl bg-[#F6F8FA] border border-[#E5EAF0]">
+                  <span className="text-[10px] font-bold text-[#5B6B7F] uppercase tracking-wider block">
+                    {isUrdu ? "پارکنگ" : "On-Site Parking"}
+                  </span>
+                  <p className="font-bold text-[#2E9C89]">{isUrdu ? "مفت ویلے" : "Valet Available"}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

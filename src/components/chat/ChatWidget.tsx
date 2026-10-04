@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { MessageSquareText, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MessageSquareText, Sparkles, X } from "lucide-react";
 import { ChatPanel } from "./ChatPanel";
 
 export function ChatWidget({
@@ -16,6 +16,16 @@ export function ChatWidget({
   onOpenBookingModal?: () => void;
 }) {
   const [isOpen, setIsOpen] = useState(initialOpen);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    try {
+      const isDismissed = localStorage.getItem("lahore_dental_chat_dismissed");
+      if (isDismissed === "true") {
+        setDismissed(true);
+      }
+    } catch (e) {}
+  }, []);
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => {
@@ -23,26 +33,36 @@ export function ChatWidget({
     onResetService?.();
   };
 
+  const handleDismiss = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDismissed(true);
+    try {
+      localStorage.setItem("lahore_dental_chat_dismissed", "true");
+    } catch (err) {}
+  };
+
   return (
     <>
-      {/* Floating Action Trigger Button */}
-      <div className="fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-40">
-        <button
-          onClick={handleOpen}
-          aria-label="Open AI Dental Assistant"
-          className="relative group flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-[#001a4b] via-[#04326d] to-[#04326d] text-white shadow-glow hover:scale-105 active:scale-95 transition-all duration-300 animate-pulseGlow cursor-pointer border-2 border-[#b2bed6]/40"
-        >
-          <div className="relative flex items-center justify-center">
-            <MessageSquareText className="w-7 h-7 sm:w-8 sm:h-8 transition-transform group-hover:scale-110" />
-            <Sparkles className="w-3.5 h-3.5 text-[#b2bed6] absolute -top-1 -right-1 animate-bounce" />
+      {/* Specific, non-generic Clinical Assistant Pill (Dismissible) */}
+      {!dismissed && !isOpen && (
+        <div className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 animate-clinical-in">
+          <div
+            onClick={handleOpen}
+            className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#0F172A] text-white shadow-clinical hover:bg-[#2E9C89] transition-clinical cursor-pointer group border border-slate-700 text-xs font-semibold"
+          >
+            <Sparkles className="w-4 h-4 text-[#4FB8A6] shrink-0" />
+            <span>Check Slots & Fees (AI)</span>
+            <button
+              onClick={handleDismiss}
+              title="Dismiss"
+              aria-label="Dismiss assistant badge"
+              className="ms-1 p-0.5 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
           </div>
-
-          {/* Tooltip on Desktop hover */}
-          <span className="hidden sm:group-hover:inline-block absolute right-full mr-3 px-3 py-1.5 rounded-xl bg-[#001a4b] text-white border border-[#04326d] text-xs font-bold whitespace-nowrap shadow-lg animate-in fade-in slide-in-from-right-2 duration-200">
-            Ask AI Dental Assistant
-          </span>
-        </button>
-      </div>
+        </div>
+      )}
 
       {/* Slide-out / Sheet Modal Panel */}
       <ChatPanel
