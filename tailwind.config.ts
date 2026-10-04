@@ -57,6 +57,29 @@ const config: Config = {
           900: "#001338",
           950: "#000c24",
         },
+        // Clinical Premium Design System Tokens
+        clinical: {
+          bg: "#FFFFFF",
+          soft: "#F6F8FA",
+          surface: "#FFFFFF",
+          border: "#E5EAF0",
+          text: "#0F172A",
+          muted: "#5B6B7F",
+        },
+        mint: {
+          DEFAULT: "#4FB8A6",
+          strong: "#2E9C89",
+          soft: "#E8F7F4",
+          border: "#C2ECE4",
+        },
+        accentBlue: {
+          DEFAULT: "#5B9BD5",
+          soft: "#EEF5FB",
+        },
+        danger: {
+          DEFAULT: "#D64545",
+          soft: "#FEE2E2",
+        },
       },
       borderRadius: {
         "2xl": "1rem",
@@ -64,13 +87,15 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
-        heading: ["var(--font-heading)", "'Plus Jakarta Sans'", "sans-serif"],
+        heading: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
         urdu: ["var(--font-urdu)", "system-ui", "sans-serif"],
       },
       boxShadow: {
-        soft: "0 4px 20px -2px rgba(4, 50, 109, 0.12), 0 2px 6px -1px rgba(0, 26, 75, 0.05)",
-        card: "0 10px 30px -4px rgba(0, 26, 75, 0.08), 0 4px 12px -2px rgba(4, 50, 109, 0.04)",
-        glow: "0 0 25px -2px rgba(4, 50, 109, 0.45)",
+        clinical: "0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06)",
+        "clinical-sm": "0 1px 2px rgba(15,23,42,.04)",
+        soft: "0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 20px -4px rgba(15, 23, 42, 0.05)",
+        card: "0 1px 3px rgba(15, 23, 42, 0.05), 0 10px 25px -5px rgba(15, 23, 42, 0.05)",
+        glow: "0 0 20px -2px rgba(79, 184, 166, 0.35)",
       },
       keyframes: {
         pulseGlow: {

@@ -1,17 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: 215 25% 98%;
-  --foreground: 220 100% 15%;
-  --border: 221 28% 77%;      /* #b2bed6 */
-  --input: 221 28% 77%;       /* #b2bed6 */
-  --ring: 214 93% 22%;        /* #04326d */
+  --bg: #FFFFFF;
+  --bg-soft: #F6F8FA;          /* soft slate tint */
+  --surface: #FFFFFF;
+  --border: #E5EAF0;
+  --text: #0F172A;             /* slate-900 */
+  --text-muted: #5B6B7F;
+  --accent: #4FB8A6;           /* subtle mint */
+  --accent-strong: #2E9C89;
+  --accent-blue: #5B9BD5;      /* subtle blue, use sparingly */
+  --danger: #D64545;
+  --radius: 16px;
+  --shadow: 0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
+
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-urdu: 'Noto Sans Arabic', 'Noto Nastaliq Urdu', system-ui, sans-serif;
 }
 
@@ -21,18 +28,19 @@ html {
 }
 
 body {
-  color: #001a4b;
-  background: #fafafa;
+  color: var(--text);
+  background: var(--bg);
   font-family: var(--font-sans);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.6;
   overflow-x: hidden;
 }
 
+/* Headings: Inter (One typeface family), tight tracking, calm and confident */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  letter-spacing: -0.02em;
-  color: inherit;
+  font-family: var(--font-sans);
+  letter-spacing: -0.025em;
+  color: var(--text);
 }
 
 h1 { font-weight: 700; line-height: 1.15; }
@@ -40,9 +48,10 @@ h2 { font-weight: 700; line-height: 1.2; }
 h3 { font-weight: 600; line-height: 1.25; }
 h4, h5, h6 { font-weight: 600; line-height: 1.3; }
 
-p, li, nav, footer, label, span:not(.font-heading) {
+/* Body text scale & generous whitespace */
+p, li, nav, footer, label, span {
   font-family: var(--font-sans);
-  line-height: 1.6; /* generous line-height on body */
+  line-height: 1.6;
 }
 
 input, select, textarea {
@@ -57,33 +66,56 @@ button, [type="button"], [type="submit"], a.btn-cta, button.btn-cta {
   font-weight: 600;
 }
 
+/* RTL-specific styles for Urdu with logical CSS properties */
 [dir="rtl"] {
   font-family: var(--font-urdu);
   letter-spacing: 0;
 }
 [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
   font-family: var(--font-urdu);
-  line-height: 1.6;
+  line-height: 1.7;
   letter-spacing: 0;
 }
 [dir="rtl"] body, [dir="rtl"] p, [dir="rtl"] input, [dir="rtl"] select, [dir="rtl"] button {
   font-family: var(--font-urdu) !important;
 }
 
-/* MedTech precision micro-animations */
-@keyframes slideUpFade { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-.animate-slideUpFade { animation: slideUpFade 0.5s ease forwards; }
+/* Motion: CSS only, transform and opacity only, 150-250ms ease-out */
+.transition-clinical {
+  transition: transform 200ms ease-out, opacity 200ms ease-out, background-color 200ms ease-out, border-color 200ms ease-out, box-shadow 200ms ease-out;
+}
 
-/* Subtle grid pattern for sections */
-.bg-grid-pattern {
-  background-image: linear-gradient(rgba(178,190,214,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(178,190,214,0.08) 1px, transparent 1px);
+@keyframes fadeInClinical {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-clinical-in {
+  animation: fadeInClinical 220ms ease-out forwards;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Subtle clean grid pattern for public sections */
+.bg-grid-clinical {
+  background-image: linear-gradient(rgba(229, 234, 240, 0.6) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(229, 234, 240, 0.6) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
-* { scrollbar-width: thin; scrollbar-color: #b2bed6 transparent; }
+/* Scrollbars */
+* { scrollbar-width: thin; scrollbar-color: #E5EAF0 transparent; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #b2bed6; border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: #8ca2c4; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

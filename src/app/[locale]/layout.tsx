@@ -76,7 +76,15 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} dir={dir}>
-      <body className={`min-h-screen antialiased selection:bg-sky-200 selection:text-sky-900 ${locale === "ur" ? "font-urdu" : "font-sans"}`}>
+      <head>
+        {locale === "ur" && (
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap"
+          />
+        )}
+      </head>
+      <body className={`min-h-screen bg-white text-[#0F172A] antialiased selection:bg-[#4FB8A6]/20 selection:text-[#2E9C89] ${locale === "ur" ? "font-urdu" : "font-sans"}`}>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <AuthProvider>{children}</AuthProvider>
         </NextIntlClientProvider>
