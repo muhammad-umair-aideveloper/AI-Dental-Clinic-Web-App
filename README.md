@@ -156,13 +156,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 👥 Demo Credentials
+## 🔐 Staff Access
 
-| Role | Username / Email | Password | Access Portal |
-| :--- | :--- | :--- | :--- |
-| **Clinic Administrator** | `admin` or `admin@lahoredental.pk` | `admin123` | `/[locale]/admin-dashboard` |
-| **Normal Patient** | `patient@lahoredental.pk` | `patient123` | `/[locale]/user-dashboard` |
-| **New Patients** | *Any email via Sign Up* | *Chosen password* | `/[locale]/user-dashboard` |
+| Role | Access URL | Authentication Method |
+| :--- | :--- | :--- |
+| **Clinic Staff / Surgeon** | `/[locale]/admin/login` | Staff email & environment password (`ADMIN_INITIAL_PASSWORD`). |
+
+> **Note on Patient Accounts:** In accordance with clinical platform specifications, patients do not create accounts or manage passwords. All appointments, records, and reports are handled seamlessly via verified WhatsApp notifications and expiring signed links.
 
 ---
 

@@ -31,6 +31,14 @@ export async function POST(request: Request) {
       );
     }
 
+    // Role check: Only clinic staff and surgeons can log in (patient accounts are forbidden)
+    if (user.role !== "admin") {
+      return NextResponse.json(
+        { error: "Access restricted: Patient accounts are retired. Only clinic staff can access this portal." },
+        { status: 403 }
+      );
+    }
+
     // Generate signed session token with role from the database
     const token = createSessionToken({
       id: user.id,

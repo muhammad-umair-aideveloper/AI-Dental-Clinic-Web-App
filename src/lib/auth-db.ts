@@ -20,27 +20,16 @@ const globalStore = globalThis as unknown as {
   __lahoreDentalUsers?: UserRecord[];
 };
 
-// Seed default accounts
+// Seed default staff accounts (No patient accounts per platform skill specifications)
 const DEFAULT_USERS: UserRecord[] = [
   {
     id: "usr-admin-001",
     name: "Dr. Admin (Owner)",
     email: "admin@lahoredental.pk",
     phone: "03001234567",
-    // Salted PBKDF2 hash of "admin123"
-    passwordHash: hashPassword("admin123"),
+    passwordHash: hashPassword(process.env.ADMIN_INITIAL_PASSWORD || "AdminPass2026!"),
     role: "admin",
     created_at: new Date("2026-01-01T00:00:00.000Z").toISOString(),
-  },
-  {
-    id: "usr-patient-001",
-    name: "Ali Ahmed",
-    email: "patient@lahoredental.pk",
-    phone: "03009876543",
-    // Salted PBKDF2 hash of "patient123"
-    passwordHash: hashPassword("patient123"),
-    role: "user",
-    created_at: new Date("2026-01-15T00:00:00.000Z").toISOString(),
   },
 ];
 
