@@ -96,7 +96,7 @@ export function HeroSection({ onOpenBooking }: HeroSectionProps) {
               {/* Asset Display */}
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#F6F8FA]">
                 <img
-                  src="/images/hero-clinic-placeholder.svg"
+                  src="/images/clinic-hero.jpg"
                   alt="Lahore Dental Clinic Operatory Suite"
                   className="w-full h-full object-cover"
                 />

@@ -5,9 +5,12 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { Lock, Mail, AlertCircle, Loader2, ArrowRight } from "lucide-react";
 
+import { useAuth } from "@/components/auth/AuthProvider";
+
 export default function StaffLoginPage() {
   const locale = useLocale();
   const router = useRouter();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,26 +29,17 @@ export default function StaffLoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password }),
-      });
+      const res = await login(email.trim(), password);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Invalid staff credentials.");
+      if (!res.success) {
+        setError(res.error || "Invalid staff credentials.");
+        setLoading(false);
       } else {
-        if (data.user?.role === "admin") {
-          router.push(`/${locale}/admin-dashboard`);
-        } else {
-          setError("Unauthorized: Only clinic staff and surgeons can access this portal.");
-        }
+        // Full navigation ensures AuthProvider and middleware session are completely synchronized
+        window.location.href = `/${locale}/admin-dashboard`;
       }
-    } catch (err) {
-      setError("Network error occurred. Please check your connection.");
-    } finally {
+    } catch (err: any) {
+      setError(err?.message || "Network error occurred. Please check your connection.");
       setLoading(false);
     }
   };

@@ -104,7 +104,7 @@ export const CLINIC_CONFIG = {
     ], // VERIFY WITH CLIENT
     bio: "Specializing in conservative restorative dentistry, minimally invasive titanium implantology, and clear aligner smile transformations with a gentle, patient-first approach.",
     bioUr: "جدید امپلانٹس اور شفاف الائنرز کے علاج میں خصوصی مہارت اور مریضوں کی پرسکون نگہداشت۔",
-    image: "/images/doctor-placeholder.svg", // Real photo required: CLIENT_ASSET_REQUIRED
+    image: "/images/doctor-sarah.jpg",
   },
 
   // Weekly Working Timings in Asia/Karachi
@@ -229,8 +229,8 @@ export const CLINIC_CONFIG = {
       note: "6 shades brighter. Individual patient results may vary.",
       noteUr: "6 درجے تک چمکدار مسکراہٹ۔ نتائج ہر مریض کے لیے مختلف ہو سکتے ہیں۔",
       consentOnFile: true,
-      beforeImage: "/images/before-after/whitening-before.svg", // CLIENT_ASSET_REQUIRED
-      afterImage: "/images/before-after/whitening-after.svg",   // CLIENT_ASSET_REQUIRED
+      beforeImage: "/images/before-after/whitening-before.jpg",
+      afterImage: "/images/before-after/whitening-after.jpg",
     },
     {
       id: "bonding-1",
@@ -242,8 +242,8 @@ export const CLINIC_CONFIG = {
       note: "Midline spacing closed with zero enamel loss. Results vary.",
       noteUr: "دانت کو نقصان پہنچائے بغیر فاصلہ ختم۔ نتائج مختلف ہو سکتے ہیں۔",
       consentOnFile: true,
-      beforeImage: "/images/before-after/bonding-before.svg", // CLIENT_ASSET_REQUIRED
-      afterImage: "/images/before-after/bonding-after.svg",   // CLIENT_ASSET_REQUIRED
+      beforeImage: "/images/before-after/bonding-before.jpg",
+      afterImage: "/images/before-after/bonding-after.jpg",
     },
     {
       id: "aligners-1",
@@ -255,8 +255,8 @@ export const CLINIC_CONFIG = {
       note: "Mild crowding corrected without extractions. Results vary.",
       noteUr: "بغیر دانت نکالے مسکراہٹ کی سیدھ درست۔ نتائج مختلف ہو سکتے ہیں۔",
       consentOnFile: true,
-      beforeImage: "/images/before-after/aligners-before.svg", // CLIENT_ASSET_REQUIRED
-      afterImage: "/images/before-after/aligners-after.svg",   // CLIENT_ASSET_REQUIRED
+      beforeImage: "/images/before-after/aligners-before.jpg",
+      afterImage: "/images/before-after/aligners-after.jpg",
     },
   ] as BeforeAfterCase[],
 };
