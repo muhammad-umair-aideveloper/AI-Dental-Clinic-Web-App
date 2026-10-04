@@ -18,6 +18,11 @@ import {
   buildGroundedSystemPrompt,
   generateDynamicKnowledgeResponse,
 } from "@/lib/ai-retriever";
+import {
+  isAskingForMedication,
+  getClinicalMedicationRefusal,
+  filterMedicationOutput,
+} from "@/lib/guardrails";
 
 export const maxDuration = 30;
 
@@ -44,6 +49,36 @@ export async function POST(req: Request) {
     // 2. Extract latest user query & detect language style (Roman Urdu, English, Mixed)
     const lastUserMsg = messages[messages.length - 1]?.content || "";
     const detectedLang = detectLanguage(lastUserMsg);
+    const mappedLang: "roman_urdu" | "urdu_script" | "english" =
+      detectedLang === "urdu_script"
+        ? "urdu_script"
+        : detectedLang === "english"
+        ? "english"
+        : "roman_urdu";
+
+    // 2b. Clinical Safety Guardrail: Block any medication / antibiotic prescription queries immediately
+    if (isAskingForMedication(lastUserMsg)) {
+      const refusalText = getClinicalMedicationRefusal(mappedLang);
+      const encoder = new TextEncoder();
+      const readable = new ReadableStream({
+        async start(controller) {
+          const words = refusalText.split(" ");
+          for (let i = 0; i < words.length; i++) {
+            const word = words[i] + (i < words.length - 1 ? " " : "");
+            controller.enqueue(encoder.encode(`0:${JSON.stringify(word)}\n`));
+            await new Promise((resolve) => setTimeout(resolve, 15));
+          }
+          controller.close();
+        },
+      });
+
+      return new Response(readable, {
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "X-Vercel-AI-Data-Stream": "v1",
+        },
+      });
+    }
 
     // 3. Knowledge Retrieval Pipeline
     const retrieved = retrieveRelevantKnowledge(lastUserMsg, settings.knowledge);
@@ -149,12 +184,13 @@ export async function POST(req: Request) {
 
     // 6. Dynamic Knowledge-Grounded Streaming Engine
     // (Used when API key is not yet set or during offline execution)
-    const dynamicResponse = generateDynamicKnowledgeResponse(
+    const rawDynamicResponse = generateDynamicKnowledgeResponse(
       lastUserMsg,
       settings,
       retrieved,
       detectedLang
     );
+    const { safeText: dynamicResponse } = filterMedicationOutput(rawDynamicResponse, mappedLang);
 
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
