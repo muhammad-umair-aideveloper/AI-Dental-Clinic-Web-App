@@ -7,7 +7,10 @@ export interface AppointmentRecord {
   date: string;
   time: string;
   reason?: string;
-  status: "confirmed" | "completed" | "cancelled";
+  status: "confirmed" | "completed" | "cancelled" | "no-show";
+  chair?: "chair-1" | "chair-2"; // Chair 1: Root Canal / Implants; Chair 2: Scaling / Aligners
+  whatsapp_reminder_sent?: boolean;
+  reminder_sent_at?: string;
   language?: string;
   created_at?: string;
 }
@@ -39,6 +42,22 @@ const globalStore = globalThis as unknown as {
   __lahoreDentalInquiries?: InquiryRecord[];
 };
 
+export function inferChair(reason?: string): "chair-1" | "chair-2" {
+  if (!reason) return "chair-2";
+  const r = reason.toLowerCase();
+  if (
+    r.includes("implant") ||
+    r.includes("root canal") ||
+    r.includes("rct") ||
+    r.includes("surgical") ||
+    r.includes("extraction") ||
+    r.includes("surgery")
+  ) {
+    return "chair-1"; // Chair 1: Root Canal / Implants / Oral Surgery
+  }
+  return "chair-2"; // Chair 2: Scaling / Polishing / Aligners / Consultation
+}
+
 if (!globalStore.__lahoreDentalAppointments) {
   const today = new Date().toISOString().split("T")[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
@@ -52,6 +71,8 @@ if (!globalStore.__lahoreDentalAppointments) {
       time: "12:00",
       reason: "General Consultation & X-Ray",
       status: "confirmed",
+      chair: "chair-2",
+      whatsapp_reminder_sent: true,
       language: "en",
       created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
     },
@@ -63,6 +84,8 @@ if (!globalStore.__lahoreDentalAppointments) {
       time: "15:00",
       reason: "Scaling & Ultrasonic Polishing",
       status: "confirmed",
+      chair: "chair-2",
+      whatsapp_reminder_sent: false,
       language: "ur",
       created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
     },
@@ -74,6 +97,8 @@ if (!globalStore.__lahoreDentalAppointments) {
       time: "17:00",
       reason: "Single-Visit Root Canal (RCT)",
       status: "confirmed",
+      chair: "chair-1",
+      whatsapp_reminder_sent: false,
       language: "en",
       created_at: new Date(Date.now() - 3600000 * 12).toISOString(),
     },
@@ -105,6 +130,7 @@ export async function insertAppointment(
   data: Omit<AppointmentRecord, "id"> & { id?: string }
 ): Promise<{ success: boolean; data?: AppointmentRecord; error?: string }> {
   try {
+    const chair = data.chair || inferChair(data.reason);
     const formattedData: AppointmentRecord = {
       id: data.id || "apt-" + Math.random().toString(36).substring(2, 9),
       name: data.name,
@@ -113,6 +139,8 @@ export async function insertAppointment(
       time: data.time.slice(0, 5),
       reason: data.reason || "General Consultation",
       status: data.status || "confirmed",
+      chair,
+      whatsapp_reminder_sent: data.whatsapp_reminder_sent ?? false,
       language: data.language || "en",
       created_at: data.created_at || new Date().toISOString(),
     };
@@ -162,7 +190,7 @@ export async function getAllAppointments(): Promise<AppointmentRecord[]> {
 
 export async function updateAppointmentStatus(
   id: string,
-  status: "confirmed" | "completed" | "cancelled"
+  status: "confirmed" | "completed" | "cancelled" | "no-show"
 ): Promise<boolean> {
   try {
     if (supabase) {
@@ -179,6 +207,89 @@ export async function updateAppointmentStatus(
     return false;
   } catch (err) {
     console.error("Error updating appointment status:", err);
+    return false;
+  }
+}
+
+/**
+ * Reschedule appointment with conflict protection per chair and time
+ */
+export async function rescheduleAppointment(
+  id: string,
+  newDate: string,
+  newTime: string,
+  newChair?: "chair-1" | "chair-2"
+): Promise<{ success: boolean; conflict?: boolean; error?: string; updated?: AppointmentRecord }> {
+  try {
+    const store = globalStore.__lahoreDentalAppointments || [];
+    const target = store.find((a) => a.id === id);
+    if (!target) {
+      return { success: false, error: "Appointment not found" };
+    }
+
+    const assignedChair = newChair || target.chair || inferChair(target.reason);
+    const cleanTime = newTime.slice(0, 5);
+
+    // Conflict protection check: Is another confirmed appointment already taking this chair at this date/time?
+    const hasConflict = store.some(
+      (a) =>
+        a.id !== id &&
+        a.date === newDate &&
+        a.time.slice(0, 5) === cleanTime &&
+        (a.chair || inferChair(a.reason)) === assignedChair &&
+        a.status === "confirmed"
+    );
+
+    if (hasConflict) {
+      return {
+        success: false,
+        conflict: true,
+        error: `Schedule conflict: ${assignedChair === "chair-1" ? "Chair 1 (Surgical/RCT)" : "Chair 2 (General/Scaling)"} is already booked at ${cleanTime} on ${newDate}.`,
+      };
+    }
+
+    target.date = newDate;
+    target.time = cleanTime;
+    target.chair = assignedChair;
+
+    if (supabase) {
+      await supabase
+        .from("appointments")
+        .update({ date: newDate, time: cleanTime, chair: assignedChair })
+        .eq("id", id);
+    }
+
+    return { success: true, updated: target };
+  } catch (err: any) {
+    return { success: false, error: err?.message || "Failed to reschedule" };
+  }
+}
+
+/**
+ * Mark appointment as reminder sent
+ */
+export async function markReminderSent(id: string): Promise<boolean> {
+  try {
+    const store = globalStore.__lahoreDentalAppointments;
+    if (store) {
+      const target = store.find((a) => a.id === id);
+      if (target) {
+        target.whatsapp_reminder_sent = true;
+        target.reminder_sent_at = new Date().toISOString();
+        if (supabase) {
+          await supabase
+            .from("appointments")
+            .update({
+              whatsapp_reminder_sent: true,
+              reminder_sent_at: target.reminder_sent_at,
+            })
+            .eq("id", id);
+        }
+        return true;
+      }
+    }
+    return false;
+  } catch (err) {
     return false;
   }
 }

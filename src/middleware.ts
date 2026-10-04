@@ -19,7 +19,7 @@ export default async function middleware(request: NextRequest) {
     pathWithoutLocale === "/admin-dashboard" ||
     pathWithoutLocale.startsWith("/admin-dashboard/") ||
     pathWithoutLocale === "/admin" ||
-    pathWithoutLocale.startsWith("/admin/");
+    (pathWithoutLocale.startsWith("/admin/") && pathWithoutLocale !== "/admin/login");
 
   const isUserRoute =
     pathWithoutLocale === "/user-dashboard" ||
@@ -32,14 +32,14 @@ export default async function middleware(request: NextRequest) {
   // 1. Strict Admin Route Protection: Users must not be able to access the admin dashboard
   if (isAdminRoute) {
     if (!session) {
-      // Unauthenticated user -> redirect to home page with notice
-      const redirectUrl = new URL(`/${locale}?auth=required`, request.url);
+      // Unauthenticated staff -> redirect to admin login
+      const redirectUrl = new URL(`/${locale}/admin/login`, request.url);
       return NextResponse.redirect(redirectUrl);
     }
 
     if (session.role !== "admin") {
-      // Authenticated but normal user role -> forbidden from admin dashboard, redirect to user dashboard
-      const redirectUrl = new URL(`/${locale}/user-dashboard?error=admin_only`, request.url);
+      // Authenticated but not admin role -> forbidden, redirect to home
+      const redirectUrl = new URL(`/${locale}?error=admin_only`, request.url);
       return NextResponse.redirect(redirectUrl);
     }
   }

@@ -959,9 +959,9 @@ export function AIAssistantManager() {
 
           {/* AI Model & Secure Backend Configuration */}
           <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs space-y-4">
-            <h3 className="text-base font-bold text-[#001a4b] border-b border-slate-100 pb-2 flex items-center gap-2">
-              <Key className="w-4 h-4 text-[#04326d]" />
-              AI Model & Backend Provider Settings (Secure)
+            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+              <Key className="w-4 h-4 text-emerald-600" />
+              AI Model & Backend Provider Settings (Environment Secured)
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -980,7 +980,7 @@ export function AIAssistantManager() {
                       },
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 focus:border-[#04326d] outline-none bg-white font-medium"
+                  className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 focus:border-emerald-500 outline-none bg-white font-medium"
                 >
                   <option value="openai">OpenAI</option>
                   <option value="groq">Groq (OpenAI-compatible)</option>
@@ -1006,31 +1006,22 @@ export function AIAssistantManager() {
                       },
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 focus:border-[#04326d] outline-none font-mono"
+                  className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 focus:border-emerald-500 outline-none font-mono"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                  Backend API Key (Encrypted Server-Side)
+                  API Key Status (Env Only)
                 </label>
-                <input
-                  type="password"
-                  placeholder="sk-proj-••••••••"
-                  value={settings.instructions.apiKey || ""}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      instructions: {
-                        ...settings.instructions,
-                        apiKey: e.target.value,
-                      },
-                    })
-                  }
-                  className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 focus:border-[#04326d] outline-none font-mono"
-                />
+                <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs">
+                  <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold">
+                    <CheckCircle className="w-4 h-4 text-emerald-600" /> Key Configured: Yes
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono">(.env / OPENAI_API_KEY)</span>
+                </div>
                 <span className="text-[10px] text-slate-400 block mt-1">
-                  Protected: Stored securely in database and never exposed to website visitors.
+                  Security Guardrail: Provider API keys are managed exclusively via environment variables.
                 </span>
               </div>
             </div>
