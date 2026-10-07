@@ -42,6 +42,7 @@ import {
   Layers,
   ArrowRight,
   ExternalLink,
+  MapPin,
 } from "lucide-react";
 import { AIAssistantManager } from "@/components/admin/AIAssistantManager";
 import { CLINIC_CONFIG } from "@/config/clinic";
@@ -464,77 +465,39 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 pb-16">
-      {/* Top Clinical Header */}
-      <header className="bg-white border-b border-slate-200/90 sticky top-0 z-30 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Brand Title */}
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 font-bold text-sm">
-                🦷
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-sm font-bold tracking-tight text-slate-900">
-                    Lahore Dental • Reception &amp; Clinical Management
-                  </h1>
-                  <span className="text-[10px] font-mono uppercase bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">
-                    Live
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-500">
-                  PMDC Registered Clinic Console • Gulberg III, Lahore
-                </p>
-              </div>
-            </div>
+    <div className="min-h-screen bg-[#EEF1F8] p-3 sm:p-5 lg:p-7 text-[#2D3748] font-sans antialiased selection:bg-[#544BB9] selection:text-white pb-16">
+      {/* Toast Notification Alert */}
+      {bulkReminderMsg && (
+        <div className="fixed top-6 right-6 z-50 bg-[#2D3748] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl flex items-center justify-between gap-3 animate-bounce">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-[#4FD1C5]" />
+            <span>{bulkReminderMsg}</span>
+          </div>
+          <button
+            onClick={() => setBulkReminderMsg(null)}
+            className="text-slate-400 hover:text-white font-bold ml-2"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
-            {/* Quick Actions & Staff Profile */}
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleTriggerBulkReminders}
-                disabled={bulkReminderLoading}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-                title="Send WhatsApp confirmation reminder to all patients booked for tomorrow"
-              >
-                {bulkReminderLoading ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <Send className="w-3.5 h-3.5" />
-                )}
-                <span>Remind Tomorrow&apos;s ({tomorrowApts.length})</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShowNewModal(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>+ Walk-In Booking</span>
-              </button>
-
-              <div className="h-6 w-px bg-slate-200 mx-1 hidden sm:block" />
-
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-slate-600 hidden md:inline">
-                  Dr. Sarah / Staff
-                </span>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors"
-                  title="Sign out of Admin"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+      {/* Main Claymorphic Dashboard Shell Container */}
+      <div className="max-w-[1700px] mx-auto bg-[#F7F9FD] border border-white/80 rounded-[36px] shadow-[0_24px_60px_rgba(110,125,160,0.12)] p-4 sm:p-6 lg:p-7 flex flex-col lg:flex-row gap-6">
+        
+        {/* ========================================================= */}
+        {/* 1. LEFT PURPLE NAVIGATION CAPSULE (Matches Reference Image) */}
+        {/* ========================================================= */}
+        <aside className="lg:w-20 w-full bg-gradient-to-b from-[#544BB9] via-[#4A3FA8] to-[#3E3494] rounded-[28px] p-3.5 flex lg:flex-col flex-row items-center justify-between lg:justify-start gap-4 shadow-[0_16px_36px_rgba(84,75,185,0.32)] shrink-0">
+          {/* Brand Squircle Icon */}
+          <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-inner font-bold text-lg">
+            🦷
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex gap-1 overflow-x-auto border-t border-slate-100 py-1.5 text-xs font-semibold">
+          <div className="h-[1px] w-8 bg-white/15 my-1 hidden lg:block" />
+
+          {/* Navigation Tabs Icons */}
+          <nav className="flex lg:flex-col flex-row items-center gap-3 w-full justify-center">
             {[
               { id: "calendar", label: "Chair Calendar", icon: CalendarIcon, count: todayApts.length },
               { id: "patients", label: "Patient Records & X-Rays", icon: User, count: patients.length },
@@ -549,226 +512,478 @@ export default function AdminDashboardPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+                  title={tab.label}
+                  className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 relative group cursor-pointer ${
                     isActive
-                      ? "bg-slate-900 text-white shadow-xs font-bold"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                      ? "bg-white text-[#544BB9] shadow-[0_8px_20px_rgba(0,0,0,0.15)] scale-105 font-bold"
+                      : "text-white/70 hover:text-white hover:bg-white/10"
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{tab.label}</span>
-                  {tab.count !== undefined && (
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                        isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-700"
-                      }`}
-                    >
-                      {tab.count}
-                    </span>
+                  <Icon className="w-5 h-5" />
+                  {isActive && (
+                    <span className="absolute -left-1 w-1.5 h-6 bg-[#FD7289] rounded-r-full hidden lg:block" />
+                  )}
+                  {tab.count !== undefined && tab.count > 0 && !isActive && (
+                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#FD7289]" />
                   )}
                 </button>
               );
             })}
-          </div>
-        </div>
-      </header>
+          </nav>
 
-      {/* Bulk Reminder Feedback Alert */}
-      {bulkReminderMsg && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center justify-between">
-            <span>{bulkReminderMsg}</span>
+          {/* Bottom Sign-Out Button */}
+          <div className="lg:mt-auto hidden lg:block">
             <button
-              onClick={() => setBulkReminderMsg(null)}
-              className="text-emerald-700 font-bold hover:underline"
+              onClick={handleLogout}
+              title="Sign Out"
+              className="w-12 h-12 rounded-2xl text-white/60 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all cursor-pointer"
             >
-              Dismiss
+              <LogOut className="w-5 h-5" />
             </button>
           </div>
-        </div>
-      )}
+        </aside>
 
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        {/* ========================================================================= */}
-        {/* TAB 1: CALENDAR (CHAIR 1 & CHAIR 2 VISUAL SPLIT) */}
-        {/* ========================================================================= */}
-        {activeTab === "calendar" && (
-          <div className="space-y-6">
-            {/* Quick Metrics Bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  Today&apos;s Appointments
+        {/* ========================================================= */}
+        {/* 2. MAIN CENTER WORKSPACE AREA                             */}
+        {/* ========================================================= */}
+        <div className="flex-1 flex flex-col gap-6 min-w-0">
+          
+          {/* Top Header Bar */}
+          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold tracking-wider uppercase text-[#8A94A6]">
+                  Primary Dashboard
                 </span>
-                <div className="text-2xl font-black text-slate-900 mt-1">{todayApts.length}</div>
-                <span className="text-xs text-emerald-600 mt-0.5 block">
-                  {todayApts.filter((a) => a.status === "completed").length} completed
+                <span className="text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
+                  Live
                 </span>
               </div>
-
-              <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  Chair 1 (Implants / RCT)
-                </span>
-                <div className="text-2xl font-black text-slate-900 mt-1">{chair1Today.length}</div>
-                <span className="text-xs text-slate-500 mt-0.5 block">Surgical operatory</span>
-              </div>
-
-              <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  Chair 2 (Scaling / Aligners)
-                </span>
-                <div className="text-2xl font-black text-slate-900 mt-1">{chair2Today.length}</div>
-                <span className="text-xs text-slate-500 mt-0.5 block">General dentistry</span>
-              </div>
-
-              <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  Tomorrow Pending Reminders
-                </span>
-                <div className="text-2xl font-black text-slate-900 mt-1">
-                  {tomorrowPendingReminders.length}
-                </div>
-                <span className="text-xs text-amber-600 mt-0.5 block">
-                  {tomorrowApts.length - tomorrowPendingReminders.length} sent
-                </span>
-              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1E2640] tracking-tight mt-0.5">
+                Lahore Dental Clinic Console
+              </h1>
+              <p className="text-xs text-[#8A94A6] font-medium flex items-center gap-1.5 mt-0.5">
+                <MapPin className="w-3.5 h-3.5 text-[#544BB9]" />
+                PMDC Registered • Gulberg III, Lahore • Open Now (11:00 AM – 9:00 PM)
+              </p>
             </div>
 
-            {/* Calendar Controls Bar */}
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedDate(todayStr)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer transition-colors ${
-                    selectedDate === todayStr
-                      ? "bg-slate-900 text-white"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                  }`}
-                >
-                  Today
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedDate(tomorrowStr)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer transition-colors ${
-                    selectedDate === tomorrowStr
-                      ? "bg-slate-900 text-white"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                  }`}
-                >
-                  Tomorrow
-                </button>
+            {/* Header Right Actions */}
+            <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
+              {/* Search Pill */}
+              <div className="relative flex-1 sm:w-60">
+                <Search className="w-4 h-4 text-[#8A94A6] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="px-3 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 text-slate-800 outline-none"
+                  type="text"
+                  placeholder="Search patient, phone..."
+                  value={patientSearch}
+                  onChange={(e) => setPatientSearch(e.target.value)}
+                  className="w-full bg-white border border-slate-200/80 rounded-full pl-9 pr-4 py-2 text-xs font-medium text-[#1E2640] placeholder-[#8A94A6] focus:outline-none focus:ring-2 focus:ring-[#544BB9]/20 shadow-sm"
                 />
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Confirmed
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500" /> Completed
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> No-Show
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-slate-300" /> Cancelled
-                </span>
+              {/* Remind Tomorrow's Pill */}
+              <button
+                type="button"
+                onClick={handleTriggerBulkReminders}
+                disabled={bulkReminderLoading}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-full flex items-center gap-1.5 shadow-[0_6px_16px_rgba(16,185,129,0.25)] transition-transform active:scale-95 cursor-pointer shrink-0"
+              >
+                {bulkReminderLoading ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Send className="w-3.5 h-3.5" />
+                )}
+                <span>Remind Tomorrow ({tomorrowApts.length})</span>
+              </button>
+
+              {/* + Walk-In Booking Pill */}
+              <button
+                type="button"
+                onClick={() => setShowNewModal(true)}
+                className="bg-[#544BB9] hover:bg-[#463CA3] text-white text-xs font-semibold px-4 py-2.5 rounded-full flex items-center gap-1.5 shadow-[0_8px_20px_rgba(84,75,185,0.25)] transition-transform active:scale-95 cursor-pointer shrink-0"
+              >
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>+ Walk-In</span>
+              </button>
+
+              {/* Doctor Avatar Pill */}
+              <div className="flex items-center gap-2 pl-1 border-l border-slate-200">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#544BB9] to-[#FD7289] p-0.5 shrink-0 shadow-sm">
+                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center font-bold text-xs text-[#544BB9]">
+                    ST
+                  </div>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  title="Sign out"
+                  className="p-1.5 text-slate-400 hover:text-slate-800 rounded-lg lg:hidden"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
               </div>
             </div>
+          </header>
 
-            {/* Split Chair Grid View */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* CHAIR 1 OPERATORY COLUMN */}
-              <div className="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs flex flex-col">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
-                      <h2 className="text-sm font-bold text-slate-900">
-                        Chair 1 — Surgical &amp; Endodontics
-                      </h2>
+          {/* ========================================================================= */}
+          {/* TAB 1: CALENDAR (CHAIR 1 & CHAIR 2 VISUAL SPLIT + IMAGE 1 HERO CARDS)     */}
+          {/* ========================================================================= */}
+          {activeTab === "calendar" && (
+            <div className="space-y-6">
+              
+              {/* HERO STATS ROW (Matching Image 1's Signature Cards) */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+                
+                {/* Card A: Signature Deep Purple Overview Widget (7 cols) */}
+                <div className="md:col-span-8 bg-gradient-to-br from-[#544BB9] via-[#493CA6] to-[#3A2D94] rounded-[28px] p-6 text-white shadow-[0_18px_36px_rgba(84,75,185,0.32)] relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+                  
+                  <div className="flex items-center justify-between relative z-10">
+                    <div>
+                      <h3 className="text-base font-bold tracking-tight">Today&apos;s Operatory Flow</h3>
+                      <p className="text-xs text-white/75">
+                        {todayApts.length} Confirmed Appointments · {todayApts.filter((a) => a.status === "completed").length} Completed
+                      </p>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
-                      Dental Implants, Surgical Extractions, Single-Visit Root Canal (RCT)
-                    </p>
+                    <div className="bg-white/15 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-semibold text-white border border-white/20">
+                      Live Asia/Karachi
+                    </div>
                   </div>
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 font-mono">
-                    {chair1Apts.length} booked
-                  </span>
+
+                  {/* Glowing Wave SVG Representation (Signature Feature in Image 1) */}
+                  <div className="my-2 relative z-10">
+                    <div className="relative h-20 w-full flex items-center">
+                      <svg className="w-full h-full overflow-visible" viewBox="0 0 500 80" fill="none">
+                        <path
+                          d="M0,60 C80,60 120,20 200,30 C280,40 340,10 420,35 C460,50 480,30 500,40"
+                          stroke="rgba(253, 114, 137, 0.85)"
+                          strokeWidth="3.5"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M0,60 C80,60 120,20 200,30 C280,40 340,10 420,35 C460,50 480,30 500,40 L500,80 L0,80 Z"
+                          fill="url(#purpleGlow)"
+                          opacity="0.3"
+                        />
+                        <defs>
+                          <linearGradient id="purpleGlow" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#FD7289" />
+                            <stop offset="100%" stopColor="#544BB9" stopOpacity="0" />
+                          </linearGradient>
+                        </defs>
+                        <circle cx="200" cy="30" r="6" fill="#FFFFFF" stroke="#FD7289" strokeWidth="4" />
+                      </svg>
+                      
+                      <div className="absolute left-[38%] top-0 -translate-y-2 bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-xl text-[10px] font-bold border border-white/30 text-white shadow-lg">
+                        Peak: Chair 1 Surgery
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between text-[10px] text-white/60 font-semibold px-2">
+                      <span>11 AM</span>
+                      <span>1 PM</span>
+                      <span>3 PM</span>
+                      <span>5 PM</span>
+                      <span>7 PM</span>
+                      <span>9 PM</span>
+                    </div>
+                  </div>
+
+                  {/* 3-Column Pill Footer */}
+                  <div className="grid grid-cols-3 gap-3 pt-3 border-t border-white/15 relative z-10">
+                    <div>
+                      <span className="text-[10px] text-white/70 block font-medium">Chair 1 Load</span>
+                      <p className="text-lg font-black text-white">{chair1Today.length} Patients</p>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-white/70 block font-medium">Chair 2 Load</span>
+                      <p className="text-lg font-black text-white">{chair2Today.length} Patients</p>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-white/70 block font-medium">Autoclave Protocol</span>
+                      <p className="text-lg font-black text-[#4FD1C5]">Class-B OK</p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="space-y-3 flex-1">
-                  {chair1Apts.length === 0 ? (
-                    <div className="h-44 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center p-4">
-                      <Clock className="w-6 h-6 text-slate-300 mb-1" />
-                      <p className="text-xs font-semibold text-slate-600">Chair 1 is open on {selectedDate}</p>
-                      <button
-                        onClick={() => {
-                          setNewPatient((p) => ({ ...p, date: selectedDate, chair: "chair-1" }));
-                          setShowNewModal(true);
-                        }}
-                        className="mt-2 text-[11px] text-emerald-600 font-bold hover:underline"
-                      >
-                        + Book a surgery/RCT slot
-                      </button>
+                {/* Card B: Signature Coral-Rose Highlight Widget (4 cols) */}
+                <div className="md:col-span-4 bg-gradient-to-br from-[#FD7289] via-[#FC617C] to-[#F54B68] rounded-[28px] p-6 text-white shadow-[0_18px_36px_rgba(253,114,137,0.32)] flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
+                        <Send className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] uppercase font-bold tracking-widest bg-white/20 px-2.5 py-1 rounded-full">
+                        Action Required
+                      </span>
                     </div>
-                  ) : (
-                    chair1Apts.map((apt) => renderAppointmentCard(apt))
-                  )}
+                    
+                    <div className="mt-4">
+                      <h4 className="text-sm font-bold text-white/90">Tomorrow&apos;s Patients</h4>
+                      <p className="text-3xl font-extrabold tracking-tight mt-0.5">
+                        {tomorrowPendingReminders.length} Pending
+                      </p>
+                      <p className="text-xs text-white/80 mt-1">
+                        {tomorrowApts.length - tomorrowPendingReminders.length} reminder(s) already dispatched.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleTriggerBulkReminders}
+                    disabled={bulkReminderLoading}
+                    className="w-full bg-white hover:bg-white/95 text-[#FD7289] font-bold text-xs py-3 rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(0,0,0,0.1)] transition-all active:scale-95 cursor-pointer"
+                  >
+                    {bulkReminderLoading ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Send className="w-3.5 h-3.5" />
+                    )}
+                    <span>Remind All Tomorrow</span>
+                    <ChevronRight className="w-4 h-4 ml-auto" />
+                  </button>
                 </div>
               </div>
 
-              {/* CHAIR 2 OPERATORY COLUMN */}
-              <div className="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs flex flex-col">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                  <div>
+              {/* Main Scheduling Section + Right Activity Panel */}
+              <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                
+                {/* Operatory Chairs Area (8 cols on XL) */}
+                <div className="xl:col-span-8 space-y-5">
+                  {/* Calendar Controls Bar */}
+                  <div className="bg-white rounded-[24px] p-4 border border-slate-100 shadow-[0_8px_24px_rgba(90,105,145,0.05)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                      <h2 className="text-sm font-bold text-slate-900">
-                        Chair 2 — Preventive &amp; Orthodontics
-                      </h2>
+                      <div className="bg-[#EEF1F8] p-1 rounded-full flex items-center text-xs font-semibold">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedDate(todayStr)}
+                          className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
+                            selectedDate === todayStr
+                              ? "bg-[#544BB9] text-white shadow-sm"
+                              : "text-[#8A94A6] hover:text-[#1E2640]"
+                          }`}
+                        >
+                          Today
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedDate(tomorrowStr)}
+                          className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
+                            selectedDate === tomorrowStr
+                              ? "bg-[#544BB9] text-white shadow-sm"
+                              : "text-[#8A94A6] hover:text-[#1E2640]"
+                          }`}
+                        >
+                          Tomorrow
+                        </button>
+                      </div>
+
+                      <input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="px-3 py-1.5 text-xs font-semibold rounded-full border border-slate-200 bg-white text-slate-800 outline-none shadow-xs"
+                      />
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
-                      Ultrasonic Scaling, Clear Aligners, Laser Whitening, Checkups
-                    </p>
+
+                    <div className="flex items-center gap-3 text-[11px] font-semibold text-[#8A94A6]">
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-[#38A169]" /> Confirmed
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-[#544BB9]" /> Completed
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-[#E53E3E]" /> No-Show
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono">
-                    {chair2Apts.length} booked
-                  </span>
+
+                  {/* Split Chair Grid Columns */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    {/* CHAIR 1 OPERATORY COLUMN */}
+                    <div className="bg-white border border-slate-100 rounded-[28px] p-5 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col">
+                      <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-[#544BB9]/10 text-[#544BB9] flex items-center justify-center font-bold text-xs">
+                            1
+                          </div>
+                          <div>
+                            <h2 className="text-sm font-bold text-[#1E2640]">
+                              Chair 1 — Surgical &amp; Endodontics
+                            </h2>
+                            <p className="text-[11px] text-[#8A94A6]">
+                              Dental Implants, Single-Visit RCT
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#544BB9]/10 text-[#544BB9] font-mono">
+                          {chair1Apts.length} booked
+                        </span>
+                      </div>
+
+                      <div className="space-y-3 flex-1">
+                        {chair1Apts.length === 0 ? (
+                          <div className="h-44 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center p-4">
+                            <Clock className="w-6 h-6 text-slate-300 mb-1" />
+                            <p className="text-xs font-semibold text-slate-600">
+                              Chair 1 is open on {selectedDate}
+                            </p>
+                            <button
+                              onClick={() => {
+                                setNewPatient((p) => ({ ...p, date: selectedDate, chair: "chair-1" }));
+                                setShowNewModal(true);
+                              }}
+                              className="mt-2 text-[11px] text-[#544BB9] font-bold hover:underline cursor-pointer"
+                            >
+                              + Book a surgery/RCT slot
+                            </button>
+                          </div>
+                        ) : (
+                          chair1Apts.map((apt) => renderAppointmentCard(apt))
+                        )}
+                      </div>
+                    </div>
+
+                    {/* CHAIR 2 OPERATORY COLUMN */}
+                    <div className="bg-white border border-slate-100 rounded-[28px] p-5 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col">
+                      <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-[#FD7289]/10 text-[#FD7289] flex items-center justify-center font-bold text-xs">
+                            2
+                          </div>
+                          <div>
+                            <h2 className="text-sm font-bold text-[#1E2640]">
+                              Chair 2 — Preventive &amp; Orthodontics
+                            </h2>
+                            <p className="text-[11px] text-[#8A94A6]">
+                              Scaling, Clear Aligners, Whitening
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FD7289]/10 text-[#FD7289] font-mono">
+                          {chair2Apts.length} booked
+                        </span>
+                      </div>
+
+                      <div className="space-y-3 flex-1">
+                        {chair2Apts.length === 0 ? (
+                          <div className="h-44 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center p-4">
+                            <Clock className="w-6 h-6 text-slate-300 mb-1" />
+                            <p className="text-xs font-semibold text-slate-600">
+                              Chair 2 is open on {selectedDate}
+                            </p>
+                            <button
+                              onClick={() => {
+                                setNewPatient((p) => ({ ...p, date: selectedDate, chair: "chair-2" }));
+                                setShowNewModal(true);
+                              }}
+                              className="mt-2 text-[11px] text-[#FD7289] font-bold hover:underline cursor-pointer"
+                            >
+                              + Book a scaling/aligner slot
+                            </button>
+                          </div>
+                        ) : (
+                          chair2Apts.map((apt) => renderAppointmentCard(apt))
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="space-y-3 flex-1">
-                  {chair2Apts.length === 0 ? (
-                    <div className="h-44 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center p-4">
-                      <Clock className="w-6 h-6 text-slate-300 mb-1" />
-                      <p className="text-xs font-semibold text-slate-600">Chair 2 is open on {selectedDate}</p>
-                      <button
-                        onClick={() => {
-                          setNewPatient((p) => ({ ...p, date: selectedDate, chair: "chair-2" }));
-                          setShowNewModal(true);
-                        }}
-                        className="mt-2 text-[11px] text-emerald-600 font-bold hover:underline"
-                      >
-                        + Book a scaling/aligner slot
-                      </button>
+                {/* ========================================================= */}
+                {/* RIGHT ACTIVITY PANEL (Matching "Friends & Map" in Image 1)  */}
+                {/* ========================================================= */}
+                <aside className="xl:col-span-4 flex flex-col gap-5">
+                  {/* Top Panel: Today's Patient Queue */}
+                  <div className="bg-white rounded-[28px] p-5 border border-slate-100 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-[#544BB9]" />
+                        <h3 className="text-sm font-bold text-[#1E2640]">Patient Queue</h3>
+                      </div>
+                      <span className="text-[11px] font-semibold text-[#544BB9] font-mono">
+                        {dateAppointments.length} Active
+                      </span>
                     </div>
-                  ) : (
-                    chair2Apts.map((apt) => renderAppointmentCard(apt))
-                  )}
-                </div>
+
+                    <div className="space-y-3">
+                      {dateAppointments.length === 0 ? (
+                        <p className="text-xs text-[#8A94A6] text-center py-4">
+                          No patients scheduled for this date.
+                        </p>
+                      ) : (
+                        dateAppointments.slice(0, 5).map((apt, idx) => (
+                          <div key={apt.id} className="flex items-center justify-between gap-3 p-2 rounded-xl hover:bg-[#F8F9FD] transition-colors">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div
+                                className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-xs ${
+                                  idx % 2 === 0 ? "bg-[#544BB9]" : "bg-[#FD7289]"
+                                }`}
+                              >
+                                {apt.name.charAt(0)}
+                              </div>
+                              <div className="min-w-0">
+                                <h5 className="text-xs font-bold text-[#1E2640] truncate">
+                                  {apt.name}
+                                </h5>
+                                <p className="text-[10px] text-[#8A94A6] truncate">
+                                  {apt.time} · {apt.reason || "Consultation"}
+                                </p>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => handleSendReminder(apt)}
+                              title="Send WhatsApp Reminder"
+                              className="w-8 h-8 rounded-full bg-[#EEF1F8] hover:bg-[#544BB9] text-[#544BB9] hover:text-white flex items-center justify-center transition-all shrink-0 cursor-pointer"
+                            >
+                              <MessageCircle className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Bottom Panel: Gulberg III Operatory & Valet Status */}
+                  <div className="bg-white rounded-[28px] p-5 border border-slate-100 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-[#FD7289]" />
+                        <h3 className="text-sm font-bold text-[#1E2640]">Gulberg III Clinic</h3>
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                        Open Now
+                      </span>
+                    </div>
+
+                    <div className="relative h-28 rounded-2xl bg-gradient-to-br from-[#E8ECF5] to-[#DFE5F2] overflow-hidden border border-slate-200/60 p-3 flex flex-col justify-between">
+                      <div className="flex items-center justify-between text-[10px] font-semibold text-[#8A94A6]">
+                        <span>Plaza 42-B, Main Boulevard</span>
+                        <span className="text-[#544BB9] font-bold">Valet: Free</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md p-2 rounded-xl border border-white shadow-sm">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#FD7289] animate-ping" />
+                        <span className="text-[10px] font-bold text-[#1E2640]">
+                          Lahore Dental Suites
+                        </span>
+                        <span className="text-[9px] text-[#8A94A6] ml-auto">Chair 1 &amp; 2 Active</span>
+                      </div>
+                    </div>
+
+                    <div className="text-[11px] text-[#8A94A6] flex justify-between pt-1">
+                      <span>Sterilization: Class-B Vacuum</span>
+                      <span className="text-emerald-600 font-bold">134°C OK</span>
+                    </div>
+                  </div>
+                </aside>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* ========================================================================= */}
         {/* TAB 2: PATIENTS (TIMELINE, CLINICAL NOTES, X-RAYS, SECURE EXPIRING LINKS) */}
@@ -1196,7 +1411,8 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         )}
-      </main>
+        </div>
+      </div>
 
       {/* ========================================================================= */}
       {/* MODAL: RESCHEDULE APPOINTMENT WITH CONFLICT PROTECTION */}
@@ -1582,34 +1798,37 @@ export default function AdminDashboardPage() {
           isNoShow
             ? "bg-rose-50/60 border-rose-200"
             : isCompleted
-            ? "bg-slate-50 border-slate-200 opacity-75"
-            : "bg-white border-slate-200/90 shadow-xs hover:border-slate-400"
+            ? "bg-slate-50 border-slate-200 opacity-80"
+            : "bg-white border-slate-100 shadow-[0_4px_16px_rgba(90,105,145,0.04)] hover:shadow-[0_8px_24px_rgba(90,105,145,0.08)] hover:border-[#544BB9]/30"
         }`}
       >
         <div className="flex items-start justify-between gap-2">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-black font-mono text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md">
+              <span className="text-xs font-black font-mono text-[#544BB9] bg-[#EEF1F8] px-2.5 py-0.5 rounded-full">
                 {apt.time}
               </span>
-              <h3 className="text-xs font-bold text-slate-900">{apt.name}</h3>
+              <h3 className="text-xs font-bold text-[#1E2640]">{apt.name}</h3>
             </div>
-            <p className="text-[11px] font-mono text-slate-500 mt-1">{apt.phone}</p>
-            <p className="text-xs text-slate-700 font-medium mt-1">
+            <p className="text-[11px] font-mono text-[#8A94A6] mt-1 flex items-center gap-1">
+              <Phone className="w-3 h-3 text-[#8A94A6]" />
+              {apt.phone}
+            </p>
+            <p className="text-xs text-[#544BB9] font-semibold mt-1">
               {apt.reason || "General Consultation"}
             </p>
           </div>
 
           {/* Status Badge */}
           <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded-full capitalize ${
+            className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
               isConfirmed
-                ? "bg-emerald-100 text-emerald-800"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
                 : isCompleted
-                ? "bg-blue-100 text-blue-800"
+                ? "bg-indigo-50 text-[#544BB9] border border-indigo-100"
                 : isNoShow
-                ? "bg-rose-100 text-rose-800"
-                : "bg-slate-200 text-slate-700"
+                ? "bg-rose-50 text-rose-700 border border-rose-100"
+                : "bg-slate-100 text-slate-700"
             }`}
           >
             {apt.status}
@@ -1617,20 +1836,20 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Action Controls for Receptionist */}
-        <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="mt-3 pt-3 border-t border-slate-50 flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-1.5">
             {/* WhatsApp Reminder Button */}
             <button
               type="button"
               onClick={() => handleSendReminder(apt)}
-              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold transition-all cursor-pointer ${
                 apt.whatsapp_reminder_sent
                   ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                  : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                  : "bg-[#EEF1F8] hover:bg-[#544BB9] text-[#544BB9] hover:text-white"
               }`}
               title="Send WhatsApp appointment reminder"
             >
-              <MessageCircle className="w-3 h-3 text-emerald-600" />
+              <MessageCircle className="w-3 h-3" />
               <span>{apt.whatsapp_reminder_sent ? "Reminder Sent" : "WhatsApp"}</span>
             </button>
 
@@ -1644,7 +1863,7 @@ export default function AdminDashboardPage() {
                 setRescheduleChair(apt.chair || "chair-1");
                 setRescheduleError(null);
               }}
-              className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold cursor-pointer"
+              className="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold cursor-pointer transition-colors"
             >
               Reschedule
             </button>
@@ -1656,7 +1875,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => handleStatusChange(apt.id, "completed")}
-                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg cursor-pointer"
+                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-full cursor-pointer transition-colors"
                 title="Mark Completed"
               >
                 <CheckCircle className="w-4 h-4" />
@@ -1668,7 +1887,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => handleStatusChange(apt.id, "no-show")}
-                className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg cursor-pointer"
+                className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-full cursor-pointer transition-colors"
                 title="Mark No-Show (Auto-increments strike counter)"
               >
                 <XCircle className="w-4 h-4" />
