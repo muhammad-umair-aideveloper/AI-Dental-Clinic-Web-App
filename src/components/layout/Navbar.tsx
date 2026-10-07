@@ -30,7 +30,7 @@ export function Navbar({ onOpenBooking }: { onOpenBooking?: () => void }) {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-[#E5EAF0] transition-clinical">
+    <header className="sticky top-0 z-40 w-full bg-white/75 backdrop-blur-xl border-b border-slate-200/50 shadow-[0_4px_24px_rgba(15,23,42,0.04)] transition-clinical">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo & Clinical Brand */}
