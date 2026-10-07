@@ -86,8 +86,8 @@ const config: Config = {
         "3xl": "1.5rem",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
-        heading: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "'Plus Jakarta Sans'", "Inter", "system-ui", "sans-serif"],
+        heading: ["var(--font-sans)", "'Plus Jakarta Sans'", "Inter", "system-ui", "sans-serif"],
         urdu: ["var(--font-urdu)", "system-ui", "sans-serif"],
       },
       boxShadow: {
