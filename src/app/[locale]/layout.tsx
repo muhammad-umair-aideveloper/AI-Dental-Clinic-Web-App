@@ -4,6 +4,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { DialogProvider } from "@/components/ui/DialogProvider";
 import "../globals.css";
 
 export const viewport: Viewport = {
@@ -92,7 +93,9 @@ export default async function LocaleLayout({
       </head>
       <body className={`min-h-screen bg-white text-[#0F172A] antialiased selection:bg-[#4FB8A6]/20 selection:text-[#2E9C89] ${locale === "ur" ? "font-urdu" : "font-sans"}`}>
         <NextIntlClientProvider messages={messages} locale={locale}>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <DialogProvider>{children}</DialogProvider>
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

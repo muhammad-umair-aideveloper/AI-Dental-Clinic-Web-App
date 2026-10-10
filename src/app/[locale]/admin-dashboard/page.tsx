@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import Image from "next/image";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useDialog } from "@/components/ui/DialogProvider";
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -96,6 +97,7 @@ export default function AdminDashboardPage() {
   const locale = useLocale();
   const router = useRouter();
   const { user, role, logout, isLoading: authLoading } = useAuth();
+  const { showToast, confirm, alert } = useDialog();
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<
@@ -153,7 +155,6 @@ export default function AdminDashboardPage() {
 
   // Bulk Reminder State
   const [bulkReminderLoading, setBulkReminderLoading] = useState(false);
-  const [bulkReminderMsg, setBulkReminderMsg] = useState<string | null>(null);
 
   // Strict RBAC: Check admin role
   useEffect(() => {
@@ -192,7 +193,21 @@ export default function AdminDashboardPage() {
   }, [user, role]);
 
   const handleLogout = async () => {
+    const shouldLogout = await confirm({
+      title: "Sign Out of Clinic Console?",
+      message: "You will be redirected to the admin login portal.",
+      confirmText: "Sign Out",
+      cancelText: "Stay Logged In",
+      type: "warning",
+    });
+    if (!shouldLogout) return;
+
     await logout();
+    showToast({
+      type: "info",
+      title: "Logged Out",
+      message: "Successfully signed out of admin session.",
+    });
     router.push(`/${locale}/admin/login`);
   };
 
@@ -201,6 +216,27 @@ export default function AdminDashboardPage() {
     id: string,
     newStatus: "confirmed" | "completed" | "cancelled" | "no-show"
   ) => {
+    if (newStatus === "no-show") {
+      const willMarkNoShow = await confirm({
+        title: "Mark Patient as No-Show?",
+        message:
+          "This will increment their missed appointment counter. Accumulating 2+ no-shows will automatically enforce the Rs. 2,000 Advance Token rule.",
+        confirmText: "Yes, Mark No-Show",
+        cancelText: "Cancel",
+        type: "danger",
+      });
+      if (!willMarkNoShow) return;
+    } else if (newStatus === "cancelled") {
+      const willCancel = await confirm({
+        title: "Cancel Appointment?",
+        message: "Are you sure you want to cancel this scheduled appointment slot?",
+        confirmText: "Yes, Cancel",
+        cancelText: "Keep Slot",
+        type: "warning",
+      });
+      if (!willCancel) return;
+    }
+
     try {
       const res = await fetch(`/api/appointments/${id}`, {
         method: "PATCH",
@@ -212,13 +248,29 @@ export default function AdminDashboardPage() {
         setAppointments((prev) =>
           prev.map((apt) => (apt.id === id ? { ...apt, status: newStatus } : apt))
         );
+        showToast({
+          type: "success",
+          title: "Status Updated",
+          message: `Appointment marked as ${newStatus}.`,
+        });
         // Refresh patients if no-show to update counter
         if (newStatus === "no-show") {
           fetchData();
         }
+      } else {
+        showToast({
+          type: "error",
+          title: "Update Failed",
+          message: "Unable to update appointment status.",
+        });
       }
     } catch (err) {
       console.error("Status update error:", err);
+      showToast({
+        type: "error",
+        title: "Server Error",
+        message: "Failed to communicate with appointment API.",
+      });
     }
   };
 
@@ -247,6 +299,11 @@ export default function AdminDashboardPage() {
       setAppointments((prev) =>
         prev.map((a) => (a.id === apt.id ? { ...a, whatsapp_reminder_sent: true } : a))
       );
+      showToast({
+        type: "success",
+        title: "Reminder Logged",
+        message: `WhatsApp reminder dispatched for ${apt.name}.`,
+      });
     } catch (e) {
       // ignore
     }
@@ -254,22 +311,41 @@ export default function AdminDashboardPage() {
 
   // Trigger Bulk Reminders for Tomorrow
   const handleTriggerBulkReminders = async () => {
+    const proceed = await confirm({
+      title: "Send Tomorrow's Reminders?",
+      message: `Trigger automated reminder dispatch for all ${tomorrowApts.length} confirmed appointments tomorrow?`,
+      confirmText: "Send Bulk Reminders",
+      cancelText: "Cancel",
+      type: "info",
+    });
+    if (!proceed) return;
+
     setBulkReminderLoading(true);
-    setBulkReminderMsg(null);
     try {
       const res = await fetch("/api/admin/reminders/bulk", { method: "POST" });
       const data = await res.json();
       if (res.ok) {
-        setBulkReminderMsg(data.message || `Processed reminders for tomorrow.`);
+        showToast({
+          type: "success",
+          title: "Bulk Reminders Sent",
+          message: data.message || `Processed reminders for tomorrow.`,
+        });
         fetchData();
       } else {
-        setBulkReminderMsg(data.error || "Failed to trigger bulk reminders");
+        showToast({
+          type: "error",
+          title: "Dispatch Error",
+          message: data.error || "Failed to trigger bulk reminders",
+        });
       }
     } catch (err: any) {
-      setBulkReminderMsg(err.message || "Network error sending reminders");
+      showToast({
+        type: "error",
+        title: "Network Error",
+        message: err.message || "Network error sending reminders",
+      });
     } finally {
       setBulkReminderLoading(false);
-      setTimeout(() => setBulkReminderMsg(null), 6000);
     }
   };
 
@@ -401,9 +477,25 @@ export default function AdminDashboardPage() {
         setPatients((prev) =>
           prev.map((p) => (p.phone === selectedPatient.phone ? { ...p, notes: patientNotesInput } : p))
         );
+        showToast({
+          type: "success",
+          title: "Notes Saved",
+          message: "Clinical patient notes updated successfully.",
+        });
+      } else {
+        showToast({
+          type: "error",
+          title: "Save Failed",
+          message: "Failed to update clinical notes.",
+        });
       }
     } catch (err) {
       console.error("Failed saving notes:", err);
+      showToast({
+        type: "error",
+        title: "Network Error",
+        message: "Unable to reach server to save notes.",
+      });
     } finally {
       setSavingNotes(false);
     }
@@ -412,6 +504,17 @@ export default function AdminDashboardPage() {
   // Toggle Advance Token Requirement
   const handleToggleAdvanceToken = async (patient: Patient) => {
     const nextVal = !patient.advanceTokenRequired;
+    const confirmed = await confirm({
+      title: nextVal ? "Enforce Advance Token Deposit?" : "Clear Token Requirement?",
+      message: nextVal
+        ? `Patient ${patient.name} will be required to pay a non-refundable Rs. 2,000 advance token deposit before booking any future appointments.`
+        : `Remove token penalty for ${patient.name}? They will be able to book normal appointments without advance fee.`,
+      confirmText: nextVal ? "Enforce Rs. 2,000 Token" : "Remove Penalty",
+      cancelText: "Cancel",
+      type: nextVal ? "danger" : "info",
+    });
+    if (!confirmed) return;
+
     try {
       const res = await fetch(`/api/admin/patients/${encodeURIComponent(patient.phone)}`, {
         method: "PATCH",
@@ -425,9 +528,26 @@ export default function AdminDashboardPage() {
         if (selectedPatient && selectedPatient.phone === patient.phone) {
           setSelectedPatient((prev) => (prev ? { ...prev, advanceTokenRequired: nextVal } : null));
         }
+        showToast({
+          type: "success",
+          title: "Patient Policy Updated",
+          message: nextVal
+            ? `Advance Token (Rs. 2,000) enforced for ${patient.name}.`
+            : `Advance Token requirement cleared for ${patient.name}.`,
+        });
+      } else {
+        showToast({
+          type: "error",
+          title: "Update Failed",
+          message: "Failed to modify token requirement.",
+        });
       }
     } catch (e) {
-      // ignore
+      showToast({
+        type: "error",
+        title: "Server Error",
+        message: "Failed to update patient record.",
+      });
     }
   };
 
@@ -466,21 +586,6 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#EEF1F8] p-3 sm:p-5 lg:p-7 text-[#2D3748] font-sans antialiased selection:bg-[#544BB9] selection:text-white pb-16">
-      {/* Toast Notification Alert */}
-      {bulkReminderMsg && (
-        <div className="fixed top-6 right-6 z-50 bg-[#2D3748] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl flex items-center justify-between gap-3 animate-bounce">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-[#4FD1C5]" />
-            <span>{bulkReminderMsg}</span>
-          </div>
-          <button
-            onClick={() => setBulkReminderMsg(null)}
-            className="text-slate-400 hover:text-white font-bold ml-2"
-          >
-            ×
-          </button>
-        </div>
-      )}
 
       {/* Main Claymorphic Dashboard Shell Container */}
       <div className="max-w-[1700px] mx-auto bg-[#F7F9FD] border border-white/80 rounded-[36px] shadow-[0_24px_60px_rgba(110,125,160,0.12)] p-4 sm:p-6 lg:p-7 flex flex-col lg:flex-row gap-6">
