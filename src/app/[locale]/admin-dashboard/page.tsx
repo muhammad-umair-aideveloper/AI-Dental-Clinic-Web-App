@@ -118,12 +118,12 @@ export default function AdminDashboardPage() {
   const [calendarView, setCalendarView] = useState<"day" | "week">("day");
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [pickerYear, setPickerYear] = useState<number>(() => {
-    const d = new Date();
-    return d.getFullYear();
+    const parts = (new Date().toISOString().split("T")[0]).split("-");
+    return parts.length === 3 ? parseInt(parts[0], 10) : 2026;
   });
   const [pickerMonth, setPickerMonth] = useState<number>(() => {
-    const d = new Date();
-    return d.getMonth(); // 0-indexed
+    const parts = (new Date().toISOString().split("T")[0]).split("-");
+    return parts.length === 3 ? parseInt(parts[1], 10) - 1 : 9; // 9 = October (0-indexed)
   });
 
   // Patient Detail Drawer State
@@ -947,16 +947,20 @@ export default function AdminDashboardPage() {
                 
                 {/* Operatory Chairs Area (8 cols on XL) */}
                 <div className="xl:col-span-8 space-y-5">
-                  {/* Calendar Controls Bar */}
-                  <div className="bg-white rounded-[24px] p-4 border border-slate-100 shadow-[0_8px_24px_rgba(90,105,145,0.05)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
+                  {/* Calendar Controls Bar (Single Horizontal Row) */}
+                  <div className="bg-white rounded-[24px] p-4 border border-slate-100 shadow-[0_8px_24px_rgba(90,105,145,0.05)] flex flex-wrap items-center justify-between gap-3 relative z-30">
+                    {/* Left: Quick Date Pills & Custom Popover Trigger on same row */}
+                    <div className="flex items-center gap-3">
                       <div className="bg-[#EEF1F8] p-1 rounded-full flex items-center text-xs font-semibold">
                         <button
                           type="button"
-                          onClick={() => setSelectedDate(todayStr)}
+                          onClick={() => {
+                            setSelectedDate(todayStr);
+                            setShowDatePicker(false);
+                          }}
                           className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
                             selectedDate === todayStr
-                              ? "bg-[#544BB9] text-white shadow-sm"
+                              ? "bg-[#544BB9] text-white shadow-sm font-bold"
                               : "text-[#8A94A6] hover:text-[#1E2640]"
                           }`}
                         >
@@ -964,10 +968,13 @@ export default function AdminDashboardPage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => setSelectedDate(tomorrowStr)}
+                          onClick={() => {
+                            setSelectedDate(tomorrowStr);
+                            setShowDatePicker(false);
+                          }}
                           className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
                             selectedDate === tomorrowStr
-                              ? "bg-[#544BB9] text-white shadow-sm"
+                              ? "bg-[#544BB9] text-white shadow-sm font-bold"
                               : "text-[#8A94A6] hover:text-[#1E2640]"
                           }`}
                         >
@@ -975,30 +982,34 @@ export default function AdminDashboardPage() {
                         </button>
                       </div>
 
-                      {/* Custom Dark-Themed Rounded Calendar Dropdown (Pixel-perfect Image 11) */}
-                      <div className="relative">
+                      {/* Custom Dark-Themed Rounded Calendar Dropdown Popover */}
+                      <div className="relative inline-block">
                         {/* Interactive Trigger Capsule Pill */}
                         <button
                           type="button"
                           onClick={() => setShowDatePicker((prev) => !prev)}
-                          className="px-3.5 py-1.5 text-xs font-semibold rounded-full border border-slate-200/90 bg-white text-slate-800 hover:border-[#6C5CE7] hover:text-[#544BB9] shadow-xs flex items-center gap-2 cursor-pointer transition-colors"
+                          className={`px-3.5 py-1.5 text-xs font-semibold rounded-full border shadow-xs flex items-center gap-2 cursor-pointer transition-all ${
+                            showDatePicker
+                              ? "border-[#6C5CE7] bg-[#EEF1F8] text-[#544BB9] ring-2 ring-[#6C5CE7]/20"
+                              : "border-slate-200/90 bg-white text-slate-800 hover:border-[#6C5CE7] hover:text-[#544BB9]"
+                          }`}
                         >
-                          <span className="font-mono">{selectedDate}</span>
-                          <CalendarIcon className="w-3.5 h-3.5 text-slate-500" />
+                          <span className="font-mono font-bold">{selectedDate}</span>
+                          <CalendarIcon className="w-3.5 h-3.5 text-[#544BB9]" />
                         </button>
 
                         {/* Dropdown Backdrop to close on click outside */}
                         {showDatePicker && (
                           <div
-                            className="fixed inset-0 z-40"
+                            className="fixed inset-0 z-40 bg-transparent"
                             onClick={() => setShowDatePicker(false)}
                           />
                         )}
 
                         {/* Pixel-Perfect Dark Calendar Card (image_11.png Reference) */}
                         {showDatePicker && (
-                          <div className="absolute left-0 top-full mt-2 z-50 w-[320px] rounded-3xl bg-gradient-to-b from-[#141324] to-[#0A0A0F] border border-white/10 shadow-[0_24px_50px_rgba(10,10,25,0.7),0_10px_20px_rgba(108,92,231,0.15)] p-5 text-white animate-in fade-in zoom-in-95 origin-top duration-150 relative overflow-hidden font-sans">
-                            {/* Top Purple Accent Indicator Bar (Signature from image_11.png) */}
+                          <div className="absolute left-0 top-full mt-2.5 z-50 w-[320px] rounded-3xl bg-gradient-to-b from-[#141324] to-[#0A0A0F] border border-white/10 shadow-[0_24px_50px_rgba(10,10,25,0.7),0_10px_20px_rgba(108,92,231,0.2)] p-5 text-white animate-in fade-in zoom-in-95 origin-top duration-150 overflow-hidden font-sans">
+                            {/* Top Purple Accent Indicator Bar */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-1 bg-gradient-to-r from-transparent via-[#6C5CE7] to-transparent rounded-b-full shadow-[0_0_12px_#6C5CE7]" />
                             {/* Ambient Top Glow Blob */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-10 bg-[#6C5CE7]/20 blur-xl pointer-events-none rounded-full" />
@@ -1044,7 +1055,7 @@ export default function AdminDashboardPage() {
                               </button>
                             </div>
 
-                            {/* Weekday Row (MON to SUN as in image_11.png) */}
+                            {/* Weekday Row (MON to SUN) */}
                             <div className="grid grid-cols-7 gap-1 text-center mb-2.5 relative z-10">
                               {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map((day) => (
                                 <span
@@ -1092,6 +1103,7 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
 
+                    {/* Right: Status Indicators (Same Row) */}
                     <div className="flex items-center gap-3 text-[11px] font-semibold text-[#8A94A6]">
                       <span className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-[#38A169]" /> Confirmed
@@ -1106,25 +1118,25 @@ export default function AdminDashboardPage() {
                   </div>
 
                   {/* Split Chair Grid Columns */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 relative z-10">
                     
                     {/* CHAIR 1 OPERATORY COLUMN */}
                     <div className="bg-white border border-slate-100 rounded-[28px] p-5 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col">
-                      <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-slate-100">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-xl bg-[#544BB9]/10 text-[#544BB9] flex items-center justify-center font-bold text-xs">
+                      <div className="flex items-start justify-between gap-3 w-full pb-3.5 mb-3 border-b border-slate-100">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className="w-8 h-8 rounded-xl bg-[#544BB9]/10 text-[#544BB9] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
                             1
                           </div>
-                          <div>
-                            <h2 className="text-sm font-extrabold text-[#1E2640]">
+                          <div className="min-w-0">
+                            <h2 className="text-sm font-extrabold text-[#1E2640] truncate">
                               Chair 1 — Surgical &amp; Endodontics
                             </h2>
-                            <p className="text-[11px] font-semibold text-[#544BB9]">
+                            <p className="text-[11px] font-semibold text-[#544BB9] truncate">
                               Dental Implants, Single-Visit RCT
                             </p>
                           </div>
                         </div>
-                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#544BB9]/15 text-[#544BB9] font-mono">
+                        <span className="whitespace-nowrap shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-50 text-[#544BB9] font-mono">
                           {chair1Apts.length} booked
                         </span>
                       </div>
@@ -1154,21 +1166,21 @@ export default function AdminDashboardPage() {
 
                     {/* CHAIR 2 OPERATORY COLUMN */}
                     <div className="bg-white border border-slate-100 rounded-[28px] p-5 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col">
-                      <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-slate-100">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-xl bg-[#FD7289]/15 text-[#E02447] flex items-center justify-center font-bold text-xs">
+                      <div className="flex items-start justify-between gap-3 w-full pb-3.5 mb-3 border-b border-slate-100">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className="w-8 h-8 rounded-xl bg-[#FD7289]/15 text-[#E02447] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
                             2
                           </div>
-                          <div>
-                            <h2 className="text-sm font-extrabold text-[#1E2640]">
+                          <div className="min-w-0">
+                            <h2 className="text-sm font-extrabold text-[#1E2640] truncate">
                               Chair 2 — Preventive &amp; Orthodontics
                             </h2>
-                            <p className="text-[11px] font-semibold text-[#E02447]">
+                            <p className="text-[11px] font-semibold text-[#E02447] truncate">
                               Scaling, Clear Aligners, Whitening
                             </p>
                           </div>
                         </div>
-                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FD7289]/15 text-[#E02447] font-mono">
+                        <span className="whitespace-nowrap shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-50 text-[#E02447] font-mono">
                           {chair2Apts.length} booked
                         </span>
                       </div>
