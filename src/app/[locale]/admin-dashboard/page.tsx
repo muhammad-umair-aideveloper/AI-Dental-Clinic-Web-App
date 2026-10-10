@@ -744,13 +744,14 @@ export default function AdminDashboardPage() {
                   
                   <div className="flex items-center justify-between relative z-10">
                     <div>
-                      <h3 className="text-base font-bold tracking-tight">Today&apos;s Operatory Flow</h3>
-                      <p className="text-xs text-white/75">
-                        {todayApts.length} Confirmed Appointments · {todayApts.filter((a) => a.status === "completed").length} Completed
+                      <h3 className="text-lg font-extrabold text-white tracking-tight drop-shadow-xs">Today&apos;s Operatory Flow</h3>
+                      <p className="text-xs text-indigo-100 font-medium mt-0.5">
+                        <span className="font-bold text-white">{todayApts.length}</span> Confirmed Appointments · <span className="font-bold text-emerald-300">{todayApts.filter((a) => a.status === "completed").length}</span> Completed
                       </p>
                     </div>
-                    <div className="bg-white/15 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-semibold text-white border border-white/20">
-                      Live Asia/Karachi
+                    <div className="bg-white/20 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[11px] font-bold text-white border border-white/30 shadow-sm flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>Live Asia/Karachi</span>
                     </div>
                   </div>
 
@@ -760,14 +761,14 @@ export default function AdminDashboardPage() {
                       <svg className="w-full h-full overflow-visible" viewBox="0 0 500 80" fill="none">
                         <path
                           d="M0,60 C80,60 120,20 200,30 C280,40 340,10 420,35 C460,50 480,30 500,40"
-                          stroke="rgba(253, 114, 137, 0.85)"
+                          stroke="rgba(253, 114, 137, 0.95)"
                           strokeWidth="3.5"
                           strokeLinecap="round"
                         />
                         <path
                           d="M0,60 C80,60 120,20 200,30 C280,40 340,10 420,35 C460,50 480,30 500,40 L500,80 L0,80 Z"
                           fill="url(#purpleGlow)"
-                          opacity="0.3"
+                          opacity="0.35"
                         />
                         <defs>
                           <linearGradient id="purpleGlow" x1="0" y1="0" x2="0" y2="1">
@@ -778,12 +779,12 @@ export default function AdminDashboardPage() {
                         <circle cx="200" cy="30" r="6" fill="#FFFFFF" stroke="#FD7289" strokeWidth="4" />
                       </svg>
                       
-                      <div className="absolute left-[38%] top-0 -translate-y-2 bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-xl text-[10px] font-bold border border-white/30 text-white shadow-lg">
+                      <div className="absolute left-[38%] top-0 -translate-y-2 bg-white/25 backdrop-blur-md px-3 py-1 rounded-xl text-[11px] font-extrabold border border-white/40 text-white shadow-lg">
                         Peak: Chair 1 Surgery
                       </div>
                     </div>
 
-                    <div className="flex justify-between text-[10px] text-white/60 font-semibold px-2">
+                    <div className="flex justify-between text-[11px] text-indigo-100 font-bold px-2">
                       <span>11 AM</span>
                       <span>1 PM</span>
                       <span>3 PM</span>
@@ -794,18 +795,18 @@ export default function AdminDashboardPage() {
                   </div>
 
                   {/* 3-Column Pill Footer */}
-                  <div className="grid grid-cols-3 gap-3 pt-3 border-t border-white/15 relative z-10">
+                  <div className="grid grid-cols-3 gap-3 pt-3.5 border-t border-white/20 relative z-10">
                     <div>
-                      <span className="text-[10px] text-white/70 block font-medium">Chair 1 Load</span>
-                      <p className="text-lg font-black text-white">{chair1Today.length} Patients</p>
+                      <span className="text-[11px] text-indigo-200 block font-semibold">Chair 1 Load</span>
+                      <p className="text-xl font-black text-white tracking-tight">{chair1Today.length} Patients</p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-white/70 block font-medium">Chair 2 Load</span>
-                      <p className="text-lg font-black text-white">{chair2Today.length} Patients</p>
+                      <span className="text-[11px] text-indigo-200 block font-semibold">Chair 2 Load</span>
+                      <p className="text-xl font-black text-white tracking-tight">{chair2Today.length} Patients</p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-white/70 block font-medium">Autoclave Protocol</span>
-                      <p className="text-lg font-black text-[#4FD1C5]">Class-B OK</p>
+                      <span className="text-[11px] text-indigo-200 block font-semibold">Autoclave Protocol</span>
+                      <p className="text-xl font-black text-[#5EEAD4] drop-shadow-xs">Class-B OK</p>
                     </div>
                   </div>
                 </div>
@@ -814,21 +815,21 @@ export default function AdminDashboardPage() {
                 <div className="md:col-span-4 bg-gradient-to-br from-[#FD7289] via-[#FC617C] to-[#F54B68] rounded-[28px] p-6 text-white shadow-[0_18px_36px_rgba(253,114,137,0.32)] flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between">
-                      <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
+                      <div className="w-11 h-11 rounded-2xl bg-white/25 backdrop-blur-sm flex items-center justify-center text-white shadow-inner">
                         <Send className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] uppercase font-bold tracking-widest bg-white/20 px-2.5 py-1 rounded-full">
+                      <span className="text-[10px] uppercase font-extrabold tracking-widest bg-white/25 border border-white/30 text-white px-3 py-1 rounded-full">
                         Action Required
                       </span>
                     </div>
                     
                     <div className="mt-4">
-                      <h4 className="text-sm font-bold text-white/90">Tomorrow&apos;s Patients</h4>
-                      <p className="text-3xl font-extrabold tracking-tight mt-0.5">
+                      <h4 className="text-sm font-bold text-white tracking-tight">Tomorrow&apos;s Patients</h4>
+                      <p className="text-3xl lg:text-4xl font-black text-white tracking-tight mt-1 drop-shadow-xs">
                         {tomorrowPendingReminders.length} Pending
                       </p>
-                      <p className="text-xs text-white/80 mt-1">
-                        {tomorrowApts.length - tomorrowPendingReminders.length} reminder(s) already dispatched.
+                      <p className="text-xs text-rose-100 font-medium mt-1">
+                        <span className="font-bold text-white">{tomorrowApts.length - tomorrowPendingReminders.length}</span> reminder(s) already dispatched.
                       </p>
                     </div>
                   </div>
@@ -837,15 +838,15 @@ export default function AdminDashboardPage() {
                     type="button"
                     onClick={handleTriggerBulkReminders}
                     disabled={bulkReminderLoading}
-                    className="w-full bg-white hover:bg-white/95 text-[#FD7289] font-bold text-xs py-3 rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(0,0,0,0.1)] transition-all active:scale-95 cursor-pointer"
+                    className="w-full bg-white hover:bg-white/95 text-[#E02447] font-extrabold text-xs py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition-all active:scale-95 cursor-pointer mt-4"
                   >
                     {bulkReminderLoading ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     ) : (
-                      <Send className="w-3.5 h-3.5" />
+                      <Send className="w-3.5 h-3.5 text-[#E02447]" />
                     )}
-                    <span>Remind All Tomorrow</span>
-                    <ChevronRight className="w-4 h-4 ml-auto" />
+                    <span className="text-[#E02447]">Remind All Tomorrow</span>
+                    <ChevronRight className="w-4 h-4 ml-auto text-[#E02447]" />
                   </button>
                 </div>
               </div>
@@ -915,15 +916,15 @@ export default function AdminDashboardPage() {
                             1
                           </div>
                           <div>
-                            <h2 className="text-sm font-bold text-[#1E2640]">
+                            <h2 className="text-sm font-extrabold text-[#1E2640]">
                               Chair 1 — Surgical &amp; Endodontics
                             </h2>
-                            <p className="text-[11px] text-[#8A94A6]">
+                            <p className="text-[11px] font-semibold text-[#544BB9]">
                               Dental Implants, Single-Visit RCT
                             </p>
                           </div>
                         </div>
-                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#544BB9]/10 text-[#544BB9] font-mono">
+                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#544BB9]/15 text-[#544BB9] font-mono">
                           {chair1Apts.length} booked
                         </span>
                       </div>
@@ -931,8 +932,8 @@ export default function AdminDashboardPage() {
                       <div className="space-y-3 flex-1">
                         {chair1Apts.length === 0 ? (
                           <div className="h-44 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center p-4">
-                            <Clock className="w-6 h-6 text-slate-300 mb-1" />
-                            <p className="text-xs font-semibold text-slate-600">
+                            <Clock className="w-6 h-6 text-slate-400 mb-1" />
+                            <p className="text-xs font-bold text-slate-700">
                               Chair 1 is open on {selectedDate}
                             </p>
                             <button
@@ -940,7 +941,7 @@ export default function AdminDashboardPage() {
                                 setNewPatient((p) => ({ ...p, date: selectedDate, chair: "chair-1" }));
                                 setShowNewModal(true);
                               }}
-                              className="mt-2 text-[11px] text-[#544BB9] font-bold hover:underline cursor-pointer"
+                              className="mt-2 text-xs text-[#544BB9] font-extrabold hover:underline cursor-pointer"
                             >
                               + Book a surgery/RCT slot
                             </button>
@@ -955,19 +956,19 @@ export default function AdminDashboardPage() {
                     <div className="bg-white border border-slate-100 rounded-[28px] p-5 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col">
                       <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-slate-100">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-xl bg-[#FD7289]/10 text-[#FD7289] flex items-center justify-center font-bold text-xs">
+                          <div className="w-8 h-8 rounded-xl bg-[#FD7289]/15 text-[#E02447] flex items-center justify-center font-bold text-xs">
                             2
                           </div>
                           <div>
-                            <h2 className="text-sm font-bold text-[#1E2640]">
+                            <h2 className="text-sm font-extrabold text-[#1E2640]">
                               Chair 2 — Preventive &amp; Orthodontics
                             </h2>
-                            <p className="text-[11px] text-[#8A94A6]">
+                            <p className="text-[11px] font-semibold text-[#E02447]">
                               Scaling, Clear Aligners, Whitening
                             </p>
                           </div>
                         </div>
-                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FD7289]/10 text-[#FD7289] font-mono">
+                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FD7289]/15 text-[#E02447] font-mono">
                           {chair2Apts.length} booked
                         </span>
                       </div>
@@ -1015,12 +1016,12 @@ export default function AdminDashboardPage() {
 
                     <div className="space-y-3">
                       {dateAppointments.length === 0 ? (
-                        <p className="text-xs text-[#8A94A6] text-center py-4">
+                        <p className="text-xs text-slate-500 font-medium text-center py-4">
                           No patients scheduled for this date.
                         </p>
                       ) : (
                         dateAppointments.slice(0, 5).map((apt, idx) => (
-                          <div key={apt.id} className="flex items-center justify-between gap-3 p-2 rounded-xl hover:bg-[#F8F9FD] transition-colors">
+                          <div key={apt.id} className="flex items-center justify-between gap-3 p-2.5 rounded-2xl hover:bg-[#EEF1F8]/60 transition-colors border border-transparent hover:border-slate-100">
                             <div className="flex items-center gap-3 min-w-0">
                               <div
                                 className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-xs ${
@@ -1033,8 +1034,9 @@ export default function AdminDashboardPage() {
                                 <h5 className="text-xs font-bold text-[#1E2640] truncate">
                                   {apt.name}
                                 </h5>
-                                <p className="text-[10px] text-[#8A94A6] truncate">
-                                  {apt.time} · {apt.reason || "Consultation"}
+                                <p className="text-[11px] font-semibold text-slate-500 truncate flex items-center gap-1.5 mt-0.5">
+                                  <span className="font-bold text-[#544BB9] bg-[#EEF1F8] px-1.5 py-0.2 rounded-md font-mono">{apt.time}</span>
+                                  <span>{apt.reason || "Consultation"}</span>
                                 </p>
                               </div>
                             </div>
@@ -1910,16 +1912,16 @@ export default function AdminDashboardPage() {
         <div className="flex items-start justify-between gap-2">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-black font-mono text-[#544BB9] bg-[#EEF1F8] px-2.5 py-0.5 rounded-full">
+              <span className="text-xs font-black font-mono text-[#544BB9] bg-[#EEF1F8] px-2.5 py-0.5 rounded-full border border-indigo-100">
                 {apt.time}
               </span>
               <h3 className="text-xs font-bold text-[#1E2640]">{apt.name}</h3>
             </div>
-            <p className="text-[11px] font-mono text-[#8A94A6] mt-1 flex items-center gap-1">
-              <Phone className="w-3 h-3 text-[#8A94A6]" />
-              {apt.phone}
+            <p className="text-[11px] font-mono font-medium text-slate-500 mt-1 flex items-center gap-1.5">
+              <Phone className="w-3 h-3 text-slate-400" />
+              <span>{apt.phone}</span>
             </p>
-            <p className="text-xs text-[#544BB9] font-semibold mt-1">
+            <p className="text-xs text-[#544BB9] font-bold mt-1">
               {apt.reason || "General Consultation"}
             </p>
           </div>
