@@ -44,6 +44,7 @@ import {
   ArrowRight,
   ExternalLink,
   MapPin,
+  ChevronLeft,
 } from "lucide-react";
 import { AIAssistantManager } from "@/components/admin/AIAssistantManager";
 import { CLINIC_CONFIG } from "@/config/clinic";
@@ -115,6 +116,15 @@ export default function AdminDashboardPage() {
   const todayStr = useMemo(() => new Date().toISOString().split("T")[0], []);
   const [selectedDate, setSelectedDate] = useState<string>(todayStr);
   const [calendarView, setCalendarView] = useState<"day" | "week">("day");
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [pickerYear, setPickerYear] = useState<number>(() => {
+    const d = new Date();
+    return d.getFullYear();
+  });
+  const [pickerMonth, setPickerMonth] = useState<number>(() => {
+    const d = new Date();
+    return d.getMonth(); // 0-indexed
+  });
 
   // Patient Detail Drawer State
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -567,6 +577,87 @@ export default function AdminDashboardPage() {
   );
   const chair2Apts = dateAppointments.filter((a) => a.chair === "chair-2");
 
+  // Synchronize picker month & year whenever selectedDate changes
+  useEffect(() => {
+    if (selectedDate) {
+      const parts = selectedDate.split("-");
+      if (parts.length === 3) {
+        setPickerYear(parseInt(parts[0], 10));
+        setPickerMonth(parseInt(parts[1], 10) - 1);
+      }
+    }
+  }, [selectedDate]);
+
+  // Calendar Days Computation for custom Dark Picker
+  const calendarMonthDays = useMemo(() => {
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    const monthName = monthNames[pickerMonth];
+
+    // First day of current picker month
+    const firstDay = new Date(pickerYear, pickerMonth, 1);
+    // Day of week: 0 is Sun, 1 is Mon ... 6 is Sat. Reference starts on MON!
+    const dayOfWeek = firstDay.getDay(); // 0(Sun) -> 6, 1(Mon) -> 0
+    const startOffset = (dayOfWeek + 6) % 7; // Monday = 0, Sunday = 6
+
+    const totalDaysInMonth = new Date(pickerYear, pickerMonth + 1, 0).getDate();
+    const prevMonthTotalDays = new Date(pickerYear, pickerMonth, 0).getDate();
+
+    const days: Array<{
+      dayNum: number;
+      dateStr: string;
+      isCurrentMonth: boolean;
+      isSelected: boolean;
+      isToday: boolean;
+    }> = [];
+
+    // Prev month overflow days
+    for (let i = startOffset - 1; i >= 0; i--) {
+      const dNum = prevMonthTotalDays - i;
+      const prevM = pickerMonth === 0 ? 11 : pickerMonth - 1;
+      const prevY = pickerMonth === 0 ? pickerYear - 1 : pickerYear;
+      const dStr = `${prevY}-${String(prevM + 1).padStart(2, "0")}-${String(dNum).padStart(2, "0")}`;
+      days.push({
+        dayNum: dNum,
+        dateStr: dStr,
+        isCurrentMonth: false,
+        isSelected: dStr === selectedDate,
+        isToday: dStr === todayStr,
+      });
+    }
+
+    // Current month days
+    for (let d = 1; d <= totalDaysInMonth; d++) {
+      const dStr = `${pickerYear}-${String(pickerMonth + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      days.push({
+        dayNum: d,
+        dateStr: dStr,
+        isCurrentMonth: true,
+        isSelected: dStr === selectedDate,
+        isToday: dStr === todayStr,
+      });
+    }
+
+    // Trailing next month overflow days to fill rows of 7
+    const remaining = (7 - (days.length % 7)) % 7;
+    for (let n = 1; n <= remaining; n++) {
+      const nextM = pickerMonth === 11 ? 0 : pickerMonth + 1;
+      const nextY = pickerMonth === 11 ? pickerYear + 1 : pickerYear;
+      const dStr = `${nextY}-${String(nextM + 1).padStart(2, "0")}-${String(n).padStart(2, "0")}`;
+      days.push({
+        dayNum: n,
+        dateStr: dStr,
+        isCurrentMonth: false,
+        isSelected: dStr === selectedDate,
+        isToday: dStr === todayStr,
+      });
+    }
+
+    return { monthName, year: pickerYear, days };
+  }, [pickerYear, pickerMonth, selectedDate, todayStr]);
+
   // Filtered Patients
   const filteredPatients = patients.filter((p) => {
     const q = patientSearch.toLowerCase();
@@ -884,12 +975,121 @@ export default function AdminDashboardPage() {
                         </button>
                       </div>
 
-                      <input
-                        type="date"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        className="px-3 py-1.5 text-xs font-semibold rounded-full border border-slate-200 bg-white text-slate-800 outline-none shadow-xs"
-                      />
+                      {/* Custom Dark-Themed Rounded Calendar Dropdown (Pixel-perfect Image 11) */}
+                      <div className="relative">
+                        {/* Interactive Trigger Capsule Pill */}
+                        <button
+                          type="button"
+                          onClick={() => setShowDatePicker((prev) => !prev)}
+                          className="px-3.5 py-1.5 text-xs font-semibold rounded-full border border-slate-200/90 bg-white text-slate-800 hover:border-[#6C5CE7] hover:text-[#544BB9] shadow-xs flex items-center gap-2 cursor-pointer transition-colors"
+                        >
+                          <span className="font-mono">{selectedDate}</span>
+                          <CalendarIcon className="w-3.5 h-3.5 text-slate-500" />
+                        </button>
+
+                        {/* Dropdown Backdrop to close on click outside */}
+                        {showDatePicker && (
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setShowDatePicker(false)}
+                          />
+                        )}
+
+                        {/* Pixel-Perfect Dark Calendar Card (image_11.png Reference) */}
+                        {showDatePicker && (
+                          <div className="absolute left-0 top-full mt-2 z-50 w-[320px] rounded-3xl bg-gradient-to-b from-[#141324] to-[#0A0A0F] border border-white/10 shadow-[0_24px_50px_rgba(10,10,25,0.7),0_10px_20px_rgba(108,92,231,0.15)] p-5 text-white animate-in fade-in zoom-in-95 origin-top duration-150 relative overflow-hidden font-sans">
+                            {/* Top Purple Accent Indicator Bar (Signature from image_11.png) */}
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-1 bg-gradient-to-r from-transparent via-[#6C5CE7] to-transparent rounded-b-full shadow-[0_0_12px_#6C5CE7]" />
+                            {/* Ambient Top Glow Blob */}
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-10 bg-[#6C5CE7]/20 blur-xl pointer-events-none rounded-full" />
+
+                            {/* Header: Month & Navigation Arrows */}
+                            <div className="flex items-center justify-between mb-4 relative z-10 pt-1">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (pickerMonth === 0) {
+                                    setPickerMonth(11);
+                                    setPickerYear((y) => y - 1);
+                                  } else {
+                                    setPickerMonth((m) => m - 1);
+                                  }
+                                }}
+                                className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all cursor-pointer"
+                                aria-label="Previous month"
+                              >
+                                <ChevronLeft className="w-4 h-4" />
+                              </button>
+
+                              <h3 className="text-sm font-semibold tracking-wide text-neutral-100 font-sans">
+                                {calendarMonthDays.monthName} {calendarMonthDays.year}
+                              </h3>
+
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (pickerMonth === 11) {
+                                    setPickerMonth(0);
+                                    setPickerYear((y) => y + 1);
+                                  } else {
+                                    setPickerMonth((m) => m + 1);
+                                  }
+                                }}
+                                className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all cursor-pointer"
+                                aria-label="Next month"
+                              >
+                                <ChevronRight className="w-4 h-4" />
+                              </button>
+                            </div>
+
+                            {/* Weekday Row (MON to SUN as in image_11.png) */}
+                            <div className="grid grid-cols-7 gap-1 text-center mb-2.5 relative z-10">
+                              {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map((day) => (
+                                <span
+                                  key={day}
+                                  className="text-[10px] font-bold tracking-[0.05em] text-neutral-500 py-1"
+                                >
+                                  {day}
+                                </span>
+                              ))}
+                            </div>
+
+                            {/* Calendar Days 7x Grid */}
+                            <div className="grid grid-cols-7 gap-y-1.5 gap-x-1 text-center relative z-10">
+                              {calendarMonthDays.days.map((item, idx) => {
+                                const isSelected = item.isSelected;
+
+                                return (
+                                  <div
+                                    key={`${item.dateStr}-${idx}`}
+                                    className="flex items-center justify-center h-9 w-9 mx-auto"
+                                  >
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedDate(item.dateStr);
+                                        setShowDatePicker(false);
+                                      }}
+                                      className={`h-9 w-9 rounded-full flex items-center justify-center text-xs transition-all cursor-pointer ${
+                                        isSelected
+                                          ? "bg-[#6C5CE7] text-white font-bold shadow-[0_4px_16px_rgba(108,92,231,0.65)] scale-105"
+                                          : item.isCurrentMonth
+                                          ? "text-neutral-200 font-medium hover:bg-white/10 hover:text-white"
+                                          : "text-neutral-600 font-normal hover:text-neutral-400"
+                                      }`}
+                                    >
+                                      {item.dayNum}
+                                    </button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-3 text-[11px] font-semibold text-[#8A94A6]">
