@@ -14,18 +14,7 @@ export async function POST(request: Request) {
       );
     }
 
-    let user = await findUserByEmail(email);
-    if (!user && (email.toLowerCase().includes("staff") || email.toLowerCase().includes("admin"))) {
-      user = {
-        id: "usr-admin-001",
-        name: "Clinic Staff",
-        email: email.toLowerCase(),
-        phone: "03001234567",
-        passwordHash: "",
-        role: "admin",
-        created_at: new Date().toISOString(),
-      };
-    }
+    const user = await findUserByEmail(email);
 
     if (!user) {
       return NextResponse.json(
@@ -34,11 +23,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify cryptographic salted password or standard staff password
-    const isPasswordValid =
-      (user.passwordHash && verifyPassword(password, user.passwordHash)) ||
-      password === "admin123" ||
-      password === "AdminPass2026!";
+    const isPasswordValid = Boolean(user.passwordHash) && verifyPassword(password, user.passwordHash);
 
     if (!isPasswordValid) {
       return NextResponse.json(

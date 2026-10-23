@@ -161,7 +161,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 | Role | Access URL | Authentication Method |
 | :--- | :--- | :--- |
-| **Clinic Staff / Surgeon** | `/[locale]/admin/login` | Staff email & environment password (`ADMIN_INITIAL_PASSWORD`). |
+| **Clinic Staff / Surgeon** | `/[locale]/admin/login` | Staff email and password stored in the Supabase `users` table. |
 
 > **Note on Patient Accounts:** In accordance with clinical platform specifications, patients do not create accounts or manage passwords. All appointments, records, and reports are handled seamlessly via verified WhatsApp notifications and expiring signed links.
 
