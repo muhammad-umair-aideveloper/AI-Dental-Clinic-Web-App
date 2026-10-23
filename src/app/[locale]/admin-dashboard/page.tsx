@@ -1009,7 +1009,7 @@ export default function AdminDashboardPage() {
                             {/* Top Purple Accent Indicator Bar */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-1 bg-gradient-to-r from-transparent via-[#FF5C35] to-transparent rounded-b-full shadow-[0_0_12px_#FF5C35]" />
                             {/* Ambient Top Glow Blob */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-10 bg-[#6C5CE7]/20 blur-xl pointer-events-none rounded-full" />
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-10 bg-[#FF5C35]/20 blur-xl pointer-events-none rounded-full" />
 
                             {/* Header: Month & Navigation Arrows */}
                             <div className="flex items-center justify-between mb-4 relative z-10 pt-1">
@@ -1083,7 +1083,7 @@ export default function AdminDashboardPage() {
                                       }}
                                       className={`h-9 w-9 rounded-full flex items-center justify-center text-xs transition-all cursor-pointer ${
                                         isSelected
-                                          ? "bg-[#6C5CE7] text-white font-bold shadow-[0_4px_16px_rgba(108,92,231,0.65)] scale-105"
+                                          ? "bg-[#FF5C35] text-white font-bold shadow-[0_4px_16px_rgba(255,92,53,0.45)] scale-105"
                                           : item.isCurrentMonth
                                           ? "text-neutral-200 font-medium hover:bg-white/10 hover:text-white"
                                           : "text-neutral-600 font-normal hover:text-neutral-400"
