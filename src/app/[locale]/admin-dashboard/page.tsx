@@ -674,24 +674,24 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#EEF1F8] p-3 sm:p-5 lg:p-7 text-[#2D3748] font-sans antialiased selection:bg-[#544BB9] selection:text-white pb-16">
+    <div className="dashboard-finexy min-h-screen bg-[#ECEEF2] p-4 md:p-6 text-[#202124] font-sans antialiased selection:bg-[#FF5C35] selection:text-white pb-16">
 
-      {/* Main Claymorphic Dashboard Shell Container */}
-      <div className="max-w-[1700px] mx-auto bg-[#F7F9FD] border border-white/80 rounded-[36px] shadow-[0_24px_60px_rgba(110,125,160,0.12)] p-4 sm:p-6 lg:p-7 flex flex-col lg:flex-row gap-6">
+      {/* Finexy-inspired framed dashboard shell */}
+      <div className="max-w-[1700px] mx-auto bg-[#F6F7F9] border border-white rounded-[32px] shadow-xl p-4 sm:p-6 lg:p-7 flex flex-col lg:flex-row gap-6">
         
         {/* ========================================================= */}
-        {/* 1. LEFT PURPLE NAVIGATION CAPSULE (Matches Reference Image) */}
+        {/* 1. Floating navigation dock */}
         {/* ========================================================= */}
-        <aside className="lg:w-20 w-full bg-gradient-to-b from-[#544BB9] via-[#4A3FA8] to-[#3E3494] rounded-[28px] p-3.5 flex lg:flex-col flex-row items-center justify-between lg:justify-start gap-4 shadow-[0_16px_36px_rgba(84,75,185,0.32)] shrink-0">
-          {/* Brand Squircle Icon */}
-          <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-inner font-bold text-lg">
+        <aside className="lg:w-[62px] w-full bg-white rounded-full py-3 lg:py-5 px-2.5 flex lg:flex-col flex-row items-center justify-between lg:justify-start gap-4 lg:gap-5 shadow-sm border border-neutral-100 shrink-0">
+          {/* Brand mark */}
+          <div className="w-11 h-11 rounded-full bg-[#FF5C35] flex items-center justify-center text-white shadow-sm font-bold text-lg">
             🦷
           </div>
 
-          <div className="h-[1px] w-8 bg-white/15 my-1 hidden lg:block" />
+          <div className="h-[1px] w-7 bg-neutral-100 my-1 hidden lg:block" />
 
           {/* Navigation Tabs Icons */}
-          <nav className="flex lg:flex-col flex-row items-center gap-3 w-full justify-center">
+          <nav className="flex lg:flex-col flex-row items-center gap-3 lg:gap-5 w-full justify-center">
             {[
               { id: "calendar", label: "Chair Calendar", icon: CalendarIcon, count: todayApts.length },
               { id: "patients", label: "Patient Records & X-Rays", icon: User, count: patients.length },
@@ -708,16 +708,16 @@ export default function AdminDashboardPage() {
                   title={tab.label}
                   className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 relative group cursor-pointer ${
                     isActive
-                      ? "bg-white text-[#544BB9] shadow-[0_8px_20px_rgba(0,0,0,0.15)] scale-105 font-bold"
-                      : "text-white/70 hover:text-white hover:bg-white/10"
+                      ? "bg-[#202124] text-white shadow-sm scale-105 font-bold"
+                        : "text-[#9CA3AF] hover:text-[#202124] hover:bg-[#F6F7F9]"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
                   {isActive && (
-                    <span className="absolute -left-1 w-1.5 h-6 bg-[#FD7289] rounded-r-full hidden lg:block" />
+                    <span className="absolute -left-1 w-1.5 h-6 bg-[#FF5C35] rounded-r-full hidden lg:block" />
                   )}
                   {tab.count !== undefined && tab.count > 0 && !isActive && (
-                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#FD7289]" />
+                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#FF5C35]" />
                   )}
                 </button>
               );
@@ -729,7 +729,7 @@ export default function AdminDashboardPage() {
             <button
               onClick={handleLogout}
               title="Sign Out"
-              className="w-12 h-12 rounded-2xl text-white/60 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all cursor-pointer"
+              className="w-12 h-12 rounded-full text-[#9CA3AF] hover:text-[#202124] hover:bg-[#F6F7F9] flex items-center justify-center transition-all cursor-pointer"
             >
               <LogOut className="w-5 h-5" />
             </button>
@@ -745,18 +745,18 @@ export default function AdminDashboardPage() {
           <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold tracking-wider uppercase text-[#8A94A6]">
+                <span className="text-[11px] font-bold tracking-wider uppercase text-[#9CA3AF]">
                   Primary Dashboard
                 </span>
-                <span className="text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] font-mono uppercase bg-[#E8F7EF] text-[#25804B] px-2 py-0.5 rounded-full font-bold">
                   Live
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1E2640] tracking-tight mt-0.5">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#202124] tracking-tight mt-0.5">
                 Lahore Dental Clinic Console
               </h1>
               <p className="text-xs text-[#8A94A6] font-medium flex items-center gap-1.5 mt-0.5">
-                <MapPin className="w-3.5 h-3.5 text-[#544BB9]" />
+                <MapPin className="w-3.5 h-3.5 text-[#FF5C35]" />
                 PMDC Registered • Gulberg III, Lahore • Open Now (11:00 AM – 9:00 PM)
               </p>
             </div>
@@ -765,13 +765,13 @@ export default function AdminDashboardPage() {
             <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
               {/* Search Pill */}
               <div className="relative flex-1 sm:w-60">
-                <Search className="w-4 h-4 text-[#8A94A6] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-[#9CA3AF] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Search patient, phone..."
                   value={patientSearch}
                   onChange={(e) => setPatientSearch(e.target.value)}
-                  className="w-full bg-white border border-slate-200/80 rounded-full pl-9 pr-4 py-2 text-xs font-medium text-[#1E2640] placeholder-[#8A94A6] focus:outline-none focus:ring-2 focus:ring-[#544BB9]/20 shadow-sm"
+                  className="w-full bg-white border border-neutral-200 rounded-full pl-9 pr-4 py-2 text-xs font-medium text-[#202124] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#FF5C35]/20 shadow-sm"
                 />
               </div>
 
@@ -780,7 +780,7 @@ export default function AdminDashboardPage() {
                 type="button"
                 onClick={handleTriggerBulkReminders}
                 disabled={bulkReminderLoading}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-full flex items-center gap-1.5 shadow-[0_6px_16px_rgba(16,185,129,0.25)] transition-transform active:scale-95 cursor-pointer shrink-0"
+                className="bg-[#202124] hover:bg-[#363636] text-white text-xs font-semibold px-4 py-2.5 rounded-full flex items-center gap-1.5 shadow-sm transition-transform active:scale-95 cursor-pointer shrink-0"
               >
                 {bulkReminderLoading ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -794,7 +794,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setShowNewModal(true)}
-                className="bg-[#544BB9] hover:bg-[#463CA3] text-white text-xs font-semibold px-4 py-2.5 rounded-full flex items-center gap-1.5 shadow-[0_8px_20px_rgba(84,75,185,0.25)] transition-transform active:scale-95 cursor-pointer shrink-0"
+                className="bg-[#FF5C35] hover:bg-[#E94C29] text-white text-xs font-semibold px-4 py-2.5 rounded-full flex items-center gap-1.5 shadow-sm transition-transform active:scale-95 cursor-pointer shrink-0"
               >
                 <PlusCircle className="w-3.5 h-3.5" />
                 <span>+ Walk-In</span>
@@ -802,8 +802,8 @@ export default function AdminDashboardPage() {
 
               {/* Doctor Avatar Pill */}
               <div className="flex items-center gap-2 pl-1 border-l border-slate-200">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#544BB9] to-[#FD7289] p-0.5 shrink-0 shadow-sm">
-                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center font-bold text-xs text-[#544BB9]">
+                <div className="w-9 h-9 rounded-full bg-[#FF5C35] p-0.5 shrink-0 shadow-sm">
+                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center font-bold text-xs text-[#202124]">
                     ST
                   </div>
                 </div>
@@ -827,13 +827,13 @@ export default function AdminDashboardPage() {
               {/* HERO STATS ROW (Matching Image 1's Signature Cards) */}
               <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
                 
-                {/* Card A: Signature Deep Purple Overview Widget (7 cols) */}
-                <div className="md:col-span-8 bg-gradient-to-br from-[#544BB9] via-[#493CA6] to-[#3A2D94] rounded-[28px] p-6 text-white shadow-[0_18px_36px_rgba(84,75,185,0.32)] relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+                {/* Card A: Operatory overview */}
+                <div className="md:col-span-8 bg-[#202124] rounded-[28px] p-6 text-white shadow-[0_18px_36px_rgba(32,33,36,0.18)] relative overflow-hidden flex flex-col justify-between min-h-[220px]">
                   
                   <div className="flex items-center justify-between relative z-10">
                     <div>
                       <h3 className="text-lg font-extrabold text-white tracking-tight drop-shadow-xs">Today&apos;s Operatory Flow</h3>
-                      <p className="text-xs text-indigo-100 font-medium mt-0.5">
+                      <p className="text-xs text-neutral-300 font-medium mt-0.5">
                         <span className="font-bold text-white">{todayApts.length}</span> Confirmed Appointments · <span className="font-bold text-emerald-300">{todayApts.filter((a) => a.status === "completed").length}</span> Completed
                       </p>
                     </div>
@@ -849,30 +849,30 @@ export default function AdminDashboardPage() {
                       <svg className="w-full h-full overflow-visible" viewBox="0 0 500 80" fill="none">
                         <path
                           d="M0,60 C80,60 120,20 200,30 C280,40 340,10 420,35 C460,50 480,30 500,40"
-                          stroke="rgba(253, 114, 137, 0.95)"
+                          stroke="#FF5C35"
                           strokeWidth="3.5"
                           strokeLinecap="round"
                         />
                         <path
                           d="M0,60 C80,60 120,20 200,30 C280,40 340,10 420,35 C460,50 480,30 500,40 L500,80 L0,80 Z"
-                          fill="url(#purpleGlow)"
+                          fill="url(#orangeGlow)"
                           opacity="0.35"
                         />
                         <defs>
-                          <linearGradient id="purpleGlow" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#FD7289" />
-                            <stop offset="100%" stopColor="#544BB9" stopOpacity="0" />
+                          <linearGradient id="orangeGlow" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#FF5C35" />
+                              <stop offset="100%" stopColor="#202124" stopOpacity="0" />
                           </linearGradient>
                         </defs>
-                        <circle cx="200" cy="30" r="6" fill="#FFFFFF" stroke="#FD7289" strokeWidth="4" />
+                        <circle cx="200" cy="30" r="6" fill="#FFFFFF" stroke="#FF5C35" strokeWidth="4" />
                       </svg>
                       
-                      <div className="absolute left-[38%] top-0 -translate-y-2 bg-white/25 backdrop-blur-md px-3 py-1 rounded-xl text-[11px] font-extrabold border border-white/40 text-white shadow-lg">
+                      <div className="absolute left-[38%] top-0 -translate-y-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-xl text-[11px] font-extrabold border border-white/20 text-white shadow-lg">
                         Peak: Chair 1 Surgery
                       </div>
                     </div>
 
-                    <div className="flex justify-between text-[11px] text-indigo-100 font-bold px-2">
+                    <div className="flex justify-between text-[11px] text-neutral-300 font-bold px-2">
                       <span>11 AM</span>
                       <span>1 PM</span>
                       <span>3 PM</span>
@@ -885,22 +885,22 @@ export default function AdminDashboardPage() {
                   {/* 3-Column Pill Footer */}
                   <div className="grid grid-cols-3 gap-3 pt-3.5 border-t border-white/20 relative z-10">
                     <div>
-                      <span className="text-[11px] text-indigo-200 block font-semibold">Chair 1 Load</span>
+                      <span className="text-[11px] text-neutral-400 block font-semibold">Chair 1 Load</span>
                       <p className="text-xl font-black text-white tracking-tight">{chair1Today.length} Patients</p>
                     </div>
                     <div>
-                      <span className="text-[11px] text-indigo-200 block font-semibold">Chair 2 Load</span>
+                      <span className="text-[11px] text-neutral-400 block font-semibold">Chair 2 Load</span>
                       <p className="text-xl font-black text-white tracking-tight">{chair2Today.length} Patients</p>
                     </div>
                     <div>
-                      <span className="text-[11px] text-indigo-200 block font-semibold">Autoclave Protocol</span>
-                      <p className="text-xl font-black text-[#5EEAD4] drop-shadow-xs">Class-B OK</p>
+                      <span className="text-[11px] text-neutral-400 block font-semibold">Autoclave Protocol</span>
+                      <p className="text-xl font-black text-[#FF8B70] drop-shadow-xs">Class-B OK</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Card B: Signature Coral-Rose Highlight Widget (4 cols) */}
-                <div className="md:col-span-4 bg-gradient-to-br from-[#FD7289] via-[#FC617C] to-[#F54B68] rounded-[28px] p-6 text-white shadow-[0_18px_36px_rgba(253,114,137,0.32)] flex flex-col justify-between">
+                {/* Card B: Reminder action */}
+                <div className="md:col-span-4 bg-[#FF5C35] rounded-[28px] p-6 text-white shadow-[0_18px_36px_rgba(255,92,53,0.26)] flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between">
                       <div className="w-11 h-11 rounded-2xl bg-white/25 backdrop-blur-sm flex items-center justify-center text-white shadow-inner">
@@ -916,7 +916,7 @@ export default function AdminDashboardPage() {
                       <p className="text-3xl lg:text-4xl font-black text-white tracking-tight mt-1 drop-shadow-xs">
                         {tomorrowPendingReminders.length} Pending
                       </p>
-                      <p className="text-xs text-rose-100 font-medium mt-1">
+                      <p className="text-xs text-orange-100 font-medium mt-1">
                         <span className="font-bold text-white">{tomorrowApts.length - tomorrowPendingReminders.length}</span> reminder(s) already dispatched.
                       </p>
                     </div>
@@ -926,15 +926,15 @@ export default function AdminDashboardPage() {
                     type="button"
                     onClick={handleTriggerBulkReminders}
                     disabled={bulkReminderLoading}
-                    className="w-full bg-white hover:bg-white/95 text-[#E02447] font-extrabold text-xs py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition-all active:scale-95 cursor-pointer mt-4"
+                    className="w-full bg-white hover:bg-orange-50 text-[#202124] font-extrabold text-xs py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition-all active:scale-95 cursor-pointer mt-4"
                   >
                     {bulkReminderLoading ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     ) : (
-                      <Send className="w-3.5 h-3.5 text-[#E02447]" />
+                      <Send className="w-3.5 h-3.5 text-[#FF5C35]" />
                     )}
-                    <span className="text-[#E02447]">Remind All Tomorrow</span>
-                    <ChevronRight className="w-4 h-4 ml-auto text-[#E02447]" />
+                    <span className="text-[#202124]">Remind All Tomorrow</span>
+                    <ChevronRight className="w-4 h-4 ml-auto text-[#FF5C35]" />
                   </button>
                 </div>
               </div>
@@ -945,7 +945,7 @@ export default function AdminDashboardPage() {
                 {/* Operatory Chairs Area (8 cols on XL) */}
                 <div className="xl:col-span-8 space-y-5">
                   {/* Calendar Controls Bar (Single Horizontal Row) */}
-                  <div className="bg-white rounded-[24px] p-4 border border-slate-100 shadow-[0_8px_24px_rgba(90,105,145,0.05)] flex flex-wrap items-center justify-between gap-3 relative z-30">
+                  <div className="bg-white rounded-[24px] p-4 border border-neutral-100 shadow-sm flex flex-wrap items-center justify-between gap-3 relative z-30">
                     {/* Left: Quick Date Pills & Custom Popover Trigger on same row */}
                     <div className="flex items-center gap-3">
                       <div className="bg-[#EEF1F8] p-1 rounded-full flex items-center text-xs font-semibold">
@@ -957,8 +957,8 @@ export default function AdminDashboardPage() {
                           }}
                           className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
                             selectedDate === todayStr
-                              ? "bg-[#544BB9] text-white shadow-sm font-bold"
-                              : "text-[#8A94A6] hover:text-[#1E2640]"
+                              ? "bg-[#202124] text-white shadow-sm font-bold"
+                              : "text-[#9CA3AF] hover:text-[#202124]"
                           }`}
                         >
                           Today
@@ -971,8 +971,8 @@ export default function AdminDashboardPage() {
                           }}
                           className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
                             selectedDate === tomorrowStr
-                              ? "bg-[#544BB9] text-white shadow-sm font-bold"
-                              : "text-[#8A94A6] hover:text-[#1E2640]"
+                              ? "bg-[#202124] text-white shadow-sm font-bold"
+                              : "text-[#9CA3AF] hover:text-[#202124]"
                           }`}
                         >
                           Tomorrow
