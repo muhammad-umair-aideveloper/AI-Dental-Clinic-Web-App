@@ -201,7 +201,6 @@ AI-Dental-Clinic-Web-App/
 │   │   └── layout.tsx           # Pass-through root layout
 │   ├── components/
 │   │   ├── auth/
-│   │   │   ├── AuthButton.tsx   # Sign In / Sign Up modal & user avatar controls
 │   │   │   └── AuthProvider.tsx # Global authentication context & state
 │   │   ├── booking/
 │   │   │   └── BookingModal.tsx # Interactive date & time slot booking modal
@@ -215,10 +214,7 @@ AI-Dental-Clinic-Web-App/
 │   │   └── sections/
 │   │       ├── HeroSection.tsx
 │   │       ├── ServicesSection.tsx
-│   │       ├── WhyChooseUsSection.tsx
 │   │       ├── DoctorSection.tsx
-│   │       ├── GallerySection.tsx
-│   │       ├── TestimonialsSection.tsx
 │   │       └── ContactSection.tsx
 │   ├── i18n/
 │   │   ├── request.ts           # next-intl server request config
