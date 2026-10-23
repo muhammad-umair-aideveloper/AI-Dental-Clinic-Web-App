@@ -46,6 +46,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { CLINIC_CONFIG } from "@/config/clinic";
+import { SourceBadge } from "@/components/admin/SourceBadge";
 
 interface Appointment {
   id: string;
@@ -59,6 +60,7 @@ interface Appointment {
   whatsapp_reminder_sent?: boolean;
   reminder_sent_at?: string;
   language?: string;
+  source?: "form" | "chatbot";
   created_at?: string;
 }
 
@@ -2106,6 +2108,7 @@ export default function AdminDashboardPage() {
                 {apt.time}
               </span>
               <h3 className="text-xs font-bold text-[#1E2640]">{apt.name}</h3>
+              <SourceBadge source={apt.source} />
             </div>
             <p className="text-[11px] font-mono font-medium text-slate-500 mt-1 flex items-center gap-1.5">
               <Phone className="w-3 h-3 text-slate-400" />
@@ -2179,12 +2182,24 @@ export default function AdminDashboardPage() {
               </button>
             )}
 
+            {/* Cancel Appointment */}
+            {isConfirmed && (
+              <button
+                type="button"
+                onClick={() => handleStatusChange(apt.id, "cancelled")}
+                className="p-1.5 text-rose-400 hover:bg-rose-50 rounded-full cursor-pointer transition-colors"
+                title="Cancel Appointment"
+              >
+                <XCircle className="w-4 h-4" />
+              </button>
+            )}
+
             {/* Mark No-Show */}
             {!isNoShow && (
               <button
                 type="button"
                 onClick={() => handleStatusChange(apt.id, "no-show")}
-                className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-full cursor-pointer transition-colors"
+                className="p-1.5 text-slate-400 hover:bg-slate-50 rounded-full cursor-pointer transition-colors"
                 title="Mark No-Show (Auto-increments strike counter)"
               >
                 <XCircle className="w-4 h-4" />

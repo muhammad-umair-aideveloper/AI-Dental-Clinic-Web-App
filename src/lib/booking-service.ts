@@ -1,5 +1,6 @@
 import { supabase, AppointmentRecord, inferChair } from "./supabase";
 import { checkSlotAvailability, CLINIC_DAILY_SLOTS } from "./calendar";
+import { CLINIC_CLOSED_DATES } from "@/config/booking";
 
 const globalStore = globalThis as unknown as {
   __lahoreDentalAppointments?: AppointmentRecord[];
@@ -148,6 +149,15 @@ export async function bookAppointmentService(input: BookingInput): Promise<Booki
         success: false,
         status: 400,
         error: "Appointment date cannot be in the past.",
+      };
+    }
+
+    // Closed date check
+    if (CLINIC_CLOSED_DATES.includes(date)) {
+      return {
+        success: false,
+        status: 400,
+        error: `The clinic is closed on ${date}. Please choose another date.`,
       };
     }
 

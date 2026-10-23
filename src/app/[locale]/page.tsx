@@ -10,6 +10,7 @@ import { ContactSection } from "@/components/sections/ContactSection";
 import { Footer } from "@/components/layout/Footer";
 import { MobileStickyBar } from "@/components/layout/MobileStickyBar";
 import { BookingModal } from "@/components/booking/BookingModal";
+import { GeminiChatWidget } from "@/components/chat/GeminiChatWidget";
 
 export default function HomePage() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -60,6 +61,9 @@ export default function HomePage() {
         onClose={() => setIsBookingModalOpen(false)}
         preselectedService={selectedService}
       />
+
+      {/* 6. Gemini AI Chat Widget (bottom-right, z-49) */}
+      <GeminiChatWidget />
     </div>
   );
 }
