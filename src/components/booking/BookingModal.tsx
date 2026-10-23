@@ -181,7 +181,15 @@ export function BookingModal({
       const data = await res.json();
 
       if (!res.ok) {
-        setErrorMessage(data.error || "That slot was just booked. Please pick another available time.");
+        if (data.alternativeSlots && data.alternativeSlots.length > 0) {
+          setErrorMessage(
+            `${data.error || (isUrdu ? "یہ وقت پہلے سے بک ہے۔" : "Selected time slot is already booked.")} ${
+              isUrdu ? "دستیاب متبادل اوقات:" : "Alternative slots:"
+            } ${data.alternativeSlots.join(", ")}`
+          );
+        } else {
+          setErrorMessage(data.error || "That slot was just booked. Please pick another available time.");
+        }
       } else {
         setConfirmedBooking(data.appointment);
       }

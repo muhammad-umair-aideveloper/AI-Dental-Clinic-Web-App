@@ -11,6 +11,7 @@ export interface AppointmentRecord {
   chair?: "chair-1" | "chair-2"; // Chair 1: Root Canal / Implants; Chair 2: Scaling / Aligners
   whatsapp_reminder_sent?: boolean;
   reminder_sent_at?: string;
+  source?: "form" | "chatbot";
   language?: string;
   created_at?: string;
 }

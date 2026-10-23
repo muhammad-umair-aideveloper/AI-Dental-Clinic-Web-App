@@ -8,6 +8,7 @@ import {
   sendEmailConfirmation,
   sendWhatsAppConfirmation,
 } from "@/lib/notifications";
+import { bookAppointmentService } from "@/lib/booking-service";
 
 export async function GET(req: Request) {
   try {
@@ -32,43 +33,29 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, phone, date, time, reason, language = "en" } = body;
 
-    if (!name || !phone || !date || !time) {
-      return Response.json(
-        { error: "Name, phone, date, and time are required." },
-        { status: 400 }
-      );
-    }
-
-    // Check slot availability
-    const availability = await checkSlotAvailability(date, time);
-    if (!availability.isAvailable) {
-      return Response.json(
-        {
-          error: "Selected time slot is already booked.",
-          alternativeSlots: availability.alternativeSlots,
-        },
-        { status: 409 }
-      );
-    }
-
-    // Save appointment
-    const result = await insertAppointment({
-      name,
-      phone,
-      date,
-      time,
-      reason: reason || "General Checkup & Consultation",
-      language,
-      status: "confirmed",
+    const result = await bookAppointmentService({
+      name: body.name || body.client_name,
+      phone: body.phone,
+      date: body.date,
+      time: body.time || body.time_slot,
+      reason: body.reason,
+      source: "form",
+      language: body.language || "en",
     });
 
-    if (!result.success || !result.data) {
-      return Response.json({ error: result.error || "Booking failed" }, { status: 500 });
+    if (!result.success || !result.appointment) {
+      return Response.json(
+        {
+          error: result.error || "Booking failed",
+          alternativeSlots: result.alternativeSlots || [],
+        },
+        { status: result.status }
+      );
     }
 
     // Trigger calendar event and notifications in parallel
+    const { name, phone, date, time, reason, language } = result.appointment;
     Promise.allSettled([
       createCalendarEvent({ name, phone, date, time, reason }),
       sendWhatsAppConfirmation({ name, phone, date, time, reason, language }),
@@ -78,7 +65,7 @@ export async function POST(req: Request) {
     return Response.json(
       {
         success: true,
-        appointment: result.data,
+        appointment: result.appointment,
         message: "Appointment confirmed successfully!",
       },
       { status: 201 }
