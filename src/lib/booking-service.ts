@@ -220,7 +220,8 @@ export async function bookAppointmentService(input: BookingInput): Promise<Booki
     };
 
     if (supabase) {
-      // NOTE: `chair` column is omitted from DB insert payload as schema.sql lacks it
+      // Keep inserts compatible with the base appointments schema; migration columns
+      // use their database defaults when available.
       const { data: inserted, error: dbError } = await supabase
         .from("appointments")
         .insert([
@@ -232,8 +233,6 @@ export async function bookAppointmentService(input: BookingInput): Promise<Booki
             reason: newRecord.reason,
             status: "confirmed",
             language: newRecord.language,
-            source: newRecord.source,
-            reminder_sent: false,
           },
         ])
         .select()
