@@ -987,12 +987,12 @@ export default function AdminDashboardPage() {
                           onClick={() => setShowDatePicker((prev) => !prev)}
                           className={`px-3.5 py-1.5 text-xs font-semibold rounded-full border shadow-xs flex items-center gap-2 cursor-pointer transition-all ${
                             showDatePicker
-                              ? "border-[#6C5CE7] bg-[#EEF1F8] text-[#544BB9] ring-2 ring-[#6C5CE7]/20"
-                              : "border-slate-200/90 bg-white text-slate-800 hover:border-[#6C5CE7] hover:text-[#544BB9]"
+                              ? "border-[#FF5C35] bg-orange-50 text-[#202124] ring-2 ring-[#FF5C35]/20"
+                              : "border-slate-200/90 bg-white text-slate-800 hover:border-[#FF5C35] hover:text-[#202124]"
                           }`}
                         >
                           <span className="font-mono font-bold">{selectedDate}</span>
-                          <CalendarIcon className="w-3.5 h-3.5 text-[#544BB9]" />
+                          <CalendarIcon className="w-3.5 h-3.5 text-[#FF5C35]" />
                         </button>
 
                         {/* Dropdown Backdrop to close on click outside */}
@@ -1007,7 +1007,7 @@ export default function AdminDashboardPage() {
                         {showDatePicker && (
                           <div className="absolute left-0 top-full mt-2.5 z-50 w-[320px] rounded-3xl bg-gradient-to-b from-[#141324] to-[#0A0A0F] border border-white/10 shadow-[0_24px_50px_rgba(10,10,25,0.7),0_10px_20px_rgba(108,92,231,0.2)] p-5 text-white animate-in fade-in zoom-in-95 origin-top duration-150 overflow-hidden font-sans">
                             {/* Top Purple Accent Indicator Bar */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-1 bg-gradient-to-r from-transparent via-[#6C5CE7] to-transparent rounded-b-full shadow-[0_0_12px_#6C5CE7]" />
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-1 bg-gradient-to-r from-transparent via-[#FF5C35] to-transparent rounded-b-full shadow-[0_0_12px_#FF5C35]" />
                             {/* Ambient Top Glow Blob */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-10 bg-[#6C5CE7]/20 blur-xl pointer-events-none rounded-full" />
 
@@ -1106,7 +1106,7 @@ export default function AdminDashboardPage() {
                         <span className="w-2 h-2 rounded-full bg-[#38A169]" /> Confirmed
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-[#544BB9]" /> Completed
+                        <span className="w-2 h-2 rounded-full bg-[#202124]" /> Completed
                       </span>
                       <span className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-[#E53E3E]" /> No-Show
@@ -1121,19 +1121,19 @@ export default function AdminDashboardPage() {
                     <div className="bg-white border border-slate-100 rounded-[28px] p-5 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col">
                       <div className="flex items-start justify-between gap-3 w-full pb-3.5 mb-3 border-b border-slate-100">
                         <div className="flex items-start gap-3 min-w-0">
-                          <div className="w-8 h-8 rounded-xl bg-[#544BB9]/10 text-[#544BB9] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                          <div className="w-8 h-8 rounded-xl bg-neutral-100 text-[#202124] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
                             1
                           </div>
                           <div className="min-w-0">
                             <h2 className="text-sm font-extrabold text-[#1E2640] truncate">
                               Chair 1 — Surgical &amp; Endodontics
                             </h2>
-                            <p className="text-[11px] font-semibold text-[#544BB9] truncate">
+                            <p className="text-[11px] font-semibold text-[#202124] truncate">
                               Dental Implants, Single-Visit RCT
                             </p>
                           </div>
                         </div>
-                        <span className="whitespace-nowrap shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-50 text-[#544BB9] font-mono">
+                        <span className="whitespace-nowrap shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full bg-neutral-100 text-[#202124] font-mono">
                           {chair1Apts.length} booked
                         </span>
                       </div>
@@ -1150,7 +1150,7 @@ export default function AdminDashboardPage() {
                                 setNewPatient((p) => ({ ...p, date: selectedDate, chair: "chair-1" }));
                                 setShowNewModal(true);
                               }}
-                              className="mt-2 text-xs text-[#544BB9] font-extrabold hover:underline cursor-pointer"
+                              className="mt-2 text-xs text-[#FF5C35] font-extrabold hover:underline cursor-pointer"
                             >
                               + Book a surgery/RCT slot
                             </button>
@@ -1165,19 +1165,19 @@ export default function AdminDashboardPage() {
                     <div className="bg-white border border-slate-100 rounded-[28px] p-5 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col">
                       <div className="flex items-start justify-between gap-3 w-full pb-3.5 mb-3 border-b border-slate-100">
                         <div className="flex items-start gap-3 min-w-0">
-                          <div className="w-8 h-8 rounded-xl bg-[#FD7289]/15 text-[#E02447] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                          <div className="w-8 h-8 rounded-xl bg-orange-50 text-[#FF5C35] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
                             2
                           </div>
                           <div className="min-w-0">
                             <h2 className="text-sm font-extrabold text-[#1E2640] truncate">
                               Chair 2 — Preventive &amp; Orthodontics
                             </h2>
-                            <p className="text-[11px] font-semibold text-[#E02447] truncate">
+                            <p className="text-[11px] font-semibold text-[#FF5C35] truncate">
                               Scaling, Clear Aligners, Whitening
                             </p>
                           </div>
                         </div>
-                        <span className="whitespace-nowrap shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-50 text-[#E02447] font-mono">
+                        <span className="whitespace-nowrap shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full bg-orange-50 text-[#FF5C35] font-mono">
                           {chair2Apts.length} booked
                         </span>
                       </div>
@@ -1194,7 +1194,7 @@ export default function AdminDashboardPage() {
                                 setNewPatient((p) => ({ ...p, date: selectedDate, chair: "chair-2" }));
                                 setShowNewModal(true);
                               }}
-                              className="mt-2 text-[11px] text-[#FD7289] font-bold hover:underline cursor-pointer"
+                              className="mt-2 text-[11px] text-[#FF5C35] font-bold hover:underline cursor-pointer"
                             >
                               + Book a scaling/aligner slot
                             </button>
@@ -1215,10 +1215,10 @@ export default function AdminDashboardPage() {
                   <div className="bg-white rounded-[28px] p-5 border border-slate-100 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col gap-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-[#544BB9]" />
+                        <User className="w-4 h-4 text-[#FF5C35]" />
                         <h3 className="text-sm font-bold text-[#1E2640]">Patient Queue</h3>
                       </div>
-                      <span className="text-[11px] font-semibold text-[#544BB9] font-mono">
+                      <span className="text-[11px] font-semibold text-[#202124] font-mono">
                         {dateAppointments.length} Active
                       </span>
                     </div>
@@ -1234,7 +1234,7 @@ export default function AdminDashboardPage() {
                             <div className="flex items-center gap-3 min-w-0">
                               <div
                                 className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-xs ${
-                                  idx % 2 === 0 ? "bg-[#544BB9]" : "bg-[#FD7289]"
+                                  idx % 2 === 0 ? "bg-[#202124]" : "bg-[#FF5C35]"
                                 }`}
                               >
                                 {apt.name.charAt(0)}
@@ -1244,7 +1244,7 @@ export default function AdminDashboardPage() {
                                   {apt.name}
                                 </h5>
                                 <p className="text-[11px] font-semibold text-slate-500 truncate flex items-center gap-1.5 mt-0.5">
-                                  <span className="font-bold text-[#544BB9] bg-[#EEF1F8] px-1.5 py-0.2 rounded-md font-mono">{apt.time}</span>
+                                  <span className="font-bold text-[#202124] bg-neutral-100 px-1.5 py-0.2 rounded-md font-mono">{apt.time}</span>
                                   <span>{apt.reason || "Consultation"}</span>
                                 </p>
                               </div>
@@ -1254,7 +1254,7 @@ export default function AdminDashboardPage() {
                               type="button"
                               onClick={() => handleSendReminder(apt)}
                               title="Send WhatsApp Reminder"
-                              className="w-8 h-8 rounded-full bg-[#EEF1F8] hover:bg-[#544BB9] text-[#544BB9] hover:text-white flex items-center justify-center transition-all shrink-0 cursor-pointer"
+                              className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-[#FF5C35] text-[#202124] hover:text-white flex items-center justify-center transition-all shrink-0 cursor-pointer"
                             >
                               <MessageCircle className="w-3.5 h-3.5" />
                             </button>
@@ -1268,7 +1268,7 @@ export default function AdminDashboardPage() {
                   <div className="bg-white rounded-[28px] p-5 border border-slate-100 shadow-[0_12px_28px_rgba(90,105,145,0.06)] flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-[#FD7289]" />
+                        <MapPin className="w-4 h-4 text-[#FF5C35]" />
                         <h3 className="text-sm font-bold text-[#1E2640]">Gulberg III Clinic</h3>
                       </div>
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
@@ -1279,11 +1279,11 @@ export default function AdminDashboardPage() {
                     <div className="relative h-28 rounded-2xl bg-gradient-to-br from-[#E8ECF5] to-[#DFE5F2] overflow-hidden border border-slate-200/60 p-3 flex flex-col justify-between">
                       <div className="flex items-center justify-between text-[10px] font-semibold text-[#8A94A6]">
                         <span>Plaza 42-B, Main Boulevard</span>
-                        <span className="text-[#544BB9] font-bold">Valet: Free</span>
+                        <span className="text-[#FF5C35] font-bold">Valet: Free</span>
                       </div>
 
                       <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md p-2 rounded-xl border border-white shadow-sm">
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#FD7289] animate-ping" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#FF5C35] animate-ping" />
                         <span className="text-[10px] font-bold text-[#1E2640]">
                           Lahore Dental Suites
                         </span>
@@ -2098,13 +2098,13 @@ export default function AdminDashboardPage() {
             ? "bg-rose-50/60 border-rose-200"
             : isCompleted
             ? "bg-slate-50 border-slate-200 opacity-80"
-            : "bg-white border-slate-100 shadow-[0_4px_16px_rgba(90,105,145,0.04)] hover:shadow-[0_8px_24px_rgba(90,105,145,0.08)] hover:border-[#544BB9]/30"
+            : "bg-white border-slate-100 shadow-[0_4px_16px_rgba(90,105,145,0.04)] hover:shadow-[0_8px_24px_rgba(90,105,145,0.08)] hover:border-[#FF5C35]/30"
         }`}
       >
         <div className="flex items-start justify-between gap-2">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-black font-mono text-[#544BB9] bg-[#EEF1F8] px-2.5 py-0.5 rounded-full border border-indigo-100">
+              <span className="text-xs font-black font-mono text-[#202124] bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200">
                 {apt.time}
               </span>
               <h3 className="text-xs font-bold text-[#1E2640]">{apt.name}</h3>
@@ -2114,7 +2114,7 @@ export default function AdminDashboardPage() {
               <Phone className="w-3 h-3 text-slate-400" />
               <span>{apt.phone}</span>
             </p>
-            <p className="text-xs text-[#544BB9] font-bold mt-1">
+            <p className="text-xs text-[#FF5C35] font-bold mt-1">
               {apt.reason || "General Consultation"}
             </p>
           </div>
@@ -2125,7 +2125,7 @@ export default function AdminDashboardPage() {
               isConfirmed
                 ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
                 : isCompleted
-                ? "bg-indigo-50 text-[#544BB9] border border-indigo-100"
+                ? "bg-neutral-100 text-[#202124] border border-neutral-200"
                 : isNoShow
                 ? "bg-rose-50 text-rose-700 border border-rose-100"
                 : "bg-slate-100 text-slate-700"
@@ -2145,7 +2145,7 @@ export default function AdminDashboardPage() {
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold transition-all cursor-pointer ${
                 apt.whatsapp_reminder_sent
                   ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                  : "bg-[#EEF1F8] hover:bg-[#544BB9] text-[#544BB9] hover:text-white"
+                  : "bg-neutral-100 hover:bg-[#FF5C35] text-[#202124] hover:text-white"
               }`}
               title="Send WhatsApp appointment reminder"
             >
