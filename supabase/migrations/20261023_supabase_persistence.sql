@@ -26,6 +26,7 @@ alter table appointments add column if not exists whatsapp_reminder_sent boolean
 alter table appointments add column if not exists reminder_sent_at timestamptz;
 alter table appointments add column if not exists source text not null default 'form';
 alter table appointments add column if not exists patient_phone text;
+alter table appointments add column if not exists whatsapp_consent boolean not null default false;
 
 update appointments
 set patient_phone = phone

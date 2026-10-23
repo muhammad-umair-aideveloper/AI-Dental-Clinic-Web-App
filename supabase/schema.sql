@@ -1,4 +1,7 @@
 -- Lahore Dental: Appointments Table Schema & Security Policies
+-- The persistence migration in migrations/20261023_supabase_persistence.sql must
+-- be applied after this base schema for patients, users, inquiries, X-rays, and
+-- secure patient links.
 
 -- 1. Create table
 create table if not exists appointments (

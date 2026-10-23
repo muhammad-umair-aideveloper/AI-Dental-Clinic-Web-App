@@ -140,6 +140,7 @@ GOOGLE_CALENDAR_ID=your-calendar-id@group.calendar.google.com
 GOOGLE_API_KEY=AIzaSy...
 ```
 Supabase credentials are required for appointment, patient, inquiry, and staff-user persistence. Keep `SUPABASE_SERVICE_ROLE_KEY` server-only.
+Apply `supabase/migrations/20261023_supabase_persistence.sql` in the Supabase SQL editor after the base schema. It creates the patient-management tables, policies, indexes, and idempotent import of the existing demo records.
 
 ### 5. Run the Application
 
