@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createSecurePatientLink } from "@/lib/patient-records";
 import { verifySessionToken } from "@/lib/auth-crypto";
+import { revalidatePath } from "next/cache";
 
 export async function POST(
   req: Request,
@@ -24,7 +25,8 @@ export async function POST(
     const hours = Number(body.expiresInHours) || 48;
     const views = Number(body.maxViews) || 5;
 
-    const record = createSecurePatientLink(decodedPhone, hours, views);
+    const record = await createSecurePatientLink(decodedPhone, hours, views);
+    revalidatePath("/[locale]/admin-dashboard", "page");
 
     return NextResponse.json({
       success: true,

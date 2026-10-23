@@ -86,7 +86,7 @@ A production-ready, mobile-first dental clinic web application engineered for **
 | **Internationalization (i18n)** | `next-intl` (v3) with dynamic `/en` & `/ur` localized routing and RTL support |
 | **AI & LLM** | Vercel AI SDK (`ai`), `@ai-sdk/openai` (`gpt-4o-mini`), `zod` |
 | **Authentication & RBAC** | Custom PBKDF2 crypto salted hashing, HTTP-only HMAC-SHA256 session cookies, Next.js Edge Middleware |
-| **Database** | Supabase (PostgreSQL `appointments`, `inquiries`, `users`) with in-memory & file-backed fallback |
+| **Database** | Supabase PostgreSQL (`appointments`, `patients`, `inquiries`, `users`, secure patient records) |
 | **Calendar Integration** | Google Calendar FreeBusy and Events API |
 | **Notifications** | Resend (Email confirmations) and Twilio (WhatsApp confirmations) |
 
@@ -139,7 +139,7 @@ TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
 GOOGLE_CALENDAR_ID=your-calendar-id@group.calendar.google.com
 GOOGLE_API_KEY=AIzaSy...
 ```
-*(Note: If cloud keys are omitted, the application runs in local offline development mode with persistent JSON data storage, allowing full testing of authentication, booking, and dashboards out-of-the-box.)*
+Supabase credentials are required for appointment, patient, inquiry, and staff-user persistence. Keep `SUPABASE_SERVICE_ROLE_KEY` server-only.
 
 ### 5. Run the Application
 
@@ -170,8 +170,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ```
 AI-Dental-Clinic-Web-App/
-├── data/
-│   └── users.json               # Persistent local user store with salted hashes
 ├── messages/
 │   ├── en.json                  # English localization dictionary
 │   └── ur.json                  # Urdu localization dictionary (RTL)
@@ -226,7 +224,7 @@ AI-Dental-Clinic-Web-App/
 │   │   ├── calendar.ts          # Google Calendar slot availability
 │   │   ├── notifications.ts     # Resend email & Twilio WhatsApp
 │   │   ├── rate-limit.ts        # In-memory session rate limiter
-│   │   └── supabase.ts          # Supabase client & fallback store
+│   │   └── supabase.ts          # Supabase client and database repositories
 │   └── middleware.ts            # Next.js Edge Middleware for i18n & RBAC
 ├── supabase/
 │   └── schema.sql               # Supabase database schema

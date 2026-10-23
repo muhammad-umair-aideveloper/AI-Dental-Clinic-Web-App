@@ -9,7 +9,7 @@ Phase 1 establishes the core backend foundations and form integration for the cl
 | File | Type | Description |
 | :--- | :--- | :--- |
 | `supabase/migrations/20261011_appointments_system.sql` | **New** | Additive migration file with duplicate audit query, additive `source` and `reminder_sent` columns, `chk_appointments_source` CHECK constraint, and partial UNIQUE index on `(date, time)` WHERE `status = 'confirmed'`. *(To be run manually by owner in Supabase SQL editor)*. |
-| `src/lib/booking-service.ts` | **New** | Central shared booking engine used by both Form and future Chatbot. Handles strict time and phone normalization, future-date and operating-hours validation, calendar availability checking, Postgres unique violation (`23505`) handling with alternative slot suggestions, and in-memory demo fallback storage. |
+| `src/lib/booking-service.ts` | **New** | Central shared booking engine used by both Form and future Chatbot. Handles strict time and phone normalization, future-date and operating-hours validation, calendar availability checking, Postgres unique violation (`23505`) handling with alternative slot suggestions, and Supabase patient/appointment persistence. |
 | `src/app/api/appointments/route.ts` | **Modified** | POST handler upgraded to delegate booking to `bookAppointmentService` with security-hardcoded `source: "form"`. Preserves `createCalendarEvent`, WhatsApp notifications, and email confirmations in `Promise.allSettled`. GET handler and existing imports remain byte-for-byte untouched. |
 | `src/components/booking/BookingModal.tsx` | **Modified** | Error banner updated to parse and display available alternative slot suggestions if a double-booking collision occurs. Layout, styling, and text remain 100% untouched. |
 | `src/lib/supabase.ts` | **Modified** | Added optional `source?: "form" | "chatbot"` field to the existing `AppointmentRecord` TypeScript interface. No other changes. |
@@ -38,7 +38,7 @@ Phase 1 establishes the core backend foundations and form integration for the cl
 5. **Single Source of Truth for Slots:**
    - [src/lib/calendar.ts](file:///c:/Dental%20Lahore%20Website/src/lib/calendar.ts) (`CLINIC_DAILY_SLOTS`, `checkSlotAvailability`) remains the authoritative engine for clinic schedule hours and availability calculations.
 6. **In-Memory Demo Store Support:**
-   - `globalStore.__lahoreDentalAppointments` in [src/lib/supabase.ts](file:///c:/Dental%20Lahore%20Website/src/lib/supabase.ts) is fully supported with in-memory double-booking prevention when running without live Supabase credentials.
+   - Supabase is required at runtime; the repository no longer uses in-memory or file-backed appointment fallbacks.
 
 ---
 

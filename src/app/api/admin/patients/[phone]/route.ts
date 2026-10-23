@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { updatePatientProfile, recordNoShow } from "@/lib/patient-records";
 import { verifySessionToken } from "@/lib/auth-crypto";
+import { revalidatePath } from "next/cache";
 
 export async function PATCH(
   req: Request,
@@ -22,7 +23,8 @@ export async function PATCH(
     const body = await req.json();
 
     if (body.action === "mark_no_show") {
-      const res = recordNoShow(decodedPhone);
+      const res = await recordNoShow(decodedPhone);
+      revalidatePath("/[locale]/admin-dashboard", "page");
       return NextResponse.json({
         success: true,
         patient: res.patient,
@@ -30,7 +32,7 @@ export async function PATCH(
       });
     }
 
-    const updated = updatePatientProfile(decodedPhone, {
+    const updated = await updatePatientProfile(decodedPhone, {
       notes: body.notes,
       advanceTokenRequired: body.advanceTokenRequired,
       email: body.email,
@@ -41,6 +43,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
+    revalidatePath("/[locale]/admin-dashboard", "page");
     return NextResponse.json({ success: true, patient: updated });
   } catch (err: any) {
     return NextResponse.json(

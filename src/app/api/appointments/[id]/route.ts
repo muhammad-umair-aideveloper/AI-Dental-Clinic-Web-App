@@ -6,6 +6,7 @@ import {
   getAllAppointments,
 } from "@/lib/supabase";
 import { recordNoShow } from "@/lib/patient-records";
+import { revalidatePath } from "next/cache";
 
 export async function PATCH(
   req: Request,
@@ -31,6 +32,7 @@ export async function PATCH(
           { status: res.conflict ? 409 : 400 }
         );
       }
+      revalidatePath("/[locale]/admin-dashboard", "page");
       return Response.json({
         success: true,
         message: "Rescheduled successfully with conflict protection",
@@ -41,6 +43,7 @@ export async function PATCH(
     // 2. Reminder Sent action
     if (body.action === "reminder_sent") {
       const success = await markReminderSent(id);
+      revalidatePath("/[locale]/admin-dashboard", "page");
       return Response.json({ success, message: "WhatsApp reminder recorded" });
     }
 
@@ -60,9 +63,10 @@ export async function PATCH(
       const all = await getAllAppointments();
       const target = all.find((a) => a.id === id);
       if (target && target.phone) {
-        recordNoShow(target.phone);
+        await recordNoShow(target.phone);
       }
     }
+    revalidatePath("/[locale]/admin-dashboard", "page");
 
     return Response.json({
       success: true,
@@ -88,6 +92,7 @@ export async function DELETE(
       return Response.json({ error: "Appointment not found" }, { status: 404 });
     }
 
+    revalidatePath("/[locale]/admin-dashboard", "page");
     return Response.json({ success: true, message: "Appointment deleted" });
   } catch (error: any) {
     return Response.json(

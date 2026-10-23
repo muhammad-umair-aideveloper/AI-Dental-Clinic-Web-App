@@ -1,21 +1,10 @@
-import fs from "fs";
-import path from "path";
 import crypto from "crypto";
-import { AppointmentRecord, getAllAppointments } from "./supabase";
-
-export interface XRayRecord {
-  id: string;
-  title: string;
-  category: "OPG" | "Periapical" | "Bitewing" | "Intraoral Photo";
-  date: string;
-  url: string;
-  notes?: string;
-}
+import { AppointmentRecord, getAllAppointments, PatientRecord, XRayRecord, supabase } from "./supabase";
 
 export interface SecureLinkRecord {
   token: string;
   patientPhone: string;
-  expiresAt: string; // ISO string
+  expiresAt: string;
   maxViews: number;
   viewsLeft: number;
   revoked: boolean;
@@ -23,342 +12,261 @@ export interface SecureLinkRecord {
   accessLogs: Array<{ accessedAt: string; ip?: string }>;
 }
 
-export interface PatientProfile {
-  phone: string; // Unique primary key (Pakistani mobile format)
-  name: string;
-  email?: string;
-  notes: string;
-  noShowCount: number;
-  advanceTokenRequired: boolean; // Auto-set if noShowCount >= 2
-  createdAt: string;
-  xrays: XRayRecord[];
-}
-
-const PATIENTS_FILE = path.join(process.cwd(), "data", "patients.json");
-const SECURE_LINKS_FILE = path.join(process.cwd(), "data", "secure-links.json");
-
-// In-memory cache
-const globalPatients = globalThis as unknown as {
-  __lahoreDentalPatients?: Map<string, PatientProfile>;
-  __lahoreDentalSecureLinks?: Map<string, SecureLinkRecord>;
-};
-
-function ensureInitialized() {
-  if (!globalPatients.__lahoreDentalPatients) {
-    globalPatients.__lahoreDentalPatients = new Map();
-    globalPatients.__lahoreDentalSecureLinks = new Map();
-
-    // Load from disk if exists
-    try {
-      if (fs.existsSync(PATIENTS_FILE)) {
-        const raw = fs.readFileSync(PATIENTS_FILE, "utf-8");
-        const list: PatientProfile[] = JSON.parse(raw);
-        list.forEach((p) => globalPatients.__lahoreDentalPatients!.set(p.phone, p));
-      }
-      if (fs.existsSync(SECURE_LINKS_FILE)) {
-        const raw = fs.readFileSync(SECURE_LINKS_FILE, "utf-8");
-        const list: SecureLinkRecord[] = JSON.parse(raw);
-        list.forEach((l) => globalPatients.__lahoreDentalSecureLinks!.set(l.token, l));
-      }
-    } catch (err) {
-      console.error("[patient-records] Failed reading data files:", err);
-    }
-
-    // Seed realistic clinic test records if empty
-    if (globalPatients.__lahoreDentalPatients.size === 0) {
-      const seedPatients: PatientProfile[] = [
-        {
-          phone: "03001234567",
-          name: "Tariq Mahmood",
-          email: "tariq.m@example.com",
-          notes: "Patient prefers late morning appointments. Sensitive to cold water in lower right quadrant. Planned implant site #46.",
-          noShowCount: 0,
-          advanceTokenRequired: false,
-          createdAt: "2026-08-14T10:00:00.000Z",
-          xrays: [
-            {
-              id: "xr-101",
-              title: "Pre-Op Full OPG Panoramic",
-              category: "OPG",
-              date: "2026-09-01",
-              url: "/images/placeholders/sample-opg.svg",
-              notes: "Evaluation for lower right molar implant fixture #46. Adequate bone height ~13mm.",
-            },
-            {
-              id: "xr-102",
-              title: "Periapical #46 Ridge Assessment",
-              category: "Periapical",
-              date: "2026-09-15",
-              url: "/images/placeholders/sample-periapical.svg",
-              notes: "Clear inferior alveolar nerve canal demarcation. No periapical pathology.",
-            },
-          ],
-        },
-        {
-          phone: "03219876543",
-          name: "Hina Naveed",
-          email: "hina.n@example.com",
-          notes: "Mild gingivitis with calculus in lower anterior lingual surfaces. Highly compliant with home oral hygiene instructions.",
-          noShowCount: 1,
-          advanceTokenRequired: false,
-          createdAt: "2026-09-10T14:30:00.000Z",
-          xrays: [
-            {
-              id: "xr-103",
-              title: "Bitewing Left & Right Molars",
-              category: "Bitewing",
-              date: "2026-09-10",
-              url: "/images/placeholders/sample-periapical.svg",
-              notes: "No interproximal caries detected.",
-            },
-          ],
-        },
-        {
-          phone: "03335558899",
-          name: "Kamran Siddiqui",
-          notes: "Missed two consecutive appointments without notice. Requires Rs. 2,000 advance confirmation token before blocking chair time.",
-          noShowCount: 2,
-          advanceTokenRequired: true,
-          createdAt: "2026-07-22T11:15:00.000Z",
-          xrays: [],
-        },
-      ];
-
-      seedPatients.forEach((p) => globalPatients.__lahoreDentalPatients!.set(p.phone, p));
-      savePatientsToDisk();
-    }
+function requireSupabase() {
+  if (!supabase) {
+    throw new Error("Supabase is not configured. Set the required server environment variables.");
   }
+  return supabase;
 }
 
-function savePatientsToDisk() {
-  try {
-    const dir = path.dirname(PATIENTS_FILE);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    const list = Array.from(globalPatients.__lahoreDentalPatients!.values());
-    fs.writeFileSync(PATIENTS_FILE, JSON.stringify(list, null, 2), "utf-8");
-  } catch (err) {
-    console.error("[patient-records] Failed saving patients:", err);
-  }
-}
-
-function saveSecureLinksToDisk() {
-  try {
-    const dir = path.dirname(SECURE_LINKS_FILE);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    const list = Array.from(globalPatients.__lahoreDentalSecureLinks!.values());
-    fs.writeFileSync(SECURE_LINKS_FILE, JSON.stringify(list, null, 2), "utf-8");
-  } catch (err) {
-    console.error("[patient-records] Failed saving secure links:", err);
-  }
-}
-
-/**
- * Get or automatically create patient profile for a phone number
- */
-export function getOrCreatePatient(phone: string, name?: string): PatientProfile {
-  ensureInitialized();
-  const cleanPhone = phone.trim();
-  let patient = globalPatients.__lahoreDentalPatients!.get(cleanPhone);
-
-  if (!patient) {
-    patient = {
-      phone: cleanPhone,
-      name: name || "Patient " + cleanPhone.slice(-4),
-      notes: "First recorded visit.",
-      noShowCount: 0,
-      advanceTokenRequired: false,
-      createdAt: new Date().toISOString(),
-      xrays: [],
-    };
-    globalPatients.__lahoreDentalPatients!.set(cleanPhone, patient);
-    savePatientsToDisk();
-  } else if (name && (!patient.name || patient.name.startsWith("Patient "))) {
-    patient.name = name;
-    savePatientsToDisk();
-  }
-
-  return patient;
-}
-
-/**
- * Get list of all patient profiles combined with their appointment history
- */
-export async function getAllPatientProfiles(): Promise<
-  Array<PatientProfile & { appointments: AppointmentRecord[] }>
-> {
-  ensureInitialized();
-  const allAppointments = await getAllAppointments();
-
-  // Ensure every phone from appointments has a patient profile
-  allAppointments.forEach((apt) => {
-    if (apt.phone) {
-      getOrCreatePatient(apt.phone, apt.name);
-    }
-  });
-
-  const profiles: Array<PatientProfile & { appointments: AppointmentRecord[] }> = [];
-
-  for (const patient of globalPatients.__lahoreDentalPatients!.values()) {
-    const patientAppointments = allAppointments.filter(
-      (a) => a.phone === patient.phone || a.phone.endsWith(patient.phone.slice(-7))
-    );
-
-    profiles.push({
-      ...patient,
-      appointments: patientAppointments,
-    });
-  }
-
-  return profiles.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-/**
- * Update patient notes or advance token requirement
- */
-export function updatePatientProfile(
-  phone: string,
-  updates: Partial<Pick<PatientProfile, "notes" | "advanceTokenRequired" | "email" | "name">>
-): PatientProfile | null {
-  ensureInitialized();
-  const patient = globalPatients.__lahoreDentalPatients!.get(phone);
-  if (!patient) return null;
-
-  if (updates.notes !== undefined) patient.notes = updates.notes;
-  if (updates.advanceTokenRequired !== undefined)
-    patient.advanceTokenRequired = updates.advanceTokenRequired;
-  if (updates.email !== undefined) patient.email = updates.email;
-  if (updates.name !== undefined) patient.name = updates.name;
-
-  savePatientsToDisk();
-  return patient;
-}
-
-/**
- * Increment no-show count and automatically flag advance token requirement if count >= 2
- */
-export function recordNoShow(phone: string): {
-  patient: PatientProfile;
-  thresholdReached: boolean;
-} {
-  ensureInitialized();
-  const patient = getOrCreatePatient(phone);
-  patient.noShowCount += 1;
-
-  // Auto-flag advance token required if no-show >= 2
-  if (patient.noShowCount >= 2) {
-    patient.advanceTokenRequired = true;
-  }
-
-  savePatientsToDisk();
+function mapPatient(row: Record<string, unknown>, xrays: XRayRecord[] = []): PatientRecord {
   return {
-    patient,
-    thresholdReached: patient.advanceTokenRequired,
+    phone: String(row.phone),
+    name: String(row.name || ""),
+    email: row.email ? String(row.email) : undefined,
+    notes: String(row.notes || ""),
+    noShowCount: Number(row.no_show_count || 0),
+    advanceTokenRequired: Boolean(row.advance_token_required),
+    createdAt: String(row.created_at),
+    xrays,
   };
 }
 
-/**
- * Add an X-Ray / OPG image record to the patient's file
- */
-export function addPatientXRay(
+function mapXRay(row: Record<string, unknown>): XRayRecord {
+  return {
+    id: String(row.id),
+    title: String(row.title),
+    category: row.category as XRayRecord["category"],
+    date: String(row.date),
+    url: String(row.url),
+    notes: row.notes ? String(row.notes) : undefined,
+  };
+}
+
+function mapSecureLink(row: Record<string, unknown>): SecureLinkRecord {
+  return {
+    token: String(row.token),
+    patientPhone: String(row.patient_phone),
+    expiresAt: String(row.expires_at),
+    maxViews: Number(row.max_views),
+    viewsLeft: Number(row.views_left),
+    revoked: Boolean(row.revoked),
+    createdAt: String(row.created_at),
+    accessLogs: Array.isArray(row.access_logs) ? row.access_logs as SecureLinkRecord["accessLogs"] : [],
+  };
+}
+
+export async function getOrCreatePatient(phone: string, name?: string): Promise<PatientRecord> {
+  const client = requireSupabase();
+  const cleanPhone = phone.trim();
+  const { data: existing, error: fetchError } = await client
+    .from("patients")
+    .select("*")
+    .eq("phone", cleanPhone)
+    .maybeSingle();
+  if (fetchError) throw new Error(`Failed to fetch patient: ${fetchError.message}`);
+
+  if (existing) {
+    if (name && (!existing.name || String(existing.name).startsWith("Patient "))) {
+      const { data: updated, error } = await client
+        .from("patients")
+        .update({ name })
+        .eq("phone", cleanPhone)
+        .select("*")
+        .single();
+      if (error) throw new Error(`Failed to update patient: ${error.message}`);
+      return mapPatient(updated);
+    }
+    return mapPatient(existing);
+  }
+
+  const { data: created, error } = await client
+    .from("patients")
+    .insert({
+      phone: cleanPhone,
+      name: name || `Patient ${cleanPhone.slice(-4)}`,
+      notes: "First recorded visit.",
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(`Failed to create patient: ${error.message}`);
+  return mapPatient(created);
+}
+
+export async function getAllPatientProfiles(): Promise<
+  Array<PatientRecord & { appointments: AppointmentRecord[] }>
+> {
+  const client = requireSupabase();
+  const [{ data: patients, error: patientError }, { data: xrays, error: xrayError }, appointments] =
+    await Promise.all([
+      client.from("patients").select("*").order("created_at", { ascending: false }),
+      client.from("patient_xrays").select("*").order("created_at", { ascending: false }),
+      getAllAppointments(),
+    ]);
+  if (patientError) throw new Error(`Failed to fetch patients: ${patientError.message}`);
+  if (xrayError) throw new Error(`Failed to fetch patient X-rays: ${xrayError.message}`);
+
+  return (patients || []).map((row) => {
+    const patient = mapPatient(
+      row,
+      (xrays || [])
+        .filter((xray) => xray.patient_phone === row.phone)
+        .map(mapXRay)
+    );
+    return {
+      ...patient,
+      appointments: appointments.filter((appointment) => appointment.phone === patient.phone),
+    };
+  });
+}
+
+export async function updatePatientProfile(
+  phone: string,
+  updates: Partial<Pick<PatientRecord, "notes" | "advanceTokenRequired" | "email" | "name">>
+): Promise<PatientRecord | null> {
+  const client = requireSupabase();
+  const payload = {
+    ...(updates.notes !== undefined ? { notes: updates.notes } : {}),
+    ...(updates.advanceTokenRequired !== undefined
+      ? { advance_token_required: updates.advanceTokenRequired }
+      : {}),
+    ...(updates.email !== undefined ? { email: updates.email } : {}),
+    ...(updates.name !== undefined ? { name: updates.name } : {}),
+  };
+  const { data, error } = await client
+    .from("patients")
+    .update(payload)
+    .eq("phone", phone)
+    .select("*")
+    .maybeSingle();
+  if (error) throw new Error(`Failed to update patient: ${error.message}`);
+  return data ? mapPatient(data) : null;
+}
+
+export async function recordNoShow(phone: string): Promise<{
+  patient: PatientRecord;
+  thresholdReached: boolean;
+}> {
+  const client = requireSupabase();
+  const patient = await getOrCreatePatient(phone);
+  const noShowCount = patient.noShowCount + 1;
+  const advanceTokenRequired = noShowCount >= 2;
+  const { data, error } = await client
+    .from("patients")
+    .update({
+      no_show_count: noShowCount,
+      advance_token_required: advanceTokenRequired,
+    })
+    .eq("phone", patient.phone)
+    .select("*")
+    .single();
+  if (error) throw new Error(`Failed to record no-show: ${error.message}`);
+  const updated = mapPatient(data, patient.xrays);
+  return { patient: updated, thresholdReached: updated.advanceTokenRequired };
+}
+
+export async function addPatientXRay(
   phone: string,
   record: Omit<XRayRecord, "id">
-): XRayRecord {
-  ensureInitialized();
-  const patient = getOrCreatePatient(phone);
-  const newRecord: XRayRecord = {
-    ...record,
-    id: "xr-" + Date.now().toString(36),
-  };
-
-  patient.xrays.unshift(newRecord);
-  savePatientsToDisk();
-  return newRecord;
+): Promise<XRayRecord> {
+  const client = requireSupabase();
+  await getOrCreatePatient(phone);
+  const { data, error } = await client
+    .from("patient_xrays")
+    .insert({
+      patient_phone: phone,
+      title: record.title,
+      category: record.category,
+      date: record.date,
+      url: record.url,
+      notes: record.notes || "",
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(`Failed to add X-ray: ${error.message}`);
+  return mapXRay(data);
 }
 
-/**
- * Generate a secure, expiring, view-limited signed link for sharing patient X-rays
- */
-export function createSecurePatientLink(
+export async function createSecurePatientLink(
   patientPhone: string,
   expiresInHours: number = 48,
   maxViews: number = 5
-): SecureLinkRecord {
-  ensureInitialized();
-  const token = crypto.randomBytes(24).toString("hex");
-  const expiresAt = new Date(Date.now() + expiresInHours * 3600000).toISOString();
-
-  const record: SecureLinkRecord = {
-    token,
-    patientPhone,
-    expiresAt,
-    maxViews,
-    viewsLeft: maxViews,
-    revoked: false,
-    createdAt: new Date().toISOString(),
-    accessLogs: [],
-  };
-
-  globalPatients.__lahoreDentalSecureLinks!.set(token, record);
-  saveSecureLinksToDisk();
-  return record;
+): Promise<SecureLinkRecord> {
+  const client = requireSupabase();
+  await getOrCreatePatient(patientPhone);
+  const { data, error } = await client
+    .from("secure_patient_links")
+    .insert({
+      token: crypto.randomBytes(24).toString("hex"),
+      patient_phone: patientPhone,
+      expires_at: new Date(Date.now() + expiresInHours * 3600000).toISOString(),
+      max_views: maxViews,
+      views_left: maxViews,
+      revoked: false,
+      access_logs: [],
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(`Failed to create secure link: ${error.message}`);
+  return mapSecureLink(data);
 }
 
-/**
- * Resolve and validate a secure link token
- */
-export function accessSecurePatientLink(
+export async function accessSecurePatientLink(
   token: string,
   clientIp?: string
-): {
+): Promise<{
   valid: boolean;
   error?: "expired" | "no_views_left" | "revoked" | "not_found";
-  patient?: PatientProfile;
+  patient?: PatientRecord;
   record?: SecureLinkRecord;
-} {
-  ensureInitialized();
-  const link = globalPatients.__lahoreDentalSecureLinks!.get(token);
+}> {
+  const client = requireSupabase();
+  const { data: row, error } = await client
+    .from("secure_patient_links")
+    .select("*")
+    .eq("token", token)
+    .maybeSingle();
+  if (error) throw new Error(`Failed to load secure link: ${error.message}`);
+  if (!row) return { valid: false, error: "not_found" };
 
-  if (!link) {
-    return { valid: false, error: "not_found" };
-  }
+  const link = mapSecureLink(row);
+  if (link.revoked) return { valid: false, error: "revoked" };
+  if (new Date(link.expiresAt).getTime() < Date.now()) return { valid: false, error: "expired" };
+  if (link.viewsLeft <= 0) return { valid: false, error: "no_views_left" };
 
-  if (link.revoked) {
-    return { valid: false, error: "revoked" };
-  }
+  const accessLogs = [...link.accessLogs, { accessedAt: new Date().toISOString(), ip: clientIp }];
+  const { data: updatedRow, error: updateError } = await client
+    .from("secure_patient_links")
+    .update({ views_left: link.viewsLeft - 1, access_logs: accessLogs })
+    .eq("token", token)
+    .eq("views_left", link.viewsLeft)
+    .select("*")
+    .maybeSingle();
+  if (updateError) throw new Error(`Failed to update secure link: ${updateError.message}`);
+  if (!updatedRow) return { valid: false, error: "no_views_left" };
 
-  if (new Date(link.expiresAt).getTime() < Date.now()) {
-    return { valid: false, error: "expired" };
-  }
+  const patient = await getOrCreatePatient(link.patientPhone);
+  const { data: xrays, error: xrayError } = await client
+    .from("patient_xrays")
+    .select("*")
+    .eq("patient_phone", patient.phone)
+    .order("created_at", { ascending: false });
+  if (xrayError) throw new Error(`Failed to load patient X-rays: ${xrayError.message}`);
 
-  if (link.viewsLeft <= 0) {
-    return { valid: false, error: "no_views_left" };
-  }
-
-  // Decrement views and record access log
-  link.viewsLeft -= 1;
-  link.accessLogs.push({
-    accessedAt: new Date().toISOString(),
-    ip: clientIp,
-  });
-  saveSecureLinksToDisk();
-
-  const patient = globalPatients.__lahoreDentalPatients!.get(link.patientPhone);
   return {
     valid: true,
-    patient,
-    record: link,
+    patient: { ...patient, xrays: (xrays || []).map(mapXRay) },
+    record: mapSecureLink(updatedRow),
   };
 }
 
-/**
- * Revoke an active secure link immediately
- */
-export function revokeSecureLink(token: string): boolean {
-  ensureInitialized();
-  const link = globalPatients.__lahoreDentalSecureLinks!.get(token);
-  if (!link) return false;
-
-  link.revoked = true;
-  saveSecureLinksToDisk();
-  return true;
+export async function revokeSecureLink(token: string): Promise<boolean> {
+  const { data, error } = await requireSupabase()
+    .from("secure_patient_links")
+    .update({ revoked: true })
+    .eq("token", token)
+    .select("token")
+    .maybeSingle();
+  if (error) throw new Error(`Failed to revoke secure link: ${error.message}`);
+  return Boolean(data);
 }

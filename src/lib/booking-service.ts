@@ -1,10 +1,6 @@
-import { supabase, AppointmentRecord, inferChair } from "./supabase";
+import { supabase, AppointmentRecord, inferChair, upsertPatient } from "./supabase";
 import { checkSlotAvailability, CLINIC_DAILY_SLOTS } from "./calendar";
 import { CLINIC_CLOSED_DATES } from "@/config/booking";
-
-const globalStore = globalThis as unknown as {
-  __lahoreDentalAppointments?: AppointmentRecord[];
-};
 
 export interface BookingInput {
   name?: string;
@@ -16,6 +12,7 @@ export interface BookingInput {
   reason?: string;
   source: "form" | "chatbot";
   language?: string;
+  whatsappConsent?: boolean;
 }
 
 export interface BookingResult {
@@ -105,6 +102,14 @@ export async function bookAppointmentService(input: BookingInput): Promise<Booki
         success: false,
         status: 400,
         error: "Patient name must be at least 2 characters.",
+      };
+    }
+
+    if (source === "form" && input.whatsappConsent !== true) {
+      return {
+        success: false,
+        status: 400,
+        error: "WhatsApp/SMS consent is required to send your appointment confirmation.",
       };
     }
 
@@ -204,8 +209,20 @@ export async function bookAppointmentService(input: BookingInput): Promise<Booki
 
     // 6. DB Insertion
     const assignedChair = inferChair(reason);
-    const newRecord: AppointmentRecord = {
-      id: "apt-" + Math.random().toString(36).substring(2, 9),
+    if (!supabase) {
+      return {
+        success: false,
+        status: 500,
+        error: "Appointment booking is temporarily unavailable. Please try again later.",
+      };
+    }
+
+    await upsertPatient({
+      phone: formattedPhone,
+      name: patientName,
+    });
+
+    const newRecord: Omit<AppointmentRecord, "id"> = {
       name: patientName,
       phone: formattedPhone,
       date,
@@ -217,83 +234,50 @@ export async function bookAppointmentService(input: BookingInput): Promise<Booki
       language,
       source,
       created_at: new Date().toISOString(),
+      whatsapp_consent: input.whatsappConsent === true,
     };
 
-    if (supabase) {
-      // Keep inserts compatible with the base appointments schema; migration columns
-      // use their database defaults when available.
-      const { data: inserted, error: dbError } = await supabase
-        .from("appointments")
-        .insert([
-          {
-            name: newRecord.name,
-            phone: newRecord.phone,
-            date: newRecord.date,
-            time: newRecord.time,
-            reason: newRecord.reason,
-            status: "confirmed",
-            language: newRecord.language,
-          },
-        ])
-        .select()
-        .single();
+    const { data: inserted, error: dbError } = await supabase
+      .from("appointments")
+      .insert([newRecord])
+      .select()
+      .single();
 
-      if (dbError) {
-        // Postgres Code 23505: Unique violation on (date, time) WHERE status = 'confirmed'
-        if (dbError.code === "23505") {
-          const freshAvailability = await checkSlotAvailability(date);
-          return {
-            success: false,
-            status: 409,
-            conflict: true,
-            error: `The ${normalizedTime} slot on ${date} was just confirmed by another patient.`,
-            alternativeSlots: freshAvailability.availableSlots.slice(0, 3),
-          };
-        }
-
-        console.error("[booking-service] Supabase error:", dbError);
+    if (dbError) {
+      if (dbError.code === "23505") {
+        const freshAvailability = await checkSlotAvailability(date);
         return {
           success: false,
-          status: 500,
-          error: "Database error occurred while creating appointment.",
+          status: 409,
+          conflict: true,
+          error: `The ${normalizedTime} slot on ${date} was just confirmed by another patient.`,
+          alternativeSlots: freshAvailability.availableSlots.slice(0, 3),
         };
       }
 
-      if (inserted) {
-        // Ensure time is normalized HH:mm even if Postgres returns HH:mm:ss
-        inserted.time = inserted.time.slice(0, 5);
-        inserted.chair = assignedChair;
-        globalStore.__lahoreDentalAppointments?.unshift(inserted);
-        return { success: true, status: 201, appointment: inserted };
-      }
-    }
-
-    // In-memory demo fallback duplicate check
-    const inMemoryStore = globalStore.__lahoreDentalAppointments || [];
-    const isDoubleBooked = inMemoryStore.some(
-      (a) => a.date === date && a.time.slice(0, 5) === normalizedTime && a.status === "confirmed"
-    );
-
-    if (isDoubleBooked) {
-      const freshAvailability = await checkSlotAvailability(date);
+      console.error("[booking-service] Supabase error:", dbError);
       return {
         success: false,
-        status: 409,
-        conflict: true,
-        error: `The ${normalizedTime} slot on ${date} was just confirmed by another patient.`,
-        alternativeSlots: freshAvailability.availableSlots.slice(0, 3),
+        status: 500,
+        error: "Database error occurred while creating appointment.",
       };
     }
 
-    globalStore.__lahoreDentalAppointments = [
-      newRecord,
-      ...(globalStore.__lahoreDentalAppointments || []),
-    ];
+    if (!inserted) {
+      return {
+        success: false,
+        status: 500,
+        error: "Database did not return the created appointment.",
+      };
+    }
 
     return {
       success: true,
       status: 201,
-      appointment: newRecord,
+      appointment: {
+        ...inserted,
+        time: inserted.time.slice(0, 5),
+      } as AppointmentRecord,
     };
   } catch (err: any) {
     console.error("[booking-service] Unexpected failure:", err);

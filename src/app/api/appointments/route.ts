@@ -5,6 +5,7 @@ import {
   sendWhatsAppConfirmation,
 } from "@/lib/notifications";
 import { bookAppointmentService } from "@/lib/booking-service";
+import { revalidatePath } from "next/cache";
 
 export async function GET(req: Request) {
   try {
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
       reason: body.reason,
       source: "form",
       language: body.language || "en",
+      whatsappConsent: body.whatsappConsent === true,
     });
 
     if (!result.success || !result.appointment) {
@@ -57,6 +59,7 @@ export async function POST(req: Request) {
       sendWhatsAppConfirmation({ name, phone, date, time, reason, language }),
       sendEmailConfirmation({ name, phone, date, time, reason, language }),
     ]).catch((err) => console.error("Notification dispatch error:", err));
+    revalidatePath("/[locale]/admin-dashboard", "page");
 
     return Response.json(
       {

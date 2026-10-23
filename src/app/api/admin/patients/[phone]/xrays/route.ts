@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { addPatientXRay } from "@/lib/patient-records";
 import { verifySessionToken } from "@/lib/auth-crypto";
+import { revalidatePath } from "next/cache";
 
 export async function POST(
   req: Request,
@@ -28,13 +29,14 @@ export async function POST(
       );
     }
 
-    const newXRay = addPatientXRay(decodedPhone, {
+    const newXRay = await addPatientXRay(decodedPhone, {
       title: body.title,
       category: body.category,
       date: body.date || new Date().toISOString().split("T")[0],
       url: body.url || (body.category === "OPG" ? "/images/placeholders/sample-opg.svg" : "/images/placeholders/sample-periapical.svg"),
       notes: body.notes || "",
     });
+    revalidatePath("/[locale]/admin-dashboard", "page");
 
     return NextResponse.json({ success: true, xray: newXRay });
   } catch (err: any) {

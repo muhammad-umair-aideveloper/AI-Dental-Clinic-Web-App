@@ -9,7 +9,7 @@ export async function GET(
     const { token } = await params;
     const ip = req.headers.get("x-forwarded-for") || "unknown";
 
-    const res = accessSecurePatientLink(token, ip);
+    const res = await accessSecurePatientLink(token, ip);
 
     if (!res.valid) {
       return NextResponse.json(
@@ -56,7 +56,7 @@ export async function DELETE(
 ) {
   try {
     const { token } = await params;
-    const revoked = revokeSecureLink(token);
+    const revoked = await revokeSecureLink(token);
     return NextResponse.json({ success: revoked, message: "Link revoked" });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message }, { status: 500 });
