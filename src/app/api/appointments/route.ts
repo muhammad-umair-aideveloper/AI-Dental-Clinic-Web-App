@@ -1,8 +1,4 @@
-import {
-  getAllAppointments,
-  getAppointmentsForDate,
-  insertAppointment,
-} from "@/lib/supabase";
+import { getAllAppointments } from "@/lib/supabase";
 import { checkSlotAvailability, createCalendarEvent } from "@/lib/calendar";
 import {
   sendEmailConfirmation,

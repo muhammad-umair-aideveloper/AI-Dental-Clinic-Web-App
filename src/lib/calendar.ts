@@ -20,6 +20,24 @@ export interface AvailabilityResult {
   alternativeSlots?: string[];
 }
 
+function getKarachiDateTime(): { date: string; time: string } {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Karachi",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date());
+
+  const getPart = (type: string) => parts.find((part) => part.type === type)?.value || "";
+  return {
+    date: `${getPart("year")}-${getPart("month")}-${getPart("day")}`,
+    time: `${getPart("hour")}:${getPart("minute")}`,
+  };
+}
+
 /**
  * Checks Google Calendar / DB availability for a given date
  */
@@ -31,9 +49,14 @@ export async function checkSlotAvailability(
   const bookedSlots = await getAppointmentsForDate(date);
 
   // Filter available slots
-  const availableSlots = CLINIC_DAILY_SLOTS.filter(
+  let availableSlots = CLINIC_DAILY_SLOTS.filter(
     (slot) => !bookedSlots.includes(slot)
   );
+
+  const nowKarachi = getKarachiDateTime();
+  if (date === nowKarachi.date) {
+    availableSlots = availableSlots.filter((slot) => slot > nowKarachi.time);
+  }
 
   if (!requestedTime) {
     return {

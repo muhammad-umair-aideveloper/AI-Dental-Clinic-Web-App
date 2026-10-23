@@ -46,6 +46,18 @@ const TREATMENTS_OPTIONS = [
   { id: "implants", name: "Permanent Dental Implants", nameUr: "مستقل ڈینٹل امپلانٹس (Implants)" },
 ];
 
+function getTodayInKarachi(): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Karachi",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const getPart = (type: string) => parts.find((part) => part.type === type)?.value || "";
+  return `${getPart("year")}-${getPart("month")}-${getPart("day")}`;
+}
+
 export function BookingModal({
   isOpen,
   onClose,
@@ -61,7 +73,7 @@ export function BookingModal({
     preselectedService || TREATMENTS_OPTIONS[0].name
   );
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = getTodayInKarachi();
   const [selectedDate, setSelectedDate] = useState<string>(initialDate || today);
   const [selectedTime, setSelectedTime] = useState<string>(initialTime || "11:00");
   const [patientName, setPatientName] = useState("");
@@ -102,9 +114,9 @@ export function BookingModal({
         if (!isMounted) return;
         if (data.availableSlots && Array.isArray(data.availableSlots)) {
           setAvailableSlots(data.availableSlots);
-          if (!data.availableSlots.includes(selectedTime) && data.availableSlots.length > 0) {
-            setSelectedTime(data.availableSlots[0]);
-          }
+          setSelectedTime((currentTime) =>
+            data.availableSlots.includes(currentTime) ? currentTime : data.availableSlots[0] || ""
+          );
         }
       })
       .catch((err) => console.error("Error checking slots:", err))
@@ -158,6 +170,11 @@ export function BookingModal({
           ? "اپوائنٹمنٹ کی تصدیق کے لیے واٹس ایپ رضامندی لازمی ہے۔"
           : "WhatsApp/SMS consent is required to send your appointment confirmation."
       );
+      return;
+    }
+
+    if (!selectedTime) {
+      setErrorMessage(isUrdu ? "براہ کرم دستیاب وقت منتخب کریں۔" : "Please select an available time slot.");
       return;
     }
 

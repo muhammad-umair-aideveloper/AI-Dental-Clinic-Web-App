@@ -200,6 +200,24 @@ export default function AdminDashboardPage() {
     }
   }, [user, role]);
 
+  useEffect(() => {
+    if (!user || role !== "admin") return;
+
+    const refreshOnReturn = () => {
+      if (document.visibilityState === "visible") fetchData();
+    };
+    const refreshInterval = window.setInterval(fetchData, 30000);
+
+    window.addEventListener("focus", refreshOnReturn);
+    document.addEventListener("visibilitychange", refreshOnReturn);
+
+    return () => {
+      window.clearInterval(refreshInterval);
+      window.removeEventListener("focus", refreshOnReturn);
+      document.removeEventListener("visibilitychange", refreshOnReturn);
+    };
+  }, [user, role]);
+
   const handleLogout = async () => {
     const shouldLogout = await confirm({
       title: "Sign Out of Clinic Console?",
