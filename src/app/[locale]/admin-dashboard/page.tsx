@@ -30,7 +30,6 @@ import {
   FileText,
   Shield,
   ShieldAlert,
-  Bot,
   AlertTriangle,
   Send,
   Eye,
@@ -46,7 +45,6 @@ import {
   MapPin,
   ChevronLeft,
 } from "lucide-react";
-import { AIAssistantManager } from "@/components/admin/AIAssistantManager";
 import { CLINIC_CONFIG } from "@/config/clinic";
 
 interface Appointment {
@@ -102,14 +100,13 @@ export default function AdminDashboardPage() {
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<
-    "calendar" | "patients" | "inquiries" | "treatments" | "ai-assistant" | "settings"
+    "calendar" | "patients" | "inquiries" | "treatments" | "settings"
   >("calendar");
 
   // Data State
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [aiStatus, setAiStatus] = useState<any>(null);
   const [loadingData, setLoadingData] = useState(false);
 
   // Calendar State
@@ -187,7 +184,6 @@ export default function AdminDashboardPage() {
         if (data.appointments) setAppointments(data.appointments);
         if (data.inquiries) setInquiries(data.inquiries);
         if (data.patients) setPatients(data.patients);
-        if (data.aiStatus) setAiStatus(data.aiStatus);
       }
     } catch (err) {
       console.error("Failed to load admin data:", err);
@@ -699,7 +695,6 @@ export default function AdminDashboardPage() {
               { id: "patients", label: "Patient Records & X-Rays", icon: User, count: patients.length },
               { id: "inquiries", label: "Inquiries", icon: Mail, count: inquiries.length },
               { id: "treatments", label: "Treatments & Prices", icon: DollarSign },
-              { id: "ai-assistant", label: "AI Assistant & Knowledge", icon: Bot },
               { id: "settings", label: "Clinic Settings", icon: Sliders },
             ].map((tab) => {
               const Icon = tab.icon;
@@ -1680,24 +1675,7 @@ export default function AdminDashboardPage() {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 5: AI ASSISTANT & KNOWLEDGE */}
-        {/* ========================================================================= */}
-        {activeTab === "ai-assistant" && (
-          <div className="space-y-4">
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="font-bold text-slate-900">AI Assistant Environment Status:</span>
-                <span className="text-emerald-700 font-semibold">Configured (OPENAI_API_KEY)</span>
-              </div>
-              <span className="text-slate-400 font-mono">Model: gpt-4o-mini • Provider: openai</span>
-            </div>
-            <AIAssistantManager />
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* TAB 6: CLINIC SETTINGS */}
+        {/* TAB 5: CLINIC SETTINGS */}
         {/* ========================================================================= */}
         {activeTab === "settings" && (
           <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-6 max-w-3xl">

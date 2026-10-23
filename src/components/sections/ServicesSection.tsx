@@ -117,7 +117,7 @@ export function ServicesSection({ onSelectService }: ServicesSectionProps) {
           <p className="text-neutral-500 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto font-normal">
             {isUrdu
               ? "کوئی پوشیدہ فیس نہیں۔ تمام قیمتیں مشاورت اور جانچ کے بعد واضح کی جاتی ہیں۔"
-              : "Clear starting prices with zero hidden charges. Single source of truth across our reception, chatbot, and booking."}
+              : "Clear starting prices with zero hidden charges. Single source of truth across our reception and booking."}
           </p>
 
           <div className="pt-1">

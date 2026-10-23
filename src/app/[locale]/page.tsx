@@ -10,10 +10,8 @@ import { ContactSection } from "@/components/sections/ContactSection";
 import { Footer } from "@/components/layout/Footer";
 import { MobileStickyBar } from "@/components/layout/MobileStickyBar";
 import { BookingModal } from "@/components/booking/BookingModal";
-import { ChatWidget } from "@/components/chat/ChatWidget";
 
 export default function HomePage() {
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string | null>(null);
 
@@ -61,17 +59,6 @@ export default function HomePage() {
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
         preselectedService={selectedService}
-      />
-
-      {/* 6. Contextual AI Chat Assistant */}
-      <ChatWidget
-        initialOpen={isChatOpen}
-        selectedService={selectedService}
-        onResetService={() => setSelectedService(null)}
-        onOpenBookingModal={() => {
-          setIsChatOpen(false);
-          setIsBookingModalOpen(true);
-        }}
       />
     </div>
   );

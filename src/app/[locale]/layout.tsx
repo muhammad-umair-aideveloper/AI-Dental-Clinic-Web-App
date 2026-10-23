@@ -24,11 +24,11 @@ export async function generateMetadata({
 
   return {
     title: isUrdu
-      ? "لاہور ڈینٹل — جدید دانتوں کا علاج اور اے آئی بکنگ"
-      : "Lahore Dental — AI-Powered Dental Clinic in Gulberg, Lahore",
+      ? "لاہور ڈینٹل — جدید دانتوں کا علاج اور آن لائن بکنگ"
+      : "Lahore Dental — Premier Dental Clinic in Gulberg, Lahore",
     description: isUrdu
-      ? "لاہور میں جدید ترین ٹیکنالوجی، تکلیف سے پاک دندان سازی، اور 24/7 اے آئی اسسٹنٹ کے ساتھ دانتوں کا معتبر کلینک۔"
-      : "Premier pain-free dental clinic in Gulberg, Lahore. Equipped with digital dentistry and Pakistan's first 24/7 AI dental appointment assistant.",
+      ? "لاہور میں جدید ترین ٹیکنالوجی، تکلیف سے پاک دندان سازی، اور فوری آن لائن بکنگ کے ساتھ دانتوں کا معتبر کلینک۔"
+      : "Premier pain-free dental clinic in Gulberg, Lahore. Equipped with digital dentistry and instant online appointment booking.",
     keywords: [
       "Dental Clinic Lahore",
       "Dentist in Gulberg",
@@ -46,8 +46,8 @@ export async function generateMetadata({
       apple: "/images/logo.png",
     },
     openGraph: {
-      title: "Lahore Dental — AI-Powered Dental Clinic",
-      description: "Book pain-free dental appointments instantly via our AI assistant.",
+      title: "Lahore Dental — Premier Dental Clinic",
+      description: "Book pain-free dental appointments instantly.",
       locale: locale === "ur" ? "ur_PK" : "en_US",
       type: "website",
     },
